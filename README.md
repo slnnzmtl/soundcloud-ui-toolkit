@@ -1,7 +1,7 @@
-# SoundCloud Style Overrides
+# SoundCloud Wide
 
-A dependency-free Chrome Manifest V3 extension that overrides SoundCloud's
-layout and styles. Settings live in a toolbar popup control center.
+A dependency-free Chrome Manifest V3 extension that widens SoundCloud's main
+layout and queue. Settings live in a toolbar popup control center.
 
 ## Install locally
 
@@ -15,26 +15,42 @@ layout and styles. Settings live in a toolbar popup control center.
 
 Click the extension icon in the Chrome toolbar to open the **Control center**.
 
-| Setting     | Default | Effect                                      |
-| ----------- | ------- | ------------------------------------------- |
-| Full width  | On      | Widens the main layout (`.l-container`, etc.) |
+| Setting          | Default | Effect                                              |
+| ---------------- | ------- | --------------------------------------------------- |
+| Enlarged layout  | On      | Widens the main layout (`.l-container`, player UI)  |
+| Enlarged queue   | On      | Makes the play-queue panel larger                   |
 
 Preferences sync via `chrome.storage.sync` and apply immediately on open
-SoundCloud tabs. More settings (themes, features) will land here later.
+SoundCloud tabs.
 
-## Customize theme tokens
+## Permissions
 
-Edit the `--scx-*` values at the top of `styles.css`, then click the extension's
-**Reload** button on `chrome://extensions` and refresh SoundCloud.
-
-The rest of the stylesheet maps those values to SoundCloud's own theme tokens.
-`SELECTORS.md` records the production selectors found during inspection.
+| Permission / host              | Why it is needed                                                                 |
+| ------------------------------ | -------------------------------------------------------------------------------- |
+| `storage`                      | Save control-center toggles and sync them across Chrome profiles                 |
+| `scripting`                    | Inject layout CSS/JS into SoundCloud's same-origin player iframe after SPA loads |
+| `webNavigation`                | Detect when that player iframe is created or navigated in-app                    |
+| `https://soundcloud.com/*`     | Run only on SoundCloud                                                           |
 
 ## Scope
 
 - Runs only on `https://soundcloud.com/*`.
-- Requests the `storage` permission for control-center settings.
-- Covers the app shell, header, cards, buttons, forms, waveform progress,
-  fixed player, and queue.
-- Uses semantic class names and CSS variables to reduce breakage when
-  SoundCloud deploys new asset hashes.
+- Layout CSS for the main app shell lives in `styles.css`.
+- Player iframe layout lives in `iframe-player.css` (also injected by
+  `background.js` when frames appear after the parent page has loaded).
+- Uses semantic class names where possible to reduce breakage when SoundCloud
+  deploys new asset hashes.
+
+Developer notes: `SELECTORS.md` and `THEME.md` (optional recolor recipes, not
+injected) are for maintenance only and are excluded from the store package.
+
+## Publishing
+
+See [`store/LISTING.md`](store/LISTING.md) for Chrome Web Store listing copy,
+privacy answers, and packaging steps. Build a store zip with:
+
+```bash
+./scripts/pack.sh
+```
+
+Privacy policy: [`PRIVACY.md`](PRIVACY.md).

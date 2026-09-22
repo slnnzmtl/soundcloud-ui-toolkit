@@ -1,20 +1,28 @@
 (function () {
   const { getSettings, setSettings } = ScxSettings;
-  const fullWidthInput = document.getElementById("full-width");
 
-  function syncSwitch(settings) {
-    fullWidthInput.checked = Boolean(settings.fullWidth);
-    fullWidthInput.setAttribute(
-      "aria-checked",
-      settings.fullWidth ? "true" : "false"
-    );
+  const switches = [
+    { id: "full-width", key: "fullWidth" },
+    { id: "enlarged-queue", key: "enlargedQueue" },
+  ];
+
+  function bindSwitch(id, key) {
+    const input = document.getElementById(id);
+
+    function sync(settings) {
+      const enabled = Boolean(settings[key]);
+      input.checked = enabled;
+      input.setAttribute("aria-checked", enabled ? "true" : "false");
+    }
+
+    getSettings().then(sync);
+
+    input.addEventListener("change", () => {
+      const enabled = input.checked;
+      input.setAttribute("aria-checked", enabled ? "true" : "false");
+      setSettings({ [key]: enabled });
+    });
   }
 
-  getSettings().then(syncSwitch);
-
-  fullWidthInput.addEventListener("change", () => {
-    const fullWidth = fullWidthInput.checked;
-    fullWidthInput.setAttribute("aria-checked", fullWidth ? "true" : "false");
-    setSettings({ fullWidth });
-  });
+  switches.forEach(({ id, key }) => bindSwitch(id, key));
 })();

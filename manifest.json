@@ -1,18 +1,43 @@
 {
   "manifest_version": 3,
-  "name": "SoundCloud Style Overrides",
+  "name": "SoundCloud Wide",
   "version": "1.1.0",
-  "description": "Applies a configurable visual theme to soundcloud.com.",
-  "permissions": ["storage"],
+  "description": "Widen SoundCloud's main layout and queue. Toggle settings from the toolbar popup.",
+  "homepage_url": "https://github.com/slnnzmtl/soundcloud-wide",
+  "permissions": ["storage", "scripting", "webNavigation"],
+  "host_permissions": ["https://soundcloud.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "SoundCloud Style Overrides"
+    "default_title": "SoundCloud Wide",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
   },
   "content_scripts": [
     {
       "matches": ["https://soundcloud.com/*"],
       "css": ["styles.css"],
       "js": ["shared/settings.js", "content.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://soundcloud.com/n/*"],
+      "css": ["iframe-player.css"],
+      "js": ["shared/settings.js", "content.js"],
+      "all_frames": true,
+      "match_about_blank": true,
       "run_at": "document_start"
     }
   ]

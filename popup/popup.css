@@ -71,6 +71,10 @@ body {
   user-select: none;
 }
 
+.switch-row + .switch-row {
+  margin-top: 10px;
+}
+
 .switch-row__label {
   font-size: 13px;
   font-weight: 500;

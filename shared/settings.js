@@ -5,9 +5,11 @@
 (function (global) {
   const STORAGE_KEY = "scxSettings";
   const FULL_WIDTH_CLASS = "scx-full-width";
+  const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
 
   const DEFAULTS = Object.freeze({
     fullWidth: true,
+    enlargedQueue: true,
   });
 
   function mergeWithDefaults(stored) {
@@ -46,6 +48,7 @@
   global.ScxSettings = {
     STORAGE_KEY,
     FULL_WIDTH_CLASS,
+    ENLARGED_QUEUE_CLASS,
     DEFAULTS,
     mergeWithDefaults,
     getSettings,

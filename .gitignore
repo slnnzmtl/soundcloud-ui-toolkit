@@ -1,0 +1,12 @@
+.DS_Store
+Thumbs.db
+*.zip
+dist/
+store/screenshots/
+store/_*.png
+icons/_*.png
+node_modules/
+.vscode/
+.idea/
+*.log
+THEME.md

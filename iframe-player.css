@@ -1,0 +1,75 @@
+/*
+ * SoundCloud Wide — player iframe layout
+ *
+ * Injected into SoundCloud's same-origin player iframe
+ * (https://soundcloud.com/n/*) by the manifest and by background.js on
+ * in-app navigations that create the frame after the parent page has loaded.
+ */
+html.scx-full-width main#main,
+html.scx-full-width main.MuiBox-root {
+  width: 100% !important;
+  max-width: 1800px !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/*
+ * Two-column grid on the track *body* parent (the MuiStack after the two
+ * Track header sections — e.g. .mui-xh7knn), matching .l-fluid-fixed.
+ * Do not key this off the aside; the sidebar is only a grid item.
+ */
+@media (min-width: 1200px) {
+  html.scx-full-width
+    main#main
+    > .MuiStack-root
+    > section[aria-label="Track header"]
+    + section[aria-label="Track header"]
+    + .MuiStack-root {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 420px !important;
+    gap: 30px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  html.scx-full-width
+    main#main
+    > .MuiStack-root
+    > section[aria-label="Track header"]
+    + section[aria-label="Track header"]
+    + .MuiStack-root
+    > * {
+    min-width: 0 !important;
+  }
+
+  html.scx-full-width
+    main#main
+    > .MuiStack-root
+    > section[aria-label="Track header"]
+    + section[aria-label="Track header"]
+    + .MuiStack-root
+    > :nth-child(1) {
+    grid-column: 1 !important;
+  }
+
+  html.scx-full-width
+    main#main
+    > .MuiStack-root
+    > section[aria-label="Track header"]
+    + section[aria-label="Track header"]
+    + .MuiStack-root
+    > :nth-child(2) {
+    grid-column: 2 !important;
+    width: 420px !important;
+    max-width: 420px !important;
+    box-sizing: border-box !important;
+  }
+
+  html.scx-full-width aside[aria-label="Track sidebar"] {
+    width: 420px !important;
+    max-width: 420px !important;
+    box-sizing: border-box !important;
+  }
+}

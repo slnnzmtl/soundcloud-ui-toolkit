@@ -1,22 +1,31 @@
 (function () {
-  const { FULL_WIDTH_CLASS, getSettings, onSettingsChanged } = ScxSettings;
+  const {
+    FULL_WIDTH_CLASS,
+    ENLARGED_QUEUE_CLASS,
+    DEFAULTS,
+    getSettings,
+    onSettingsChanged,
+  } = ScxSettings;
 
-  function applyFullWidth(enabled) {
+  function applySettings(settings) {
     const root = document.documentElement;
     if (!root) {
       return;
     }
-    root.classList.toggle(FULL_WIDTH_CLASS, Boolean(enabled));
+    root.classList.toggle(FULL_WIDTH_CLASS, Boolean(settings.fullWidth));
+    root.classList.toggle(
+      ENLARGED_QUEUE_CLASS,
+      Boolean(settings.enlargedQueue)
+    );
   }
 
-  // Optimistic default: full width on until storage resolves.
-  applyFullWidth(true);
+  applySettings(DEFAULTS);
+  getSettings().then(applySettings);
 
-  getSettings().then((settings) => {
-    applyFullWidth(settings.fullWidth);
-  });
+  if (globalThis.__scxContentLoaded) {
+    return;
+  }
+  globalThis.__scxContentLoaded = true;
 
-  onSettingsChanged((settings) => {
-    applyFullWidth(settings.fullWidth);
-  });
+  onSettingsChanged(applySettings);
 })();
