@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "SoundCloud Style Overrides",
+  "version": "1.0.0",
+  "description": "Applies a configurable visual theme to soundcloud.com.",
+  "content_scripts": [
+    {
+      "matches": ["https://soundcloud.com/*"],
+      "css": ["styles.css"],
+      "run_at": "document_start"
+    }
+  ]
+}

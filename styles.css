@@ -1,0 +1,237 @@
+/*
+ * SoundCloud Style Overrides
+ *
+ * Edit only this first block to recolor the theme. Rules below map these
+ * values onto SoundCloud's own design tokens and stable semantic classes.
+ */
+:root {
+  --scx-background: #0b0d12;
+  --scx-surface: #141821;
+  --scx-surface-raised: #1c2230;
+  --scx-border: #30394a;
+  --scx-text: #f5f7fb;
+  --scx-text-muted: #a7b0c0;
+  --scx-accent: #ff5a1f;
+  --scx-link: #8ab4ff;
+  --scx-focus: #82aaff;
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 10px;
+  --scx-radius-large: 14px;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+}
+
+/* Target both themes so the extension survives site/OS theme changes. */
+body.theme-light,
+body.theme-dark {
+  color-scheme: dark !important;
+
+  --surface-color: var(--scx-surface) !important;
+  --surface-rgb: 20, 24, 33 !important;
+  --background-surface-color: var(--scx-background) !important;
+  --background-highlight-color: var(--scx-surface-raised) !important;
+  --highlight-color: var(--scx-surface-raised) !important;
+  --highlight-rgb: 28, 34, 48 !important;
+
+  --primary-color: var(--scx-text) !important;
+  --primary-rgb: 245, 247, 251 !important;
+  --secondary-color: var(--scx-text-muted) !important;
+  --secondary-rgb: 167, 176, 192 !important;
+  --font-primary-color: var(--scx-text) !important;
+  --font-secondary-color: var(--scx-text-muted) !important;
+  --font-special-color: var(--scx-accent) !important;
+
+  --special-color: var(--scx-accent) !important;
+  --special-rgb: 255, 90, 31 !important;
+  --link-color: var(--scx-link) !important;
+  --link-rgb: 138, 180, 255 !important;
+  --font-link-color: var(--scx-link) !important;
+  --link-standard-color: var(--scx-link) !important;
+  --link-standard-hover-color: var(--scx-link) !important;
+  --link-primary-color: var(--scx-text) !important;
+  --link-secondary-color: var(--scx-text-muted) !important;
+
+  --imageBorder-color: rgb(255 255 255 / 12%) !important;
+  --overlay-color: rgb(0 0 0 / 62%) !important;
+  --overlay-default-color: rgb(0 0 0 / 62%) !important;
+
+  --button-primary-background-color: var(--scx-text) !important;
+  --button-primary-font-color: var(--scx-background) !important;
+  --button-secondary-background-color: var(--scx-surface-raised) !important;
+  --button-secondary-font-color: var(--scx-text) !important;
+  --button-tertiary-background-color: var(--scx-surface) !important;
+  --button-tertiary-font-color: var(--scx-text) !important;
+  --button-special-background-color: var(--scx-accent) !important;
+  --button-focused-box-shadow: 0 0 0 2px var(--scx-focus) inset !important;
+
+  --input-default-background-color: var(--scx-surface-raised) !important;
+  --input-placeholder-background-color: var(--scx-surface-raised) !important;
+  --input-focused-background-color: var(--scx-surface-raised) !important;
+  --input-focused-border-color: var(--scx-focus) !important;
+  --input-default-font-color: var(--scx-text) !important;
+  --input-placeholder-font-color: var(--scx-text-muted) !important;
+}
+
+html,
+body,
+#app {
+  background: var(--scx-background) !important;
+}
+
+body {
+  color: var(--scx-text) !important;
+}
+
+/* Header */
+.header,
+.header__inner {
+  background: color-mix(
+    in srgb,
+    var(--scx-surface) 94%,
+    transparent
+  ) !important;
+  border-bottom-color: var(--scx-border) !important;
+}
+
+.header {
+  box-shadow: 0 1px 0 var(--scx-border) !important;
+  backdrop-filter: blur(14px);
+}
+
+.header__link,
+.header__button,
+.header__userNavButton,
+.header__userNavUsernameButton {
+  color: var(--scx-text-muted) !important;
+}
+
+.header__link:hover,
+.header__button:hover,
+.header__userNavButton:hover,
+.header__userNavUsernameButton:hover {
+  color: var(--scx-text) !important;
+}
+
+.headerSearch__input {
+  color: var(--scx-text) !important;
+  background: var(--scx-surface-raised) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--scx-radius-small) !important;
+}
+
+.headerSearch__input:focus {
+  border-color: var(--scx-focus) !important;
+}
+
+/* Cards, rows, and artwork */
+.soundBadge__content,
+.soundList__item,
+.trackList__item,
+.searchList__item,
+.userSuggestionList__item,
+.queue__itemWrapper {
+  border-color: var(--scx-border) !important;
+}
+
+.soundBadge__content,
+.playableTile__descriptionContainer,
+.userBadge__content {
+  color: var(--scx-text) !important;
+}
+
+.sc-artwork,
+.playableTile__image,
+.soundBadge__artwork,
+.userBadge__avatar,
+.queueItemView__artworkImage {
+  border-radius: var(--scx-radius-medium) !important;
+}
+
+.soundList__item:hover,
+.trackList__item:hover,
+.searchList__item:hover,
+.queue__itemWrapper:hover {
+  background: var(--scx-surface-raised) !important;
+}
+
+/* Buttons and form controls */
+.sc-button,
+button,
+input,
+textarea,
+select {
+  border-radius: var(--scx-radius-small) !important;
+}
+
+.sc-button-cta {
+  background: var(--scx-accent) !important;
+  color: #fff !important;
+}
+
+.sc-button:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--scx-focus) !important;
+  outline-offset: 2px !important;
+}
+
+/* Waveforms and progress indicators */
+.playbackTimeline__progressBar,
+.playbackTimeline__progressHandle,
+.volume__sliderProgress {
+  background-color: var(--scx-accent) !important;
+}
+
+.playbackTimeline__progressBackground,
+.volume__sliderBackground {
+  background-color: var(--scx-border) !important;
+}
+
+/* Fixed player and queue panel */
+.playControls,
+.playControls__bg,
+.playControls__wrapper,
+.playControls__inner {
+  background-color: var(--scx-surface) !important;
+  border-top-color: var(--scx-border) !important;
+}
+
+.playControls__wrapper {
+  box-shadow:
+    0 -1px 0 var(--scx-border),
+    0 -12px 32px rgb(0 0 0 / 22%) !important;
+}
+
+.queue__panel,
+.playControlsPanel__inner {
+  color: var(--scx-text) !important;
+  background: var(--scx-surface) !important;
+  border: 1px solid var(--scx-border) !important;
+  border-radius: var(--scx-radius-large) !important;
+  box-shadow: var(--scx-shadow) !important;
+}
+
+/* Preserve contrast for SoundCloud's legacy dark-header helpers. */
+.g-dark a,
+.g-dark .sc-text-secondary,
+.g-dark .sc-type-light {
+  color: var(--scx-text-muted) !important;
+}
+
+.g-dark a:hover,
+.g-dark .sc-text-primary {
+  color: var(--scx-text) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
