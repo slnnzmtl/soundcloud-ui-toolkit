@@ -13,6 +13,11 @@ Upload: `dist/soundcloud-wide-1.2.0.zip`
 
 Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 
+## What’s new in 1.2.0
+
+- Master enable switch — turn all styles off without clearing other preferences
+- Appearance presets — Classic, Accent, Style, and Homage groups in the toolbar popup
+
 ## Store listing
 
 | Field | Value |
@@ -31,7 +36,7 @@ Features
 • Master enable switch — turn all styles off to restore stock SoundCloud without changing your other settings
 • Enlarged layout — widen the main content area and related player UI
 • Enlarged queue — make the play queue panel larger and easier to browse
-• Appearance presets — Classic (Default, Midnight, OLED, Slate), Accent (Terminal, Fallout, Cyberpunk, Purple, Teal Hue, Blood), Style (Minimal, Liquid Glass), or Homage (Spotify, Mimi)
+• Appearance presets — Classic, Accent, Style, and Homage color groups (Default keeps native SoundCloud colors)
 • Toolbar control center — turn each feature on or off; preferences sync via Chrome sync
 
 The extension only runs on https://soundcloud.com/. It does not change audio playback, does not inject ads, and does not collect personal data.
@@ -83,6 +88,16 @@ These are full-bleed 1280×800 PNGs ready for the dashboard. They are **not** in
 
 Screenshots may show enlarged layout/queue; optional color presets are controlled from the popup and default to native SoundCloud colors.
 
+## Local smoke-test (before upload)
+
+Load unpacked from this repo (or from the unzipped store package):
+
+- [ ] Enabled off restores stock SoundCloud UI
+- [ ] Enlarged layout and enlarged queue toggles work
+- [ ] Default appearance leaves native colors
+- [ ] At least one Classic, Accent (including Blood), and Homage preset apply
+- [ ] Player iframe (`/n/*`) still gets wide layout / theme after in-app navigation
+
 ## Pre-submit checklist
 
 - [ ] `./scripts/pack.sh` succeeds and zip opens cleanly
@@ -94,4 +109,4 @@ Screenshots may show enlarged layout/queue; optional color presets are controlle
 - [ ] At least one 1280×800 screenshot uploaded (`store/screenshots/`)
 - [ ] `store/promo-small.png` uploaded as small promo tile
 - [ ] Permission justifications pasted and match the zip
-- [ ] Listing name/description say **SoundCloud Wide** (layout + optional presets)
+- [ ] Listing name/description say **SoundCloud Wide** (layout + optional presets; groups only, no third-party brand names)

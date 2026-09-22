@@ -51,5 +51,7 @@ redeclaring every component rule.
   on each deployment.
 - Chrome content styles are author-origin CSS. `!important` is used on theme
   tokens where SoundCloud may inject later rules with equal specificity.
+- Color presets ship in `themes.css` as `html.scx-theme-*` overrides of the
+  tokens above — not as selector rewrites in `styles.css` (layout only).
 - Re-check selectors after a SoundCloud redesign. The date above identifies
   the snapshot this map was based on.

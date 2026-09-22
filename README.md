@@ -4,6 +4,12 @@ A dependency-free Chrome Manifest V3 extension that widens SoundCloud's main
 layout and queue, with optional color presets. Settings live in a toolbar popup
 control center.
 
+### What’s new in 1.2.0
+
+Master enable switch and appearance presets (Classic, Accent, Style, Homage)
+gated by `html.scx-theme-*` in `themes.css`. Layout and queue toggles are
+unchanged.
+
 ## Install locally
 
 1. Open `chrome://extensions`.
@@ -45,8 +51,9 @@ SoundCloud tabs.
 - Uses semantic class names where possible to reduce breakage when SoundCloud
   deploys new asset hashes.
 
-Developer notes: `SELECTORS.md` and `THEME.md` (optional recolor recipes, not
-injected) are for maintenance only and are excluded from the store package.
+Developer notes: `SELECTORS.md` (selector map) is for maintenance only and is
+excluded from the store package. Preset catalog lives in `themes.css` and
+`THEME_GROUPS` in `shared/settings.js`.
 
 ## Publishing
 
