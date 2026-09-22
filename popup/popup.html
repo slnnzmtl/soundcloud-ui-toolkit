@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Control center</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="control-center">
+      <header class="control-center__header">
+        <h1 class="control-center__title">Control center</h1>
+      </header>
+
+      <section class="control-center__group" aria-labelledby="features-heading">
+        <h2 id="features-heading" class="control-center__group-title">
+          Features
+        </h2>
+
+        <label class="switch-row" for="full-width">
+          <span class="switch-row__label">Full width</span>
+          <input
+            id="full-width"
+            class="switch-row__input"
+            type="checkbox"
+            role="switch"
+          />
+          <span class="switch-row__track" aria-hidden="true">
+            <span class="switch-row__thumb"></span>
+          </span>
+        </label>
+      </section>
+    </main>
+
+    <script src="../shared/settings.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

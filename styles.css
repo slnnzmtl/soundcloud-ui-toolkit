@@ -23,7 +23,7 @@
 /* Target both themes so the extension survives site/OS theme changes. */
 body.theme-light,
 body.theme-dark {
-  color-scheme: dark !important;
+  /* color-scheme: dark !important;
 
   --surface-color: var(--scx-surface) !important;
   --surface-rgb: 20, 24, 33 !important;
@@ -68,40 +68,125 @@ body.theme-dark {
   --input-focused-background-color: var(--scx-surface-raised) !important;
   --input-focused-border-color: var(--scx-focus) !important;
   --input-default-font-color: var(--scx-text) !important;
-  --input-placeholder-font-color: var(--scx-text-muted) !important;
+  --input-placeholder-font-color: var(--scx-text-muted) !important; */
 }
 
 html,
 body,
 #app {
-  background: var(--scx-background) !important;
+  /* background: var(--scx-background) !important; */
+}
+
+/* Full width layout — toggled via control center (html.scx-full-width). */
+html.scx-full-width .l-container {
+  width: 100% !important;
+  max-width: 1800px !important;
+}
+
+html.scx-full-width .profileHeader {
+  height: 260px !important;
+}
+
+html.scx-full-width .l-fluid-fixed {
+  display: grid !important;
+  grid-template-columns: 1fr 420px !important;
+  gap: 20px !important;
+}
+
+html.scx-full-width .l-fluid-fixed .l-main {
+  margin-right: 0 !important;
+}
+
+html.scx-full-width .l-fluid-fixed .l-sidebar-right {
+  width: 420px !important;
+}
+
+html.scx-full-width .l-fluid-fixed .l-sidebar-right .l-fixed {
+  width: 420px !important;
+}
+
+html.scx-full-width .profileHeaderBackground__visual {
+  background-size: cover !important;
+}
+
+@media (min-width: 2000px) {
+  html.scx-full-width .profileHeader {
+    height: 370px !important;
+  }
+}
+
+.queueItemView__title.sc-truncate:hover {
+  overflow: visible !important;
+  white-space: normal !important;
+  border-radius: 4px !important;
+}
+
+.playControls__queue {
+  width: 50vw !important;
+  height: 80vh !important;
+  padding: 0 !important;
+}
+
+/* .playControls__queue .queue,
+.playControls__queue .queue__panel {
+  height: 100% !important;
+} */
+
+.playControls__queue .queue__scrollable {
+  top: 69px !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  height: auto !important;
+}
+
+.playControls__queue .queue__scrollableInner {
+  height: 100% !important;
+}
+
+@media (min-height: 1200px) {
+  .playControls__queue {
+    height: 800px !important;
+    width: 720px !important;
+  }
+}
+
+@media (max-width: 740px) {
+  .playControls__queue {
+    width: calc(100% - 16px) !important;
+  }
+}
+
+.queue__itemsHeight {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 body {
-  color: var(--scx-text) !important;
+  /* color: var(--scx-text) !important; */
 }
 
 /* Header */
 .header,
 .header__inner {
-  background: color-mix(
+  /* background: color-mix(
     in srgb,
     var(--scx-surface) 94%,
     transparent
   ) !important;
-  border-bottom-color: var(--scx-border) !important;
+  border-bottom-color: var(--scx-border) !important; */
 }
 
 .header {
-  box-shadow: 0 1px 0 var(--scx-border) !important;
-  backdrop-filter: blur(14px);
+  /* box-shadow: 0 1px 0 var(--scx-border) !important;
+  backdrop-filter: blur(14px); */
 }
 
 .header__link,
 .header__button,
 .header__userNavButton,
 .header__userNavUsernameButton {
-  color: var(--scx-text-muted) !important;
+  /* color: var(--scx-text-muted) !important; */
 }
 
 .header__link:hover,
@@ -112,14 +197,14 @@ body {
 }
 
 .headerSearch__input {
-  color: var(--scx-text) !important;
+  /* color: var(--scx-text) !important;
   background: var(--scx-surface-raised) !important;
   border: 1px solid transparent !important;
-  border-radius: var(--scx-radius-small) !important;
+  border-radius: var(--scx-radius-small) !important; */
 }
 
 .headerSearch__input:focus {
-  border-color: var(--scx-focus) !important;
+  /* border-color: var(--scx-focus) !important; */
 }
 
 /* Cards, rows, and artwork */
@@ -129,7 +214,7 @@ body {
 .searchList__item,
 .userSuggestionList__item,
 .queue__itemWrapper {
-  border-color: var(--scx-border) !important;
+  /* border-color: var(--scx-border) !important; */
 }
 
 .soundBadge__content,
@@ -143,14 +228,14 @@ body {
 .soundBadge__artwork,
 .userBadge__avatar,
 .queueItemView__artworkImage {
-  border-radius: var(--scx-radius-medium) !important;
+  /* border-radius: var(--scx-radius-medium) !important; */
 }
 
 .soundList__item:hover,
 .trackList__item:hover,
 .searchList__item:hover,
 .queue__itemWrapper:hover {
-  background: var(--scx-surface-raised) !important;
+  /* background: var(--scx-surface-raised) !important; */
 }
 
 /* Buttons and form controls */
@@ -159,12 +244,12 @@ button,
 input,
 textarea,
 select {
-  border-radius: var(--scx-radius-small) !important;
+  /* border-radius: var(--scx-radius-small) !important; */
 }
 
 .sc-button-cta {
-  background: var(--scx-accent) !important;
-  color: #fff !important;
+  /* background: var(--scx-accent) !important;
+  color: #fff !important; */
 }
 
 .sc-button:focus-visible,
@@ -173,20 +258,20 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--scx-focus) !important;
-  outline-offset: 2px !important;
+  /* outline: 2px solid var(--scx-focus) !important;
+  outline-offset: 2px !important; */
 }
 
 /* Waveforms and progress indicators */
 .playbackTimeline__progressBar,
 .playbackTimeline__progressHandle,
 .volume__sliderProgress {
-  background-color: var(--scx-accent) !important;
+  /* background-color: var(--scx-accent) !important; */
 }
 
 .playbackTimeline__progressBackground,
 .volume__sliderBackground {
-  background-color: var(--scx-border) !important;
+  /* background-color: var(--scx-border) !important; */
 }
 
 /* Fixed player and queue panel */
@@ -194,44 +279,44 @@ a:focus-visible {
 .playControls__bg,
 .playControls__wrapper,
 .playControls__inner {
-  background-color: var(--scx-surface) !important;
-  border-top-color: var(--scx-border) !important;
+  /* background-color: var(--scx-surface) !important; */
+  /* border-top-color: var(--scx-border) !important; */
 }
 
 .playControls__wrapper {
   box-shadow:
-    0 -1px 0 var(--scx-border),
-    0 -12px 32px rgb(0 0 0 / 22%) !important;
+    /* 0 -1px 0 var(--scx-border),
+    0 -12px 32px rgb(0 0 0 / 22%) !important; */
 }
 
 .queue__panel,
 .playControlsPanel__inner {
-  color: var(--scx-text) !important;
+  /* color: var(--scx-text) !important;
   background: var(--scx-surface) !important;
   border: 1px solid var(--scx-border) !important;
   border-radius: var(--scx-radius-large) !important;
-  box-shadow: var(--scx-shadow) !important;
+  box-shadow: var(--scx-shadow) !important; */
 }
 
 /* Preserve contrast for SoundCloud's legacy dark-header helpers. */
 .g-dark a,
 .g-dark .sc-text-secondary,
 .g-dark .sc-type-light {
-  color: var(--scx-text-muted) !important;
+  /* color: var(--scx-text-muted) !important; */
 }
 
 .g-dark a:hover,
 .g-dark .sc-text-primary {
-  color: var(--scx-text) !important;
+  /* color: var(--scx-text) !important; */
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    scroll-behavior: auto !important;
+    /* scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    animation-iteration-count: 1 !important; */
   }
 }
