@@ -47,7 +47,7 @@ injected) are for maintenance only and are excluded from the store package.
 ## Publishing
 
 See [`store/LISTING.md`](store/LISTING.md) for Chrome Web Store listing copy,
-privacy answers, and packaging steps. Build a store zip with:
+privacy answers, screenshots, and packaging steps. Build a store zip with:
 
 ```bash
 ./scripts/pack.sh

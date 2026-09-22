@@ -2,7 +2,6 @@
 Thumbs.db
 *.zip
 dist/
-store/screenshots/
 store/_*.png
 icons/_*.png
 node_modules/

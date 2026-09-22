@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 440 280" fill="none">
+  <rect width="440" height="280" fill="#0b0d12"/>
+
+  <!-- ~40px inset from all edges; text left, bars right, clear gap -->
+  <text
+    x="44"
+    y="132"
+    fill="#f5f7fb"
+    font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="30"
+    font-weight="700"
+    letter-spacing="-0.02em"
+  >SoundCloud Wide</text>
+  <text
+    x="44"
+    y="168"
+    fill="#a7b0c0"
+    font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="16"
+    font-weight="500"
+  >Widen layout &amp; queue</text>
+
+  <g fill="#ff5a1f">
+    <rect x="298" y="102" width="98" height="12" rx="6"/>
+    <rect x="324" y="126" width="72" height="12" rx="6"/>
+    <rect x="308" y="150" width="88" height="12" rx="6"/>
+    <rect x="336" y="174" width="60" height="12" rx="6"/>
+  </g>
+</svg>

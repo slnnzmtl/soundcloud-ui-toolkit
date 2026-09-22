@@ -22,7 +22,7 @@ zip -r "$ZIP_PATH" \
   shared \
   popup \
   icons \
-  -x "*.DS_Store" "*/.*"
+  -x "*.DS_Store" "*/.*" "icons/*.svg"
 
 echo "Wrote $ZIP_PATH"
 unzip -l "$ZIP_PATH"

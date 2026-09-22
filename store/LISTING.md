@@ -66,20 +66,18 @@ Use these answers in the dashboard Privacy tab.
 | ----- | ---- | ---- | -------- |
 | Extension icons | `icons/icon-{16,32,48,128}.png` | 16 / 32 / 48 / 128 | Yes (in zip) |
 | Small promo tile | `store/promo-small.png` | 440×280 | Yes (upload in dashboard) |
-| Screenshots | see below | 1280×800 preferred | Yes (≥1) |
+| Screenshots | `store/screenshots/*.png` | 1280×800 | Yes (≥1) |
 | Marquee promo | — | 1400×560 | Optional |
 
-### Screenshot capture checklist
+### Screenshots (upload in this order)
 
-Chrome Web Store needs at least one full-bleed screenshot (1280×800 or 640×400)
-showing the real product. Capture these yourself while logged into SoundCloud:
+| # | File | Shows |
+| - | ---- | ----- |
+| 1 | [`store/screenshots/01-after-layout.png`](screenshots/01-after-layout.png) | **After** — enlarged layout (wide playlist + sidebar) |
+| 2 | [`store/screenshots/02-after-queue.png`](screenshots/02-after-queue.png) | **After** — enlarged queue (“Next up” panel) |
+| 3 | [`store/screenshots/03-before.png`](screenshots/03-before.png) | **Before** — default SoundCloud width (comparison) |
 
-1. Load the unpacked extension (or the store build) and open `https://soundcloud.com/`.
-2. Enable **Enlarged layout** and **Enlarged queue** in the popup.
-3. Capture the main feed or a track page at a wide viewport (1280×800).
-4. Optionally capture a second shot with the queue panel open.
-5. Optionally capture the control-center popup (can be composited or shown on top of SoundCloud).
-6. Save PNGs into `store/screenshots/` (gitignored) and upload them in the dashboard.
+These are full-bleed 1280×800 PNGs ready for the dashboard. They are **not** included in the store zip (upload separately).
 
 Do not submit screenshots that imply a full theme/recolor if the shipped CSS is layout-only.
 
@@ -90,7 +88,7 @@ Do not submit screenshots that imply a full theme/recolor if the shipped CSS is 
 - [ ] Enlarged layout and enlarged queue work on main SoundCloud UI
 - [ ] Player iframe (`/n/*`) still gets wide layout after in-app navigation
 - [ ] `PRIVACY.md` is public on GitHub `main`
-- [ ] At least one 1280×800 screenshot uploaded
+- [ ] At least one 1280×800 screenshot uploaded (`store/screenshots/`)
 - [ ] `store/promo-small.png` uploaded as small promo tile
 - [ ] Permission justifications pasted and match the zip
 - [ ] Listing name/description say **SoundCloud Wide** (layout), not “theme”
