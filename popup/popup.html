@@ -10,8 +10,21 @@
     <main class="control-center">
       <header class="control-center__header">
         <h1 class="control-center__title">SoundCloud Wide</h1>
+        <label class="switch-row switch-row--compact" for="extension-enabled">
+          <span class="switch-row__label">Enabled</span>
+          <input
+            id="extension-enabled"
+            class="switch-row__input"
+            type="checkbox"
+            role="switch"
+          />
+          <span class="switch-row__track" aria-hidden="true">
+            <span class="switch-row__thumb"></span>
+          </span>
+        </label>
       </header>
 
+      <div id="control-center-body" class="control-center__body">
       <section class="control-center__group" aria-labelledby="features-heading">
         <h2 id="features-heading" class="control-center__group-title">
           Features
@@ -43,6 +56,23 @@
           </span>
         </label>
       </section>
+
+      <section
+        class="control-center__group"
+        aria-labelledby="appearance-heading"
+      >
+        <h2 id="appearance-heading" class="control-center__group-title">
+          Appearance
+        </h2>
+
+        <div
+          id="theme-list"
+          class="theme-list"
+          role="radiogroup"
+          aria-labelledby="appearance-heading"
+        ></div>
+      </section>
+      </div>
     </main>
 
     <script src="../shared/settings.js"></script>

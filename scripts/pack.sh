@@ -18,6 +18,7 @@ zip -r "$ZIP_PATH" \
   background.js \
   content.js \
   styles.css \
+  themes.css \
   iframe-player.css \
   shared \
   popup \

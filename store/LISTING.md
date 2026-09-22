@@ -9,7 +9,7 @@ Do not upload until icons, promo tile, screenshots, and privacy URL are ready.
 ./scripts/pack.sh
 ```
 
-Upload: `dist/soundcloud-wide-1.1.0.zip`
+Upload: `dist/soundcloud-wide-1.2.0.zip`
 
 Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 
@@ -18,7 +18,7 @@ Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 | Field | Value |
 | ----- | ----- |
 | **Name** | SoundCloud Wide |
-| **Short description** (manifest / store summary, ≤132 chars) | Widen SoundCloud's main layout and queue. Toggle settings from the toolbar popup. |
+| **Short description** (manifest / store summary, ≤132 chars) | Widen SoundCloud's layout and queue, with optional color presets. Toggle settings from the toolbar popup. |
 | **Category** | Productivity |
 | **Language** | English |
 
@@ -28,8 +28,10 @@ Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 SoundCloud Wide makes better use of large screens on soundcloud.com.
 
 Features
+• Master enable switch — turn all styles off to restore stock SoundCloud without changing your other settings
 • Enlarged layout — widen the main content area and related player UI
 • Enlarged queue — make the play queue panel larger and easier to browse
+• Appearance presets — Classic (Default, Midnight, OLED, Slate), Accent (Terminal, Fallout, Cyberpunk, Purple, Teal Hue, Blood), Style (Minimal, Liquid Glass), or Homage (Spotify, Mimi)
 • Toolbar control center — turn each feature on or off; preferences sync via Chrome sync
 
 The extension only runs on https://soundcloud.com/. It does not change audio playback, does not inject ads, and does not collect personal data.
@@ -39,7 +41,7 @@ Open the extension icon while on SoundCloud to adjust settings.
 
 ### Single purpose
 
-Widen SoundCloud’s web layout (main content and queue) with optional user toggles.
+Widen SoundCloud’s web layout (main content and queue) with optional layout toggles and color presets.
 
 ## Permission justifications (Privacy practices)
 
@@ -47,14 +49,14 @@ Use these answers in the dashboard Privacy tab.
 
 | Permission / host | Justification |
 | ----------------- | ------------- |
-| `storage` | Stores two boolean settings (enlarged layout, enlarged queue) so preferences persist and sync with Chrome sync. |
-| `scripting` | Injects layout CSS/JS into SoundCloud’s same-origin player iframe (`/n/*`) when that frame is created after the parent page loads (SPA navigation). |
-| `webNavigation` | Detects committed/completed navigations and history updates for SoundCloud frames so the player iframe can receive layout styles. |
+| `storage` | Stores the master enable toggle, layout toggles (enlarged layout, enlarged queue), and an appearance preset id so preferences persist and sync with Chrome sync. |
+| `scripting` | Injects layout/theme CSS/JS into SoundCloud’s same-origin player iframe (`/n/*`) when that frame is created after the parent page loads (SPA navigation). |
+| `webNavigation` | Detects committed/completed navigations and history updates for SoundCloud frames so the player iframe can receive layout and theme styles. |
 | Host: `https://soundcloud.com/*` | Content scripts and injection run only on SoundCloud. |
 
 ### Remote code / user data
 
-- **Does this extension collect user data?** No personal data. Only local/sync boolean preferences.
+- **Does this extension collect user data?** No personal data. Only local/sync preferences (booleans + appearance preset id).
 - **Does this extension sell user data?** No.
 - **Does this extension use remote code?** No. All scripts ship inside the extension package.
 - **Privacy policy URL** (after `PRIVACY.md` is on the default branch):  
@@ -79,16 +81,17 @@ Use these answers in the dashboard Privacy tab.
 
 These are full-bleed 1280×800 PNGs ready for the dashboard. They are **not** included in the store zip (upload separately).
 
-Do not submit screenshots that imply a full theme/recolor if the shipped CSS is layout-only.
+Screenshots may show enlarged layout/queue; optional color presets are controlled from the popup and default to native SoundCloud colors.
 
 ## Pre-submit checklist
 
 - [ ] `./scripts/pack.sh` succeeds and zip opens cleanly
 - [ ] Icons appear on `chrome://extensions` after Load unpacked
 - [ ] Enlarged layout and enlarged queue work on main SoundCloud UI
-- [ ] Player iframe (`/n/*`) still gets wide layout after in-app navigation
+- [ ] Appearance presets apply (and Default leaves native colors)
+- [ ] Player iframe (`/n/*`) still gets wide layout / theme after in-app navigation
 - [ ] `PRIVACY.md` is public on GitHub `main`
 - [ ] At least one 1280×800 screenshot uploaded (`store/screenshots/`)
 - [ ] `store/promo-small.png` uploaded as small promo tile
 - [ ] Permission justifications pasted and match the zip
-- [ ] Listing name/description say **SoundCloud Wide** (layout), not “theme”
+- [ ] Listing name/description say **SoundCloud Wide** (layout + optional presets)

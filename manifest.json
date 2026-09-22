@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "SoundCloud Wide",
-  "version": "1.1.0",
-  "description": "Widen SoundCloud's main layout and queue. Toggle settings from the toolbar popup.",
+  "version": "1.2.0",
+  "description": "Widen SoundCloud's layout and queue, with optional color presets. Toggle settings from the toolbar popup.",
   "homepage_url": "https://github.com/slnnzmtl/soundcloud-wide",
   "permissions": ["storage", "scripting", "webNavigation"],
   "host_permissions": ["https://soundcloud.com/*"],
@@ -28,13 +28,13 @@
   "content_scripts": [
     {
       "matches": ["https://soundcloud.com/*"],
-      "css": ["styles.css"],
+      "css": ["styles.css", "themes.css"],
       "js": ["shared/settings.js", "content.js"],
       "run_at": "document_start"
     },
     {
       "matches": ["https://soundcloud.com/n/*"],
-      "css": ["iframe-player.css"],
+      "css": ["iframe-player.css", "themes.css"],
       "js": ["shared/settings.js", "content.js"],
       "all_frames": true,
       "match_about_blank": true,

@@ -1,9 +1,9 @@
 /*
  * SoundCloud Wide
  *
- * Active layout tweaks only. Full width and enlarged queue are gated by
- * classes toggled from the control center (see shared/settings.js).
- * Recolor recipes that used to live here are in THEME.md.
+ * Active layout tweaks only. Layout and container rules are gated by
+ * html.scx-full-width (Enlarged layout). Queue size/hover also requires
+ * the Enlarged queue class. Button chrome lives in themes.css.
  */
 
 /* Full width — html.scx-full-width */
@@ -22,16 +22,16 @@ html.scx-full-width .profileHeader {
   height: 300px !important;
 }
 
-.spotlightUpsellBanner__background {
+html.scx-full-width .profileHeaderBackground__visual {
+  background-size: cover !important;
+}
+
+html.scx-full-width .spotlightUpsellBanner__background {
   width: 100% !important;
 }
 
-.spotlightUpsellBanner__background .g-flex-row-centered {
+html.scx-full-width .spotlightUpsellBanner__background .g-flex-row-centered {
   justify-content: space-between !important;
-}
-
-html.scx-full-width .profileHeaderBackground__visual {
-  background-size: cover !important;
 }
 
 @media (min-width: 1200px) {
@@ -61,14 +61,89 @@ html.scx-full-width .profileHeaderBackground__visual {
   }
 }
 
-/* Enlarged queue — html.scx-enlarged-queue */
-html.scx-enlarged-queue .playControls__queue {
+/* Player bar: timeline/title 70/30 */
+html.scx-full-width .playControls__soundBadge,
+html.scx-full-width .playbackSoundBadge {
+  display: contents !important;
+}
+
+html.scx-full-width .playControls__timeline {
+  flex: 7 1 0% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html.scx-full-width .playbackSoundBadge__titleContextContainer {
+  flex: 3 1 0% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html.scx-full-width .playbackSoundBadge__avatar,
+html.scx-full-width .playbackSoundBadge__actions {
+  flex: 0 0 auto !important;
+  margin-left: 10px !important;
+}
+
+/* Stream / history track rows */
+html.scx-full-width .sound__coverArt {
+  width: 220px !important;
+  height: 220px !important;
+  --artwork-20x-size: 220px;
+}
+
+html.scx-full-width .sound__coverArt .sc-artwork-20x {
+  width: var(--artwork-20x-size) !important;
+  height: var(--artwork-20x-size) !important;
+}
+
+html.scx-full-width .sound__body {
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+html.scx-full-width .sound__artwork {
+  flex: 0 0 auto !important;
+}
+
+html.scx-full-width .sound__content {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+html.scx-full-width .collection.m-overview .badgeList__item,
+html.scx-full-width .playHistory .badgeList__item {
+  width: calc(100% / 6 - 16px) !important;
+}
+
+html.scx-full-width .tileGallery__sliderPanel:not(:has(.artistConnectItem)) {
+  max-height: 270px !important;
+}
+
+html.scx-full-width
+  .tileGallery__sliderPanel:not(:has(.artistConnectItem))
+  .tileGallery__sliderPanelInner {
+  max-width: 100% !important;
+}
+
+/* "View all" overlay — SC uses top: -10px sized for default tiles */
+html.scx-full-width .readMoreTile__countWrapper {
+  top: 0 !important;
+}
+
+html.scx-full-width .readMoreTile__count {
+  position: relative !important;
+  top: 140px !important;
+}
+
+/* Enlarged queue — html.scx-full-width.scx-enlarged-queue */
+html.scx-full-width.scx-enlarged-queue .playControls__queue {
   width: 50vw !important;
   height: 80vh !important;
   padding: 0 !important;
 }
 
-html.scx-enlarged-queue .playControls__queue .queue__scrollable {
+html.scx-full-width.scx-enlarged-queue .playControls__queue .queue__scrollable {
   top: 69px !important;
   right: 0 !important;
   bottom: 0 !important;
@@ -76,44 +151,37 @@ html.scx-enlarged-queue .playControls__queue .queue__scrollable {
   height: auto !important;
 }
 
-html.scx-enlarged-queue .playControls__queue .queue__scrollableInner {
+html.scx-full-width.scx-enlarged-queue .playControls__queue .queue__scrollableInner {
   height: 100% !important;
 }
 
-html.scx-enlarged-queue .queue__itemsHeight {
+html.scx-full-width.scx-enlarged-queue .queue__itemsHeight {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
+html.scx-full-width.scx-enlarged-queue .queueItemView__title.sc-truncate:hover {
+  overflow: visible !important;
+  white-space: normal !important;
+  border-radius: 4px !important;
+}
+
 @media (min-height: 1200px) {
-  html.scx-enlarged-queue .playControls__queue {
+  html.scx-full-width.scx-enlarged-queue .playControls__queue {
     height: 800px !important;
     width: 720px !important;
   }
 }
 
 @media (max-width: 1200px) {
-  html.scx-enlarged-queue .playControls__queue {
+  html.scx-full-width.scx-enlarged-queue .playControls__queue {
     width: calc(100% - 16px) !important;
   }
 }
 
-/* Always-on tweaks */
-.queueItemView__title.sc-truncate:hover {
-  overflow: visible !important;
-  white-space: normal !important;
-  border-radius: 4px !important;
-}
-
-.collection.m-overview .badgeList__item {
-  width: calc(100% / 6 - 16px) !important;
-}
-
-.tileGallery__sliderPanel:not(:has(.artistConnectItem)) {
-  max-height: 270px !important;
-}
-
-.tileGallery__sliderPanel:not(:has(.artistConnectItem))
-  .tileGallery__sliderPanelInner {
-  max-width: 100% !important;
+.image__rounded,
+.image__rounded .sc-artwork,
+.sc-artwork.image__rounded {
+  border-radius: 50% !important;
+  overflow: hidden !important;
 }

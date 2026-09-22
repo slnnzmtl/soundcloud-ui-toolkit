@@ -1,0 +1,777 @@
+/*
+ * SoundCloud Wide — appearance presets
+ *
+ * Gated by html.scx-theme (+ html.scx-theme-{id}). Palettes only set
+ * --scx-* variables; shared rules map them onto SoundCloud tokens.
+ */
+
+/* Midnight — THEME.md palette */
+html.scx-theme-midnight {
+  --scx-background: #0b0d12;
+  --scx-surface: #141821;
+  --scx-surface-raised: #1c2230;
+  --scx-border: #30394a;
+  --scx-text: #f5f7fb;
+  --scx-text-muted: #a7b0c0;
+  --scx-accent: #ff5a1f;
+  --scx-link: #8ab4ff;
+  --scx-focus: #82aaff;
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 10px;
+  --scx-radius-large: 14px;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 20, 24, 33;
+  --scx-highlight-rgb: 28, 34, 48;
+  --scx-primary-rgb: 245, 247, 251;
+  --scx-secondary-rgb: 167, 176, 192;
+  --scx-special-rgb: 255, 90, 31;
+  --scx-link-rgb: 138, 180, 255;
+}
+
+/* OLED — near-black surfaces */
+html.scx-theme-oled {
+  --scx-background: #000000;
+  --scx-surface: #0a0a0a;
+  --scx-surface-raised: #141414;
+  --scx-border: #2a2a2a;
+  --scx-text: #f5f7fb;
+  --scx-text-muted: #a0a0a0;
+  --scx-accent: #ff5a1f;
+  --scx-link: #8ab4ff;
+  --scx-focus: #82aaff;
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 10px;
+  --scx-radius-large: 14px;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 55%);
+  --scx-surface-rgb: 10, 10, 10;
+  --scx-highlight-rgb: 20, 20, 20;
+  --scx-primary-rgb: 245, 247, 251;
+  --scx-secondary-rgb: 160, 160, 160;
+  --scx-special-rgb: 255, 90, 31;
+  --scx-link-rgb: 138, 180, 255;
+}
+
+/* Terminal — tweakcn Terminal (cmll14cgf000204ky5ms2fdgj) */
+html.scx-theme-terminal {
+  --scx-background: #000000;
+  --scx-surface: #050505;
+  --scx-surface-raised: #001a00;
+  --scx-border: #003b00;
+  --scx-text: #00ff41;
+  --scx-text-muted: #008f11;
+  --scx-accent: #00ff41;
+  --scx-link: #00ff41;
+  --scx-focus: #00ff41;
+  --scx-radius-small: 2px;
+  --scx-radius-medium: 2px;
+  --scx-radius-large: 4px;
+  --scx-shadow: 0 0 24px rgb(0 255 65 / 18%);
+  --scx-surface-rgb: 5, 5, 5;
+  --scx-highlight-rgb: 0, 26, 0;
+  --scx-primary-rgb: 0, 255, 65;
+  --scx-secondary-rgb: 0, 143, 17;
+  --scx-special-rgb: 0, 255, 65;
+  --scx-link-rgb: 0, 255, 65;
+}
+
+/* Fallout — tweakcn Fallout (cmoqms5x8000504lbhwlu5snm) */
+html.scx-theme-fallout {
+  --scx-background: #050505;
+  --scx-surface: #121212;
+  --scx-surface-raised: #1a1400;
+  --scx-border: #665200;
+  --scx-text: #ffcc00;
+  --scx-text-muted: #cc9900;
+  --scx-accent: #ffcc00;
+  --scx-link: #ffcc00;
+  --scx-focus: #ffcc00;
+  --scx-radius-small: 2px;
+  --scx-radius-medium: 4px;
+  --scx-radius-large: 4px;
+  --scx-shadow: 0 0 24px rgb(255 204 0 / 16%);
+  --scx-surface-rgb: 18, 18, 18;
+  --scx-highlight-rgb: 26, 20, 0;
+  --scx-primary-rgb: 255, 204, 0;
+  --scx-secondary-rgb: 204, 153, 0;
+  --scx-special-rgb: 255, 204, 0;
+  --scx-link-rgb: 255, 204, 0;
+}
+
+/* Cyberpunk — tweakcn community 赛博朋克 (tags=cyberpunk) */
+html.scx-theme-cyberpunk {
+  --scx-background: #050505;
+  --scx-surface: #0d0d0d;
+  --scx-surface-raised: #1a1a1a;
+  --scx-border: #3d2060;
+  --scx-text: #00ff9f;
+  --scx-text-muted: #00a86b;
+  --scx-accent: #bc13fe;
+  --scx-link: #00b8ff;
+  --scx-focus: #bc13fe;
+  --scx-radius-small: 2px;
+  --scx-radius-medium: 4px;
+  --scx-radius-large: 4px;
+  --scx-shadow: 0 0 24px rgb(188 19 254 / 22%);
+  --scx-surface-rgb: 13, 13, 13;
+  --scx-highlight-rgb: 26, 26, 26;
+  --scx-primary-rgb: 0, 255, 159;
+  --scx-secondary-rgb: 0, 168, 107;
+  --scx-special-rgb: 188, 19, 254;
+  --scx-link-rgb: 0, 184, 255;
+}
+
+/* Purple — tweakcn Dramatic Purple (community tags=midnight) */
+html.scx-theme-purple {
+  --scx-background: #0f071e;
+  --scx-surface: #1a0b2e;
+  --scx-surface-raised: #2e1065;
+  --scx-border: #4c1d95;
+  --scx-text: #faf5ff;
+  --scx-text-muted: #c4b5fd;
+  --scx-accent: #a78bfa;
+  --scx-link: #c4b5fd;
+  --scx-focus: #a78bfa;
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 10px;
+  --scx-radius-large: 14px;
+  --scx-shadow: 0 12px 32px rgb(76 29 149 / 35%);
+  --scx-surface-rgb: 26, 11, 46;
+  --scx-highlight-rgb: 46, 16, 101;
+  --scx-primary-rgb: 250, 245, 255;
+  --scx-secondary-rgb: 196, 181, 253;
+  --scx-special-rgb: 167, 139, 250;
+  --scx-link-rgb: 196, 181, 253;
+}
+
+/* Slate — cooler blue-gray surfaces */
+html.scx-theme-slate {
+  --scx-background: #0e1218;
+  --scx-surface: #161c26;
+  --scx-surface-raised: #1e2734;
+  --scx-border: #2e3a4c;
+  --scx-text: #e8eef6;
+  --scx-text-muted: #9aa8bc;
+  --scx-accent: #ff5a1f;
+  --scx-link: #8ab4ff;
+  --scx-focus: #82aaff;
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 10px;
+  --scx-radius-large: 14px;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 22, 28, 38;
+  --scx-highlight-rgb: 30, 39, 52;
+  --scx-primary-rgb: 232, 238, 246;
+  --scx-secondary-rgb: 154, 168, 188;
+  --scx-special-rgb: 255, 90, 31;
+  --scx-link-rgb: 138, 180, 255;
+}
+
+/* Minimal — tweakcn Minimal Neutral (cmho4nr9l000h04l1gu419ckw) */
+html.scx-theme-minimal {
+  --scx-background: #171717;
+  --scx-surface: #0e0e0e;
+  --scx-surface-raised: #262626;
+  --scx-border: #262626;
+  --scx-text: #fafafa;
+  --scx-text-muted: #a1a1a1;
+  --scx-accent: #e5e5e5;
+  --scx-link: #e5e5e5;
+  --scx-focus: #737373;
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 8px;
+  --scx-radius-large: 10px;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 40%);
+  --scx-surface-rgb: 14, 14, 14;
+  --scx-highlight-rgb: 38, 38, 38;
+  --scx-primary-rgb: 250, 250, 250;
+  --scx-secondary-rgb: 161, 161, 161;
+  --scx-special-rgb: 229, 229, 229;
+  --scx-link-rgb: 229, 229, 229;
+}
+
+/* Liquid Glass — tweakcn Apple Liquid Glass (cmr2flrsp000304ih46yj4y1b) */
+html.scx-theme-liquid {
+  --scx-background: #090b0f;
+  --scx-surface: #13161b;
+  --scx-surface-raised: #1a1d22;
+  --scx-border: #26292e;
+  --scx-text: #f0f2f4;
+  --scx-text-muted: #8f9aa4;
+  --scx-accent: #3a8cff;
+  --scx-link: #a5d0ff;
+  --scx-focus: #3a8cff;
+  --scx-radius-small: 12px;
+  --scx-radius-medium: 18px;
+  --scx-radius-large: 24px;
+  --scx-shadow: 0 4px 40px rgb(0 0 0 / 45%);
+  --scx-surface-rgb: 19, 22, 27;
+  --scx-highlight-rgb: 26, 29, 34;
+  --scx-primary-rgb: 240, 242, 244;
+  --scx-secondary-rgb: 143, 154, 164;
+  --scx-special-rgb: 58, 140, 255;
+  --scx-link-rgb: 165, 208, 255;
+}
+
+/* Teal Hue — tweakcn Teal Hue (cmm5996cv000004l266hbf4mr) */
+html.scx-theme-teal {
+  --scx-background: #050f0f;
+  --scx-surface: #0a1a1a;
+  --scx-surface-raised: #173336;
+  --scx-border: #203c3c;
+  --scx-text: #f3f7f6;
+  --scx-text-muted: #abbab8;
+  --scx-accent: #0df2d0;
+  --scx-link: #30c9e8;
+  --scx-focus: #0df2d0;
+  --scx-radius-small: 8px;
+  --scx-radius-medium: 12px;
+  --scx-radius-large: 16px;
+  --scx-shadow: 0 10px 25px rgb(0 0 0 / 40%);
+  --scx-surface-rgb: 10, 26, 26;
+  --scx-highlight-rgb: 23, 51, 54;
+  --scx-primary-rgb: 243, 247, 246;
+  --scx-secondary-rgb: 171, 186, 184;
+  --scx-special-rgb: 13, 242, 208;
+  --scx-link-rgb: 48, 201, 232;
+}
+
+/* Spotify — tweakcn Spotify (cmta2ef4d000004jpd7fed7le) */
+html.scx-theme-spotify {
+  --scx-background: #121212;
+  --scx-surface: #181818;
+  --scx-surface-raised: #282828;
+  --scx-border: #282828;
+  --scx-text: #ffffff;
+  --scx-text-muted: #b3b3b3;
+  --scx-accent: #1db954;
+  --scx-link: #1ed760;
+  --scx-focus: #1db954;
+  --scx-radius-small: 4px;
+  --scx-radius-medium: 6px;
+  --scx-radius-large: 8px;
+  --scx-shadow: 0 10px 20px rgb(0 0 0 / 50%);
+  --scx-surface-rgb: 24, 24, 24;
+  --scx-highlight-rgb: 40, 40, 40;
+  --scx-primary-rgb: 255, 255, 255;
+  --scx-secondary-rgb: 179, 179, 179;
+  --scx-special-rgb: 29, 185, 84;
+  --scx-link-rgb: 30, 215, 96;
+}
+
+/* Mimi — tweakcn Mimi (cmp5lo2aw000304l5fdvdgwa5) */
+html.scx-theme-mimi {
+  --scx-background: #12242e;
+  --scx-surface: #1c2e38;
+  --scx-surface-raised: #20333d;
+  --scx-border: #324859;
+  --scx-text: #f3e3ea;
+  --scx-text-muted: #e4a2b1;
+  --scx-accent: #fbe2a7;
+  --scx-link: #e4a2b1;
+  --scx-focus: #50afb6;
+  --scx-radius-small: 4px;
+  --scx-radius-medium: 6px;
+  --scx-radius-large: 8px;
+  --scx-shadow: 3px 3px 0 #324859;
+  --scx-surface-rgb: 28, 46, 56;
+  --scx-highlight-rgb: 32, 51, 61;
+  --scx-primary-rgb: 243, 227, 234;
+  --scx-secondary-rgb: 228, 162, 177;
+  --scx-special-rgb: 251, 226, 167;
+  --scx-link-rgb: 228, 162, 177;
+}
+
+/* Blood — red-on-black (from tweakcn Life-Invader cmsq8hzn6000004jw7c68go2f) */
+html.scx-theme-blood {
+  --scx-background: #060606;
+  --scx-surface: #0b0b0c;
+  --scx-surface-raised: #131416;
+  --scx-border: #27292d;
+  --scx-text: #ff2b2b;
+  --scx-text-muted: #a32626;
+  --scx-accent: #db0000;
+  --scx-link: #ff2b2b;
+  --scx-focus: #ff2b2b;
+  --scx-radius-small: 0;
+  --scx-radius-medium: 0;
+  --scx-radius-large: 0;
+  --scx-shadow: 0 0 19px rgb(219 0 0 / 40%);
+  --scx-surface-rgb: 11, 11, 12;
+  --scx-highlight-rgb: 19, 20, 22;
+  --scx-primary-rgb: 255, 43, 43;
+  --scx-secondary-rgb: 163, 38, 38;
+  --scx-special-rgb: 219, 0, 0;
+  --scx-link-rgb: 255, 43, 43;
+}
+
+/* Shared overrides — active whenever any custom theme is selected */
+html.scx-theme body.theme-light,
+html.scx-theme body.theme-dark {
+  color-scheme: dark !important;
+
+  --surface-color: transparent !important;
+  --surface-rgb: var(--scx-surface-rgb) !important;
+  --background-surface-color: transparent !important;
+  --background-highlight-color: transparent !important;
+  --highlight-color: transparent !important;
+  --highlight-rgb: var(--scx-highlight-rgb) !important;
+
+  --primary-color: var(--scx-text) !important;
+  --primary-rgb: var(--scx-primary-rgb) !important;
+  --secondary-color: var(--scx-text-muted) !important;
+  --secondary-rgb: var(--scx-secondary-rgb) !important;
+  --font-primary-color: var(--scx-text) !important;
+  --font-secondary-color: var(--scx-text-muted) !important;
+  --font-special-color: var(--scx-accent) !important;
+
+  --special-color: var(--scx-accent) !important;
+  --special-rgb: var(--scx-special-rgb) !important;
+  --toggle-on-body-color: var(--scx-accent) !important;
+  --link-color: var(--scx-link) !important;
+  --link-rgb: var(--scx-link-rgb) !important;
+  --font-link-color: var(--scx-link) !important;
+  --link-standard-color: var(--scx-link) !important;
+  --link-standard-hover-color: var(--scx-link) !important;
+  --link-primary-color: var(--scx-text) !important;
+  --link-secondary-color: var(--scx-text-muted) !important;
+
+  --imageBorder-color: rgb(255 255 255 / 12%) !important;
+  --overlay-color: rgb(0 0 0 / 62%) !important;
+  --overlay-default-color: rgb(0 0 0 / 62%) !important;
+
+  --button-primary-background-color: var(--scx-text) !important;
+  --button-primary-font-color: var(--scx-background) !important;
+  --button-secondary-background-color: var(--scx-surface-raised) !important;
+  --button-secondary-font-color: var(--scx-text) !important;
+  --button-tertiary-background-color: var(--scx-surface) !important;
+  --button-tertiary-font-color: var(--scx-text) !important;
+  --button-special-background-color: var(--scx-accent) !important;
+  --button-focused-box-shadow: 0 0 0 2px var(--scx-focus) inset !important;
+
+  --input-default-background-color: var(--scx-surface-raised) !important;
+  --input-placeholder-background-color: var(--scx-surface-raised) !important;
+  --input-focused-background-color: var(--scx-surface-raised) !important;
+  --input-focused-border-color: var(--scx-focus) !important;
+  --input-default-font-color: var(--scx-text) !important;
+  --input-placeholder-font-color: var(--scx-text-muted) !important;
+
+  --tag-default-background-color: var(--scx-surface-raised) !important;
+  --tag-default-font-color: var(--scx-text) !important;
+}
+
+html.scx-theme,
+html.scx-theme body,
+html.scx-theme #app {
+  background: var(--scx-background) !important;
+}
+
+html.scx-theme body {
+  color: var(--scx-text) !important;
+}
+
+/* Layout containers stay clear so the page background shows through.
+ * MUI tokens are set here (and on .mui-theme-*) so Artist Studio iframes
+ * pick up the preset — those frames do not use body.theme-dark. */
+html.scx-theme,
+html.scx-theme .mui-theme-dark,
+html.scx-theme .mui-theme-light,
+html.scx-theme [class*="mui-theme-"] {
+  --mui-palette-background-default: transparent !important;
+  --mui-palette-background-paper: transparent !important;
+  --mui-palette-background-tonal: var(--scx-surface-raised) !important;
+  --mui-palette-text-primary: var(--scx-text) !important;
+  --mui-palette-text-secondary: var(--scx-text-muted) !important;
+  --mui-palette-action-active: var(--scx-text) !important;
+  --mui-palette-action-hover: transparent !important;
+  --mui-palette-action-selected: transparent !important;
+  --mui-palette-action-focus: transparent !important;
+  --mui-palette-primary-main: var(--scx-accent) !important;
+  --mui-palette-primary-light: var(--scx-text) !important;
+  --mui-palette-primary-dark: var(--scx-accent) !important;
+  --mui-palette-primary-contrastText: var(--scx-background) !important;
+  --mui-palette-secondary-main: var(--scx-link) !important;
+  --mui-palette-secondary-contrastText: var(--scx-background) !important;
+  --mui-palette-brand-main: var(--scx-accent) !important;
+  --mui-palette-common-white: var(--scx-text) !important;
+  --mui-palette-common-black: var(--scx-background) !important;
+}
+
+html.scx-theme .l-container,
+html.scx-theme .l-content,
+html.scx-theme .l-main,
+html.scx-theme .l-sidebar-right,
+html.scx-theme .l-fixed,
+html.scx-theme main#main,
+html.scx-theme main.MuiBox-root,
+html.scx-theme body.MuiBox-root,
+html.scx-theme .webEmbedModuleIframe {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Menus / dropdowns need an opaque well — they use --background-surface-color */
+html.scx-theme .dropdownContent,
+html.scx-theme .dropdownContent__container,
+html.scx-theme .dropdownMenu,
+html.scx-theme .headerMenu,
+html.scx-theme .dialog,
+html.scx-theme .modal,
+html.scx-theme .moreActions,
+html.scx-theme .sc-tooltip,
+html.scx-theme .MuiPopover-paper,
+html.scx-theme .MuiMenu-paper,
+html.scx-theme .MuiAutocomplete-paper {
+  --background-surface-color: var(--scx-background) !important;
+  --background-highlight-color: var(--scx-border) !important;
+  --surface-color: var(--scx-surface) !important;
+  background: var(--scx-background) !important;
+  background-color: var(--scx-background) !important;
+  border-color: var(--scx-border) !important;
+  color: var(--scx-text) !important;
+}
+
+/* "View all" tile overlay uses background-color: var(--surface-color) */
+html.scx-theme .readMoreTile__countWrapper {
+  --surface-color: var(--scx-background) !important;
+}
+
+html.scx-theme .soundList__item:hover,
+html.scx-theme .trackList__item:hover,
+html.scx-theme .searchList__item:hover,
+html.scx-theme .queue__itemWrapper:hover,
+html.scx-theme .soundBadge__content:hover,
+html.scx-theme .listenEngagement:hover,
+html.scx-theme .MuiCard-root:hover,
+html.scx-theme .MuiPaper-root:hover {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Header */
+html.scx-theme .header,
+html.scx-theme .header__inner {
+  background: color-mix(in srgb, var(--scx-surface) 94%, transparent) !important;
+  border-bottom-color: var(--scx-border) !important;
+}
+
+html.scx-theme .header {
+  box-shadow: 0 1px 0 var(--scx-border) !important;
+  backdrop-filter: blur(14px);
+}
+
+html.scx-theme .header__link,
+html.scx-theme .header__button,
+html.scx-theme .header__userNavButton,
+html.scx-theme .header__userNavUsernameButton {
+  color: var(--scx-text-muted) !important;
+}
+
+html.scx-theme .header__link:hover,
+html.scx-theme .header__button:hover,
+html.scx-theme .header__userNavButton:hover,
+html.scx-theme .header__userNavUsernameButton:hover {
+  color: var(--scx-text) !important;
+}
+
+html.scx-theme .headerSearch__input {
+  color: var(--scx-text) !important;
+  background: var(--scx-surface-raised) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--scx-radius-small) !important;
+}
+
+html.scx-theme .headerSearch__input:focus {
+  border-color: var(--scx-focus) !important;
+}
+
+html.scx-theme .profileHeader .featuredProfiles__scroll {
+  background-color: var(--scx-background) !important;
+}
+
+html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-large-primary,
+html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-primary,
+html.scx-theme .g-type-shrinkwrap-large-primary,
+html.scx-theme .g-type-shrinkwrap-primary {
+  color: var(--scx-text) !important;
+}
+
+html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-large-secondary,
+html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-secondary,
+html.scx-theme .g-type-shrinkwrap-large-secondary,
+html.scx-theme .g-type-shrinkwrap-large-secondary:visited,
+html.scx-theme .g-type-shrinkwrap-secondary,
+html.scx-theme .g-type-shrinkwrap-secondary:visited {
+  color: var(--scx-text-muted) !important;
+}
+
+/* Cards, rows, and artwork */
+html.scx-theme .soundBadge__content,
+html.scx-theme .soundList__item,
+html.scx-theme .trackList__item,
+html.scx-theme .searchList__item,
+html.scx-theme .userSuggestionList__item,
+html.scx-theme .queue__itemWrapper {
+  border-color: var(--scx-border) !important;
+}
+
+html.scx-theme .soundBadge__content,
+html.scx-theme .playableTile__descriptionContainer,
+html.scx-theme .userBadge__content {
+  color: var(--scx-text) !important;
+}
+
+html.scx-theme .sc-artwork,
+html.scx-theme .playableTile__image,
+html.scx-theme .soundBadge__artwork,
+html.scx-theme .queueItemView__artworkImage {
+  border-radius: var(--scx-radius-medium) !important;
+}
+
+html.scx-theme .image__rounded,
+html.scx-theme .image__rounded .sc-artwork,
+html.scx-theme .sc-artwork.image__rounded,
+html.scx-theme .userBadge__avatar,
+html.scx-theme .userBadge__avatar .sc-artwork {
+  border-radius: 50% !important;
+}
+
+/* Buttons and form controls */
+html.scx-theme .sc-button,
+html.scx-theme button,
+html.scx-theme input,
+html.scx-theme textarea,
+html.scx-theme select {
+  border-radius: var(--scx-radius-small) !important;
+}
+
+html.scx-theme .playbackSoundBadge__actions {
+  display: flex !important;
+  align-items: center !important;
+  width: max-content !important;
+}
+
+html.scx-theme .playbackSoundBadge__actions .sc-button,
+html.scx-theme .playbackSoundBadge__showQueue {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+  line-height: 28px !important;
+  overflow: hidden !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+html.scx-theme .playbackSoundBadge__actions .sc-button::before,
+html.scx-theme .playbackSoundBadge__showQueue::before {
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  margin: 0 !important;
+}
+
+html.scx-theme .sc-button,
+html.scx-theme .sc-button-secondary,
+html.scx-theme .sc-button-tertiary {
+  background: var(--scx-surface) !important;
+  color: var(--scx-text) !important;
+  border-color: var(--scx-border) !important;
+}
+
+html.scx-theme .sc-button-primary,
+html.scx-theme .sc-button-cta,
+html.scx-theme .MuiButton-contained,
+html.scx-theme .MuiButton-containedPrimary,
+html.scx-theme .MuiButton-containedInherit {
+  background: var(--scx-text) !important;
+  background-color: var(--scx-text) !important;
+  color: var(--scx-background) !important;
+  border-color: var(--scx-text) !important;
+}
+
+html.scx-theme .MuiButton-outlined,
+html.scx-theme .MuiButton-text,
+html.scx-theme .MuiIconButton-root {
+  color: var(--scx-text) !important;
+  border-color: var(--scx-border) !important;
+}
+
+html.scx-theme .MuiButton-root svg,
+html.scx-theme .MuiIconButton-root svg,
+html.scx-theme .sc-button svg {
+  color: inherit !important;
+  fill: currentColor !important;
+}
+
+/* Icons / SVGs — recolor brand fills without touching artwork images */
+html.scx-theme .MuiSvgIcon-root,
+html.scx-theme .MuiCard-root svg,
+html.scx-theme [class*="MuiCard"] svg,
+html.scx-theme .header svg,
+html.scx-theme .playControls svg,
+html.scx-theme .sc-button svg {
+  color: var(--scx-accent) !important;
+}
+
+/* Filled play/pause uses accent; glyph must contrast (Terminal/Fallout share
+ * the same color for accent and icon, which otherwise paints a solid square). */
+html.scx-theme .playControls__play {
+  background-color: var(--scx-accent) !important;
+  color: var(--scx-background) !important;
+}
+
+html.scx-theme .playControls .playControls__play svg,
+html.scx-theme .playControls .playControls__play svg * {
+  color: var(--scx-background) !important;
+  fill: var(--scx-background) !important;
+}
+
+html.scx-theme .MuiButton-contained svg,
+html.scx-theme .sc-button-primary svg,
+html.scx-theme .sc-button-cta svg {
+  color: var(--scx-background) !important;
+  fill: currentColor !important;
+}
+
+html.scx-theme svg[fill="var(--mui-palette-primary-main)"],
+html.scx-theme svg [fill="var(--mui-palette-primary-main)"],
+html.scx-theme svg[fill="var(--mui-palette-brand-main)"],
+html.scx-theme svg [fill="var(--mui-palette-brand-main)"],
+html.scx-theme svg [fill="#ff5500"],
+html.scx-theme svg [fill="#f50"],
+html.scx-theme svg [fill="#FF5500"],
+html.scx-theme svg [stroke="#ff5500"],
+html.scx-theme svg [stroke="#f50"] {
+  fill: var(--scx-accent) !important;
+  color: var(--scx-accent) !important;
+}
+
+/* Track stats cards: remount primary-main onto text-primary so the
+ * repost (and liked) counts match plays, like default SoundCloud. */
+html.scx-theme .MuiStack-root:has(> .MuiPaper-root:nth-child(3)):not(:has(> :nth-child(4))) > .MuiPaper-root {
+  --mui-palette-primary-main: var(--scx-text) !important;
+}
+
+html.scx-theme a[href*="/you/insights?"] {
+  background: var(--scx-surface-raised) !important;
+  background-color: var(--scx-surface-raised) !important;
+  color: var(--scx-text) !important;
+  border: 1px solid var(--scx-border) !important;
+  border-radius: var(--scx-radius-medium) !important;
+  box-shadow: none !important;
+}
+
+html.scx-theme a[href*="/you/insights?"]:hover {
+  border-color: var(--scx-accent) !important;
+}
+
+html.scx-theme a[href*="/you/insights?"] svg {
+  fill: var(--scx-accent) !important;
+  color: var(--scx-accent) !important;
+}
+
+html.scx-theme .sc-button:focus-visible,
+html.scx-theme button:focus-visible,
+html.scx-theme input:focus-visible,
+html.scx-theme textarea:focus-visible,
+html.scx-theme select:focus-visible,
+html.scx-theme a:focus-visible {
+  outline: 2px solid var(--scx-focus) !important;
+  outline-offset: 2px !important;
+}
+
+/* Waveforms and progress */
+html.scx-theme .playbackTimeline__progressBar,
+html.scx-theme .playbackTimeline__progressHandle,
+html.scx-theme .volume__sliderProgress {
+  background-color: var(--scx-accent) !important;
+}
+
+html.scx-theme .playbackTimeline__progressBackground,
+html.scx-theme .volume__sliderBackground {
+  background-color: var(--scx-border) !important;
+}
+
+html.scx-theme .volume.expanded .volume__sliderWrapper {
+  background-color: var(--scx-surface) !important;
+}
+
+/* Player and queue panel */
+html.scx-theme .playControls,
+html.scx-theme .playControls__bg,
+html.scx-theme .playControls__wrapper,
+html.scx-theme .playControls__inner {
+  background-color: var(--scx-surface) !important;
+  border-top-color: var(--scx-border) !important;
+}
+
+html.scx-theme .playControls__inner {
+  box-shadow:
+    0 -1px 0 var(--scx-border),
+    0 -12px 32px rgb(0 0 0 / 22%) !important;
+}
+
+html.scx-theme .playControls__queue,
+html.scx-theme .queue,
+html.scx-theme .queue__panel,
+html.scx-theme .queue__scrollable,
+html.scx-theme .queue__scrollableInner,
+html.scx-theme .queue__itemsHeight,
+html.scx-theme .playControlsPanel,
+html.scx-theme .playControlsPanel__inner {
+  --background-surface-color: var(--scx-background) !important;
+  --surface-color: var(--scx-background) !important;
+  color: var(--scx-text) !important;
+  background: var(--scx-background) !important;
+  background-color: var(--scx-background) !important;
+}
+
+html.scx-theme .playControls__queue {
+  border: 1px solid var(--scx-border) !important;
+  border-radius: var(--scx-radius-large) !important;
+  box-shadow: var(--scx-shadow) !important;
+  overflow: hidden !important;
+}
+
+html.scx-theme .queue__panel,
+html.scx-theme .playControlsPanel__inner {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Legacy dark-header helpers */
+html.scx-theme .g-dark a,
+html.scx-theme .g-dark .sc-text-secondary,
+html.scx-theme .g-dark .sc-type-light {
+  color: var(--scx-text-muted) !important;
+}
+
+html.scx-theme .g-dark a:hover,
+html.scx-theme .g-dark .sc-text-primary {
+  color: var(--scx-text) !important;
+}
+
+html.scx-theme .quotaMeter__link,
+html.scx-theme .quotaMeter__link:link,
+html.scx-theme .quotaMeter__link:visited,
+html.scx-theme .quotaMeter__upsellText .quotaMeter__link,
+html.scx-theme .g-dark .quotaMeter__link {
+  color: var(--scx-accent) !important;
+}
+
+html.scx-theme-liquid .header,
+html.scx-theme-liquid .header__inner,
+html.scx-theme-liquid .playControls,
+html.scx-theme-liquid .playControls__bg,
+html.scx-theme-liquid .playControls__wrapper,
+html.scx-theme-liquid .playControls__inner {
+  background: color-mix(in srgb, var(--scx-surface) 72%, transparent) !important;
+  background-color: color-mix(in srgb, var(--scx-surface) 72%, transparent) !important;
+  backdrop-filter: blur(24px) saturate(1.35);
+}

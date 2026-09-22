@@ -1,4 +1,4 @@
-const PLAYER_FRAME_CSS = ["iframe-player.css"];
+const PLAYER_FRAME_CSS = ["iframe-player.css", "themes.css"];
 const PLAYER_FRAME_JS = ["shared/settings.js", "content.js"];
 const SOUNDCLOUD_URL_FILTER = { url: [{ hostEquals: "soundcloud.com" }] };
 
