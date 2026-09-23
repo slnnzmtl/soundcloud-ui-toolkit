@@ -1,9 +1,7 @@
 /*
  * SoundCloud UI Toolkit — player iframe layout
  *
- * Injected into SoundCloud's same-origin player iframe
- * (https://soundcloud.com/n/*) by the manifest and by background.js on
- * in-app navigations that create the frame after the parent page has loaded.
+ * Applied once per document from content.js as #scx-extension-css.
  */
 html.scx-full-width main#main,
 html.scx-full-width main.MuiBox-root {

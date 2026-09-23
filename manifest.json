@@ -3,10 +3,16 @@
   "name": "SoundCloud UI Toolkit",
   "version": "1.2.0",
   "description": "Customize SoundCloud layout, queue, themes, and rounding. Toggle everything from the toolbar popup.",
-  "homepage_url": "https://github.com/slnnzmtl/soundcloud-wide",
+  "homepage_url": "https://github.com/slnnzmtl/soundcloud-ui-toolkit",
   "minimum_chrome_version": "121",
-  "permissions": ["storage", "scripting", "webNavigation"],
-  "host_permissions": ["https://soundcloud.com/*"],
+  "permissions": [
+    "storage",
+    "scripting",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "https://soundcloud.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -28,18 +34,30 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://soundcloud.com/*"],
-      "css": ["styles.css", "shared/tokens.css", "themes.css"],
-      "js": ["shared/settings.js", "content.js"],
-      "run_at": "document_start"
-    },
-    {
-      "matches": ["https://soundcloud.com/n/*"],
-      "css": ["iframe-player.css", "shared/tokens.css", "themes.css"],
-      "js": ["shared/settings.js", "content.js"],
+      "matches": [
+        "https://soundcloud.com/*"
+      ],
+      "js": [
+        "shared/settings.js",
+        "content.js"
+      ],
       "all_frames": true,
       "match_about_blank": true,
+      "match_origin_as_fallback": true,
       "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "styles.css",
+        "iframe-player.css",
+        "shared/tokens.css",
+        "themes.css"
+      ],
+      "matches": [
+        "https://soundcloud.com/*"
+      ]
     }
   ]
 }

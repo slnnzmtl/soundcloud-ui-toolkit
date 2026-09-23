@@ -1,9 +1,10 @@
 {
-  "name": "soundcloud-wide-maintenance",
+  "name": "soundcloud-ui-toolkit-maintenance",
   "private": true,
   "type": "module",
   "scripts": {
-    "snapshot:dom": "node scripts/capture-dom.mjs"
+    "snapshot:dom": "node scripts/capture-dom.mjs",
+    "test": "node --test scripts/settings.test.mjs"
   },
   "devDependencies": {
     "@sparticuz/chromium": "153.0.0",

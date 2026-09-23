@@ -7,11 +7,15 @@
  * independently. Button chrome lives in themes.css.
  */
 
-/* Tiny scrollbars — html.scx-enabled */
-html.scx-enabled,
-html.scx-enabled * {
+/* Tiny scrollbars — size always; dark color when enabled without a theme.
+ * Themed pages override color in themes.css (html.scx-enabled.scx-theme). */
+html.scx-enabled {
   scrollbar-width: thin;
   scrollbar-color: rgb(0 0 0 / 28%) transparent;
+}
+
+html.scx-enabled * {
+  scrollbar-width: thin;
 }
 
 html.scx-enabled ::-webkit-scrollbar {
@@ -204,11 +208,4 @@ html.scx-enlarged-queue .queueItemView__title.sc-truncate:hover {
   html.scx-enlarged-queue .playControls__queue {
     width: calc(100% - 16px) !important;
   }
-}
-
-.image__rounded,
-.image__rounded .sc-artwork,
-.sc-artwork.image__rounded {
-  border-radius: 50% !important;
-  overflow: hidden !important;
 }

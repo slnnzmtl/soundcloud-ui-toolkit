@@ -7,7 +7,7 @@ cd "$ROOT"
 
 VERSION="$(python3 -c "import json; print(json.load(open('manifest.json'))['version'])")"
 OUT_DIR="$ROOT/dist"
-ZIP_NAME="soundcloud-wide-${VERSION}.zip"
+ZIP_NAME="soundcloud-ui-toolkit-${VERSION}.zip"
 ZIP_PATH="$OUT_DIR/$ZIP_NAME"
 
 mkdir -p "$OUT_DIR"
