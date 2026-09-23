@@ -1,0 +1,109 @@
+{
+  "capturedAt": "2026-09-23T10:24:33.265Z",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "authenticated": false,
+  "pages": [
+    {
+      "id": "home",
+      "label": "Home",
+      "requestedUrl": "https://soundcloud.com/",
+      "finalUrl": "https://soundcloud.com/",
+      "httpStatus": 200,
+      "status": "captured",
+      "title": "Stream and listen to music online for free with SoundCloud",
+      "elementCount": 1391,
+      "error": null
+    },
+    {
+      "id": "discover",
+      "label": "Discover",
+      "requestedUrl": "https://soundcloud.com/discover",
+      "finalUrl": "https://soundcloud.com/discover",
+      "httpStatus": 200,
+      "status": "captured",
+      "title": "Discover the top streamed music and songs online on Soundcloud",
+      "elementCount": 792,
+      "error": null
+    },
+    {
+      "id": "charts",
+      "label": "Charts",
+      "requestedUrl": "https://soundcloud.com/charts/top",
+      "finalUrl": "https://soundcloud.com/charts/top",
+      "httpStatus": 404,
+      "status": "captured",
+      "title": "Listen to the top played music charts on SoundCloud this week",
+      "elementCount": 616,
+      "error": null
+    },
+    {
+      "id": "search",
+      "label": "Search results",
+      "requestedUrl": "https://soundcloud.com/search?q=electronic",
+      "finalUrl": "https://soundcloud.com/search?q=electronic",
+      "httpStatus": 200,
+      "status": "captured",
+      "title": "electronic results on SoundCloud",
+      "elementCount": 1749,
+      "error": null
+    },
+    {
+      "id": "artist",
+      "label": "Artist profile",
+      "requestedUrl": "https://soundcloud.com/9teenn",
+      "finalUrl": "https://soundcloud.com/9teenn",
+      "httpStatus": 200,
+      "status": "captured",
+      "title": "Stream 1900rugrat music | Listen to songs, albums, playlists for free on SoundCloud",
+      "elementCount": 2132,
+      "error": null
+    },
+    {
+      "id": "track",
+      "label": "Track",
+      "requestedUrl": "https://soundcloud.com/pixychu/legacy-2",
+      "finalUrl": "https://soundcloud.com/pixychu/legacy-2",
+      "httpStatus": 200,
+      "status": "captured",
+      "title": "Stream LEGACY by PIXY | Listen online for free on SoundCloud",
+      "elementCount": 1233,
+      "error": null
+    },
+    {
+      "id": "playlist",
+      "label": "Playlist",
+      "requestedUrl": "https://soundcloud.com/monstercat/sets/monstercat-uncaged-vol-11",
+      "finalUrl": "https://soundcloud.com/monstercat/sets/monstercat-uncaged-vol-11",
+      "httpStatus": 200,
+      "status": "captured",
+      "title": "Stream Monstercat | Listen to Monstercat Uncaged Vol. 11 playlist online for free on SoundCloud",
+      "elementCount": 1437,
+      "error": null
+    },
+    {
+      "id": "stream",
+      "label": "Stream (logged out)",
+      "requestedUrl": "https://soundcloud.com/feed",
+      "finalUrl": "https://soundcloud.com/signin?redirect_url=/feed",
+      "httpStatus": 401,
+      "status": "auth-required",
+      "title": "SoundCloud — Register, sign-in or access our Homepage",
+      "elementCount": 214,
+      "error": null
+    },
+    {
+      "id": "library",
+      "label": "Library (logged out)",
+      "requestedUrl": "https://soundcloud.com/you/library",
+      "finalUrl": "https://soundcloud.com/signin?redirect_url=/you/library",
+      "httpStatus": 401,
+      "status": "auth-required",
+      "title": "SoundCloud — Register, sign-in or access our Homepage",
+      "elementCount": 226,
+      "error": null
+    }
+  ]
+}

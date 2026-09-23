@@ -1,0 +1,12 @@
+{
+  "name": "soundcloud-wide-maintenance",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "snapshot:dom": "node scripts/capture-dom.mjs"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "153.0.0",
+    "playwright": "1.63.0"
+  }
+}

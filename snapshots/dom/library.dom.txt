@@ -1,0 +1,235 @@
+# Normalized SoundCloud DOM snapshot
+# Page: Library (logged out)
+# Requested: https://soundcloud.com/you/library
+# Final URL: https://soundcloud.com/signin?redirect_url=/you/library
+# HTTP status: 401
+# Capture status: auth-required
+# Title: SoundCloud — Register, sign-in or access our Homepage
+# Elements: 226
+# Volatile attributes, text nodes, script/style contents, and SVG internals are omitted.
+html
+  head
+    meta
+    meta[name="theme-color"]
+    link[href="https://style.sndcdn.com/"]
+    link[href="https://a-v2.sndcdn.com/"]
+    link[href="https://api-v2.soundcloud.com/"]
+    link[href="https://sb.scorecardresearch.com/"]
+    link[href="https://secure.quantserve.com/"]
+    link[href="https://eventlogger.soundcloud.com/"]
+    link[href="https://api.soundcloud.com/"]
+    link[href="https://ssl.google-analytics.com/"]
+    link[href="https://i1.sndcdn.com/"]
+    link[href="https://i2.sndcdn.com/"]
+    link[href="https://i3.sndcdn.com/"]
+    link[href="https://i4.sndcdn.com/"]
+    link[href="https://wis.sndcdn.com/"]
+    link[href="https://va.sndcdn.com/"]
+    link[href="https://pixel.quantserve.com/"]
+    title
+    meta[name="keywords"]
+    meta[name="referrer"]
+    meta[name="google-site-verification"]
+    link[href="/webmanifest.json"]
+    meta[name="viewport"]
+    meta
+    meta
+    meta
+    meta
+    meta
+    meta
+    meta
+    meta
+    meta
+    link[type="application/opensearchdescription+xml"][title="SoundCloud"][href="/sc-opensearch.xml"]
+    meta[name="application-name"]
+    meta[name="msapplication-tooltip"]
+    meta[name="msapplication-TileImage"]
+    meta[name="msapplication-TileColor"]
+    meta[name="msapplication-starturl"]
+    link[type="image/x-icon"][href="https://a-v2.sndcdn.com/assets/images/sc-icons/favicon-c93ce58b59.ico"]
+    link[type="image/png"][href="https://a-v2.sndcdn.com/assets/images/sc-icons/favicon-48x48-8466dd3758.png"]
+    link[href="https://a-v2.sndcdn.com/assets/images/sc-icons/ios-a62dfc8fe7.png"]
+    link[href="https://a-v2.sndcdn.com/assets/images/sc-icons/fluid-b4e7a64b8b.png"]
+    link[href="https://style.sndcdn.com/css/soehne-6ee1b930cae107f8f71f.css"]
+    link[href="https://a-v2.sndcdn.com/assets/css/app-b80189d4c410fafce6d8.css"]
+    link[href="https://dn0qt3r0xannq.cloudfront.net/soundcloud-yUijW49gH8/soundcloud.com/prebid-load.js"]
+    link[href="https://dn0qt3r0xannq.cloudfront.net/soundcloud-yUijW49gH8/soundcloud.com/prebid-wrapper.js"]
+    meta
+    meta
+    meta
+    meta
+    meta
+    link[href="https://securepubads.g.doubleclick.net/pagead/managed/dict/m202609220101/gpt"]
+    link[href="https://edge.aditude.io/prebid/9.<n>.0.js"]
+    link[href="https://cadmus.script.ac/d24657ks8lvxjy/script.js"]
+    link[href="https://securepubads.g.doubleclick.net/tag/js/gpt.js"]
+  body.show-onetap.theme-dark
+    div#app
+      header.fixed.g-z-index-header.header.sc-selection-disabled.sc-text-h4.show[role="banner"]
+        div.header__inner.l-container.l-fullwidth
+          div.header__left
+            div.header__logo.left
+              a.header__logoLink.header__logoLink-iconOnly.sc-border-box.sc-ir[title="Home"][href="/"]
+                div
+                  svg
+              a.header__logoLink.header__logoLink-wordmark.sc-border-box.sc-ir[title="Home"][href="/"]
+                div
+                  svg
+            nav.header__navWrapper.left[role="navigation"]
+              ul.header__navMenu.left.sc-list-nostyle
+                li
+                  a.header__navMenuItem.sc-mr-1x[href="/discover"]
+                li
+                  a.header__navMenuItem.sc-mr-1x[href="/feed"]
+                li.header__collection-wrapper
+                  a.header__navMenuItem.selected[href="/you/library"]
+          div.header__middle
+            div.header__search[role="search"]
+              form.headerSearch
+                input.g-all-transitions-300.headerSearch__input.sc-input[aria-label="Search"][type="search"][name="q"]
+                button.headerSearch__submit[type="submit"]
+                  div
+                    svg
+                  span
+          div.header__right
+            div.header__loginMenu.left
+              button.g-opacity-transition.loginButton.sc-button.sc-button-medium.sc-button-tertiary[aria-label="Sign in"][type="button"][title="Sign in"]
+                span.sc-button-label
+              button.g-opacity-transition.sc-button.sc-button-cta.sc-button-medium.sc-button-primary.signupButton[aria-label="Create a SoundCloud account"][type="button"][title="Create a SoundCloud account"]
+                span.sc-button-label
+              div.onetapAuthContainer
+                div#g_id_intermediate_iframe
+            div.header__upload.left
+              a.header__link.uploadButton[href="/upload"]
+                span.sc-text-secondary.uploadButton__title
+                span.sc-text-primary.uploadButton__status
+            ul.header__navMenu.left.sc-list-nostyle
+              li
+                a.header__moreButton[role="button"]
+                  div.header__moreButtonIcon
+                    div
+                      svg
+                    span
+      div.announcements.g-z-index-fixed-top.g-z-index-header
+        div
+        div.announcements__listContainer
+          div.sc-list-nostyle
+      div.l-container.l-content
+        div.l-inner-fullwidth.l-product-banners
+          div.l-container
+            div
+              div.banner.l-inner-fullwidth.m-promotion.primary.sc-p-2x.sc-text-body.sc-type-medium
+                div.banner__contentContainer
+                  div.banner__content
+                    div.banner__icon
+                      div
+                        svg.banner__UiEvoIcon
+                    span
+                      strong
+                      a.nextProTrial__link[href="https://checkout.soundcloud.com/artist"]
+                button.banner__close[aria-label="Close"]
+                  div
+                    svg.banner__closeIcon
+        div#content[role="main"]
+          div.l-signin
+            div.l-one-column
+              div.l-content
+                div.l-top
+                  div.signinRedirectMessage
+                    h2.signinRedirectMessage__text
+                div.l-main
+                  div.webAuthContainer
+                    div.webAuthContainer__spacer
+              div.l-footer.sc-border-light-top.sc-text-secondary.sc-text-verylight.standard
+                a.sc-link-secondary[title="Terms of use"][href="/terms-of-use"]
+                a.sc-link-secondary[title="Privacy policy"][href="/pages/privacy"]
+                a.sc-link-secondary[title="Cookie Policy"][href="/pages/cookies"]
+                a.cookie-manager.sc-link-secondary[title="Cookie Manager"][href="/signin"]
+                a.sc-link-secondary[title="Company information"][href="/imprint"]
+                a.sc-link-secondary[title="Artist Resources"][href="/getstarted/getheard"]
+                a.sc-link-secondary[title="SoundCloud Newsroom"][href="/company/newsroom"]
+                a.sc-link-secondary[title="Topics"][href="/topic"]
+                a.sc-link-secondary[title="Charts"][href="/charts/top"]
+                a.sc-link-secondary.sc-link-verylight[title="Transparency Reports"][href="/transparency-reports"]
+                div.footer__localeSelector.sc-mt-3x
+                  a.localeSelector.sc-pointer.sc-text-primary[role="button"][type="button"]
+                    span.localeSelector_language.sc-text
+      div
+      div
+        div#div-gpt-ad-interstitial
+          div#google_ads_iframe_/115535218/soundcloud/webi_interstitial_0__container__
+      div.g-z-index-control-bar.playControls
+        section.playControls__inner[role="contentinfo"][aria-label="miniplayer"]
+          div.l-container.l-fullwidth.playControls__wrapper
+            div.playControls__queue
+              div.queue
+                div.queue__panel.sc-p-2x.sc-pb-1x
+                  div.queue__title.sc-font-light.sc-px-2x.sc-py-1x.sc-text-h2.sc-type-medium
+                  button.queue__clear.sc-button.sc-button-medium.sc-mr-1x.sc-px-1.5x.sc-py-0.75x.sc-text-h4[type="button"]
+                  button.queue__hide.sc-button.sc-button-icon.sc-button-secondary.sc-button-small.sc-mr-2x[type="button"][title="Hide queue"]
+                    div
+                      svg
+                div.g-scrollable.g-scrollable-v.queue__scrollable
+                  div.g-scrollable-inner.queue__scrollableInner
+                    div.queue__itemsHeight.sc-px-2x
+                      div.queue__itemsContainer
+                div.queue__dragCover
+            div.playControls__bg
+            div.playControls__elements
+              button.playControls__control.playControls__prev.sc-button.sc-button-icon.sc-button-large.sc-button-secondary.sc-ir.sc-mr-2x.skipControl.skipControl__previous
+                div
+                  svg
+              button.disabled.playControl.playControls__control.playControls__play.sc-button-large.sc-button-play.sc-ir.sc-mr-2x[aria-label="Play current"][type="button"][title="Play current"]
+                div
+                  div
+                    svg
+                  span.sc-button-label
+              button.disabled.playControls__control.playControls__next.sc-button.sc-button-icon.sc-button-large.sc-button-secondary.sc-ir.sc-mr-3x.skipControl.skipControl__next
+                div
+                  svg
+              div.playControls__control.playControls__shuffle
+                button.sc-button.sc-button-icon.sc-button-secondary.sc-button-small.sc-ir.sc-mr-1x.shuffleControl[title="Shuffle"]
+                  div
+                    svg.shuffleControl
+              div.playControls__control.playControls__repeat
+                button.repeatControl.sc-button.sc-button-icon.sc-button-secondary.sc-button-small.sc-ir[title="Repeat"]
+                  div
+                    div
+                      svg.playControls__repeatIcon
+              div.playControls__timeline.sc-ml-3x
+                div.is-scrubbable.playbackTimeline
+                  div.playbackTimeline__timePassed.sc-text-h5.sc-text-primary
+                  div.playbackTimeline__progressWrapper.sc-mx-1x[role="progressbar"]
+                    div.playbackTimeline__progressBackground
+                    div.playbackTimeline__progressBar
+                    div.playbackTimeline__progressHandle.sc-ir
+                  div.playbackTimeline__duration.sc-text-h5.sc-text-primary
+              div.playControls__castControl
+                google-cast-launcher#castbutton
+              div.playControls__volume
+                div.volume
+                  div
+                  div.volume__iconWrapper
+                    button.sc-button.sc-button-icon.sc-button-secondary.sc-button-small.volume__button.volume__speakerIcon[type="button"]
+                      div
+                        div
+                          svg
+                  div#volume__sliderDescription.sc-hidden
+                  div.volume__sliderWrapper[role="slider"][aria-label="Volume"]
+                    div.volume__sliderBackground
+                    div.volume__sliderProgress
+                    div.volume__sliderHandle
+              div.playControls__soundBadge.sc-ml-3x
+                div.playbackSoundBadge
+            div.m-upsell-styling.playControls__panel
+              div.m-upsell-styling.playControlsPanel.sc-background-darkgrey.sc-font-body
+    div.g-opacity-transition.g-z-index-modal-background.modal.modalWhiteout.sc-font.uploadTarget
+      div.uploadTarget__frame
+        div.uploadTarget__title
+        div.sc-mt-4x.sc-text-body.sc-text-light.sc-text-secondary.sc-type-medium.uploadTarget__message
+    iframe[name="__tcfapiLocator"][title="TCF Locator"]
+    div.webAuthContainerWrapper
+      iframe
+    iframe[name="__pb_locator__"]
+    img[alt="."]

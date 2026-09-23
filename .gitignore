@@ -5,6 +5,7 @@ dist/
 store/_*.png
 icons/_*.png
 node_modules/
+.cache/
 .vscode/
 .idea/
 *.log

@@ -1,9 +1,12 @@
 # SoundCloud CSS selector map
 
 Parsed from `https://soundcloud.com/` and its production assets on
-2026-09-22. SoundCloud is client-rendered, so markup returned without running
+2026-09-23. SoundCloud is client-rendered, so markup returned without running
 JavaScript contains only the shell. The semantic class names below also occur
 in the current JavaScript bundles.
+
+Normalized browser-rendered trees for representative routes are stored in
+`snapshots/dom/`; see `snapshots/README.md` for coverage and capture status.
 
 ## Best override surface
 

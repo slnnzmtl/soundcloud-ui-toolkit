@@ -56,9 +56,11 @@ SoundCloud tabs.
 - Uses semantic class names where possible to reduce breakage when SoundCloud
   deploys new asset hashes.
 
-Developer notes: `SELECTORS.md` (selector map) is for maintenance only and is
-excluded from the store package. Preset catalog lives in `themes.css` and
-`THEME_GROUPS` in `shared/settings.js`.
+Developer notes: `SELECTORS.md` (selector map) and `snapshots/` (normalized
+browser-rendered DOM trees) are for maintenance only and are excluded from the
+store package. Refresh route snapshots with `npm install --include=dev` and
+`npm run snapshot:dom`. Preset catalog lives in `themes.css` and `THEME_GROUPS`
+in `shared/settings.js`.
 
 ## Publishing
 
