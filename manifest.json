@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "SoundCloud Wide",
+  "name": "SoundCloud UI Toolkit",
   "version": "1.2.0",
-  "description": "Widen SoundCloud's layout and queue, with optional color presets. Toggle settings from the toolbar popup.",
+  "description": "Customize SoundCloud layout, queue, themes, and rounding. Toggle everything from the toolbar popup.",
   "homepage_url": "https://github.com/slnnzmtl/soundcloud-wide",
   "minimum_chrome_version": "121",
   "permissions": ["storage", "scripting", "webNavigation"],
@@ -18,7 +18,7 @@
   },
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "SoundCloud Wide",
+    "default_title": "SoundCloud UI Toolkit",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",

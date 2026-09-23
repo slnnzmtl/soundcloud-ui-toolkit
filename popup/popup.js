@@ -1,6 +1,7 @@
 (function () {
   const {
     THEME_GROUPS,
+    RADII,
     getSettings,
     setSettings,
     sanitizeTheme,
@@ -34,40 +35,6 @@
   function syncSwitch(input, enabled) {
     input.checked = enabled;
     input.setAttribute("aria-checked", enabled ? "true" : "false");
-  }
-
-  function bindSwitch(id, key) {
-    const input = document.getElementById(id);
-
-    function sync(settings) {
-      syncSwitch(input, Boolean(settings[key]));
-    }
-
-    getSettings().then(sync);
-
-    input.addEventListener("change", () => {
-      const enabled = input.checked;
-      syncSwitch(input, enabled);
-      setSettings({ [key]: enabled });
-    });
-  }
-
-  function bindEnabledSwitch() {
-    function sync(settings) {
-      const active = Boolean(settings.enabled);
-      syncSwitch(enabledInput, active);
-      setBodyActive(active);
-      applyPopupChrome(settings);
-    }
-
-    getSettings().then(sync);
-
-    enabledInput.addEventListener("change", () => {
-      const active = enabledInput.checked;
-      syncSwitch(enabledInput, active);
-      setBodyActive(active);
-      setSettings({ enabled: active }).then(applyPopupChrome);
-    });
   }
 
   function createSwatch(color) {
@@ -110,6 +77,28 @@
     return label;
   }
 
+  function createRadiusOption(id) {
+    const inputId = `radius-${id}`;
+
+    const label = document.createElement("label");
+    label.className = "radius-option";
+    label.htmlFor = inputId;
+
+    const input = document.createElement("input");
+    input.id = inputId;
+    input.className = "radius-option__input";
+    input.type = "radio";
+    input.name = "radius";
+    input.value = id;
+
+    const chip = document.createElement("span");
+    chip.className = "radius-option__chip";
+    chip.textContent = id;
+
+    label.append(input, chip);
+    return label;
+  }
+
   function renderThemeList() {
     const mount = document.getElementById("theme-list");
     const fragment = document.createDocumentFragment();
@@ -135,22 +124,55 @@
     mount.replaceChildren(fragment);
   }
 
-  function bindThemeRadios() {
-    const inputs = Array.from(
-      document.querySelectorAll('input[name="theme"]')
-    );
+  function renderRadiusList() {
+    const mount = document.getElementById("radius-list");
+    const fragment = document.createDocumentFragment();
+    RADII.forEach((id) => {
+      fragment.appendChild(createRadiusOption(id));
+    });
+    mount.replaceChildren(fragment);
+  }
 
-    function sync(settings) {
-      const theme = sanitizeTheme(settings.theme);
-      inputs.forEach((input) => {
-        input.checked = input.value === theme;
+  function syncAllControls(settings) {
+    const active = Boolean(settings.enabled);
+    syncSwitch(enabledInput, active);
+    setBodyActive(active);
+
+    switches.forEach(({ id, key }) => {
+      syncSwitch(document.getElementById(id), Boolean(settings[key]));
+    });
+
+    const theme = sanitizeTheme(settings.theme);
+    document.querySelectorAll('input[name="theme"]').forEach((input) => {
+      input.checked = input.value === theme;
+    });
+
+    const radius = sanitizeRadius(settings.radius);
+    document.querySelectorAll('input[name="radius"]').forEach((input) => {
+      input.checked = input.value === radius;
+    });
+
+    applyPopupChrome(settings);
+  }
+
+  function bindControls() {
+    enabledInput.addEventListener("change", () => {
+      const active = enabledInput.checked;
+      syncSwitch(enabledInput, active);
+      setBodyActive(active);
+      setSettings({ enabled: active }).then(applyPopupChrome);
+    });
+
+    switches.forEach(({ id, key }) => {
+      const input = document.getElementById(id);
+      input.addEventListener("change", () => {
+        const enabled = input.checked;
+        syncSwitch(input, enabled);
+        setSettings({ [key]: enabled });
       });
-      applyPopupChrome(settings);
-    }
+    });
 
-    getSettings().then(sync);
-
-    inputs.forEach((input) => {
+    document.querySelectorAll('input[name="theme"]').forEach((input) => {
       input.addEventListener("change", () => {
         if (!input.checked) {
           return;
@@ -160,24 +182,8 @@
         );
       });
     });
-  }
 
-  function bindRadiusRadios() {
-    const inputs = Array.from(
-      document.querySelectorAll('input[name="radius"]')
-    );
-
-    function sync(settings) {
-      const radius = sanitizeRadius(settings.radius);
-      inputs.forEach((input) => {
-        input.checked = input.value === radius;
-      });
-      applyPopupChrome(settings);
-    }
-
-    getSettings().then(sync);
-
-    inputs.forEach((input) => {
+    document.querySelectorAll('input[name="radius"]').forEach((input) => {
       input.addEventListener("change", () => {
         if (!input.checked) {
           return;
@@ -189,10 +195,9 @@
     });
   }
 
-  switches.forEach(({ id, key }) => bindSwitch(id, key));
+  renderRadiusList();
   renderThemeList();
-  bindThemeRadios();
-  bindRadiusRadios();
-  bindEnabledSwitch();
-  onSettingsChanged(applyPopupChrome);
+  bindControls();
+  getSettings().then(syncAllControls);
+  onSettingsChanged(syncAllControls);
 })();

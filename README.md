@@ -1,7 +1,7 @@
-# SoundCloud Wide
+# SoundCloud UI Toolkit
 
-A dependency-free Chromium Manifest V3 extension that widens SoundCloud's main
-layout and queue, with optional color presets. Settings live in a toolbar popup
+A dependency-free Chromium Manifest V3 extension that customizes SoundCloud's
+layout, queue, appearance, and rounding. Settings live in a toolbar popup
 control center. Supported browsers: Chrome, Edge, Opera, and Brave (Chrome 121+
 or equivalent). Firefox and Safari are not supported.
 
@@ -32,7 +32,7 @@ Click the extension icon in the toolbar to open the **Control center**.
 | Enabled          | On      | Master switch — turn off to restore stock SoundCloud |
 | Enlarged layout  | On      | Widens the main layout (`.l-container`, player UI)  |
 | Enlarged queue   | On      | Makes the play-queue panel larger                   |
-| Rounding         | md      | Corner radius for artwork, buttons, and play (`none` / `sm` / `md` / `lg` / `xl`; play is circular at `xl`) |
+| Rounding         | md      | Corner radius for artwork, buttons, and play (`default` = native; `none` / `sm` / `md` / `lg` / `xl`; play is circular at `xl`) |
 | Appearance       | Default | Classic (Default, Midnight, OLED, Slate), Accent (Matrix, Fallout, Cyberpunk, Purple, Tide, Blood), Style (Minimal, Frost), or Homage (Grove, Blush) |
 
 Preferences sync via `chrome.storage.sync` and apply immediately on open

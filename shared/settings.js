@@ -9,7 +9,7 @@
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
   const THEME_CLASS = "scx-theme";
   const RADIUS_CLASS = "scx-radius";
-  const RADII = Object.freeze(["none", "sm", "md", "lg", "xl"]);
+  const RADII = Object.freeze(["default", "none", "sm", "md", "lg", "xl"]);
   const THEME_GROUPS = Object.freeze([
     {
       id: "classic",
@@ -229,6 +229,7 @@
    * @param {{ active?: boolean }} [options]
    *   active: when false (SoundCloud disabled), clear radius classes.
    *   Popup always passes active true so chrome previews the setting.
+   *   "default" clears all scx-radius-* (stock SoundCloud corners).
    */
   function applyDocumentRadius(radius, options) {
     const root = document.documentElement;
@@ -238,11 +239,19 @@
 
     const active = !options || options.active !== false;
     for (const id of RADII) {
+      if (id === "default") {
+        continue;
+      }
       root.classList.remove(radiusClass(id));
     }
 
-    if (active) {
-      root.classList.add(radiusClass(sanitizeRadius(radius || DEFAULTS.radius)));
+    if (!active) {
+      return;
+    }
+
+    const next = sanitizeRadius(radius || DEFAULTS.radius);
+    if (next !== "default") {
+      root.classList.add(radiusClass(next));
     }
   }
 

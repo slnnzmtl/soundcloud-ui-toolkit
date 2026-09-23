@@ -1,40 +1,16 @@
 /*
- * SoundCloud Wide — map shared tokens onto SoundCloud CSS variables.
+ * SoundCloud UI Toolkit — map shared tokens onto SoundCloud CSS variables.
  *
  * Palettes and --scx-radius-* live in shared/tokens.css.
  * Color: gated by html.scx-theme (+ html.scx-theme-{id}).
- * Rounding: gated by html.scx-radius-{none,sm,md,lg,xl}.
+ * Rounding: gated by html.scx-radius-{none,sm,md,lg,xl} (omit for native).
  */
 
-/* SoundCloud border-radius tokens — independent of color themes. */
-html.scx-radius-none {
-  --borderRadiuses-4: 0;
-  --borderRadiuses-8: 0;
-  --borderRadiuses-10: 0;
-}
-
-html.scx-radius-sm {
-  --borderRadiuses-4: 4px;
-  --borderRadiuses-8: 4px;
-  --borderRadiuses-10: 4px;
-}
-
-html.scx-radius-md {
-  --borderRadiuses-4: 6px;
-  --borderRadiuses-8: 10px;
-  --borderRadiuses-10: 10px;
-}
-
-html.scx-radius-lg {
-  --borderRadiuses-4: 10px;
-  --borderRadiuses-8: 16px;
-  --borderRadiuses-10: 16px;
-}
-
-html.scx-radius-xl {
-  --borderRadiuses-4: 12px;
-  --borderRadiuses-8: 22px;
-  --borderRadiuses-10: 22px;
+/* SoundCloud border-radius tokens — alias shared --scx-radius-* (tokens.css). */
+html[class*="scx-radius-"] {
+  --borderRadiuses-4: var(--scx-radius-small);
+  --borderRadiuses-8: var(--scx-radius-medium);
+  --borderRadiuses-10: var(--scx-radius-medium);
 }
 
 /* Shared overrides — active whenever any custom theme is selected */
@@ -460,8 +436,9 @@ html.scx-theme a[href*="/you/insights?"] svg {
   color: var(--scx-accent) !important;
 }
 
-/* Classic .sc-tag reads --tag-default-* (html + body.theme-*). Player iframe
- * chips ignore those vars and often have no body.theme-dark. */
+/* Classic .sc-tag reads --tag-default-* (body.theme-* overrides SC body tokens;
+ * html.scx-theme covers iframes without body.theme-dark). Player iframe chips
+ * ignore those vars and often have no body.theme-dark. */
 html.scx-theme .MuiChip-root {
   --mui-palette-secondary-main: var(--scx-surface-raised);
   --mui-palette-secondary-contrastText: var(--scx-text);

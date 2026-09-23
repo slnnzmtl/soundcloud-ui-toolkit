@@ -1,10 +1,10 @@
 /*
- * SoundCloud Wide
+ * SoundCloud UI Toolkit
  *
  * Active layout tweaks only. Master switch is html.scx-enabled (tiny
  * scrollbars). Layout and container rules are gated by html.scx-full-width
- * (Enlarged layout). Queue size/hover also requires the Enlarged queue
- * class. Button chrome lives in themes.css.
+ * (Enlarged layout). Queue size/hover is gated by html.scx-enlarged-queue
+ * independently. Button chrome lives in themes.css.
  */
 
 /* Tiny scrollbars — html.scx-enabled */
@@ -163,14 +163,14 @@ html.scx-full-width .readMoreTile__count {
   top: 140px !important;
 }
 
-/* Enlarged queue — html.scx-full-width.scx-enlarged-queue */
-html.scx-full-width.scx-enlarged-queue .playControls__queue {
+/* Enlarged queue — html.scx-enlarged-queue */
+html.scx-enlarged-queue .playControls__queue {
   width: 50vw !important;
   height: 80vh !important;
   padding: 0 !important;
 }
 
-html.scx-full-width.scx-enlarged-queue .playControls__queue .queue__scrollable {
+html.scx-enlarged-queue .playControls__queue .queue__scrollable {
   top: 69px !important;
   right: 0 !important;
   bottom: 0 !important;
@@ -178,30 +178,30 @@ html.scx-full-width.scx-enlarged-queue .playControls__queue .queue__scrollable {
   height: auto !important;
 }
 
-html.scx-full-width.scx-enlarged-queue .playControls__queue .queue__scrollableInner {
+html.scx-enlarged-queue .playControls__queue .queue__scrollableInner {
   height: 100% !important;
 }
 
-html.scx-full-width.scx-enlarged-queue .queue__itemsHeight {
+html.scx-enlarged-queue .queue__itemsHeight {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
-html.scx-full-width.scx-enlarged-queue .queueItemView__title.sc-truncate:hover {
+html.scx-enlarged-queue .queueItemView__title.sc-truncate:hover {
   overflow: visible !important;
   white-space: normal !important;
   border-radius: 4px !important;
 }
 
 @media (min-height: 1200px) {
-  html.scx-full-width.scx-enlarged-queue .playControls__queue {
+  html.scx-enlarged-queue .playControls__queue {
     height: 800px !important;
     width: 720px !important;
   }
 }
 
 @media (max-width: 1200px) {
-  html.scx-full-width.scx-enlarged-queue .playControls__queue {
+  html.scx-enlarged-queue .playControls__queue {
     width: calc(100% - 16px) !important;
   }
 }

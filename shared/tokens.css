@@ -1,5 +1,5 @@
 /*
- * SoundCloud Wide — shared color + radius tokens
+ * SoundCloud UI Toolkit — shared color + radius tokens
  *
  * Used by the toolbar popup and by themes.css (SoundCloud mapping).
  * Color: gated by html.scx-theme-{id}. Rounding: html.scx-radius-{id}.

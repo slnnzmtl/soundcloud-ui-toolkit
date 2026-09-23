@@ -1,4 +1,4 @@
-# Chrome Web Store listing — SoundCloud Wide
+# Chrome Web Store listing — SoundCloud UI Toolkit
 
 Paste these fields into the [Chrome Developer Dashboard](https://chrome.google.com/webstore/devconsole).
 Do not upload until icons, promo tile, screenshots, and privacy URL are ready.
@@ -26,31 +26,32 @@ Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 
 | Field | Value |
 | ----- | ----- |
-| **Name** | SoundCloud Wide |
-| **Short description** (manifest / store summary, ≤132 chars) | Widen SoundCloud's layout and queue, with optional color presets. Toggle settings from the toolbar popup. |
+| **Name** | SoundCloud UI Toolkit |
+| **Short description** (manifest / store summary, ≤132 chars) | Customize SoundCloud layout, queue, themes, and rounding. Toggle everything from the toolbar popup. |
 | **Category** | Productivity |
 | **Language** | English |
 
 ### Detailed description
 
 ```
-SoundCloud Wide makes better use of large screens on soundcloud.com.
+SoundCloud UI Toolkit customizes soundcloud.com for larger screens and personal taste.
 
 Features
 • Master enable switch — turn all styles off to restore stock SoundCloud without changing your other settings
 • Enlarged layout — widen the main content area and related player UI
 • Enlarged queue — make the play queue panel larger and easier to browse
 • Appearance presets — Classic, Accent, Style, and Homage color groups (Default keeps native SoundCloud colors)
+• Rounding scale — adjust corner radius for artwork, buttons, and the play control
 • Toolbar control center — turn each feature on or off; preferences sync via Chrome sync
 
-The extension only runs on https://soundcloud.com/. It does not change audio playback, does not inject ads, and does not collect personal data.
+The extension only runs on https://soundcloud.com/. It is not affiliated with SoundCloud. It does not change audio playback, does not inject ads, and does not collect personal data.
 
 Open the extension icon while on SoundCloud to adjust settings.
 ```
 
 ### Single purpose
 
-Widen SoundCloud’s web layout (main content and queue) with optional layout toggles and color presets.
+Customize SoundCloud’s web UI with layout, queue, appearance, and rounding controls.
 
 ## Permission justifications (Privacy practices)
 
@@ -113,4 +114,4 @@ Load unpacked from this repo (or from the unzipped store package):
 - [ ] At least one 1280×800 screenshot uploaded (`store/screenshots/`)
 - [ ] `store/promo-small.png` uploaded as small promo tile
 - [ ] Permission justifications pasted and match the zip
-- [ ] Listing name/description say **SoundCloud Wide** (layout + optional presets; groups only, no third-party brand names)
+- [ ] Listing name/description say **SoundCloud UI Toolkit** (layout + optional presets; groups only, no third-party brand names)

@@ -72,6 +72,9 @@ body {
   background: var(--scx-surface);
   border: 1px solid var(--scx-border);
   border-radius: var(--scx-radius-medium);
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .control-center__group + .control-center__group {
@@ -162,11 +165,9 @@ body {
 }
 
 .radius-field {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
 .radius-field__label {
@@ -203,8 +204,8 @@ body {
 
 .radius-option__chip {
   display: block;
-  min-width: 32px;
-  padding: 4px 8px;
+  min-width: 28px;
+  padding: 4px 6px;
   border-radius: var(--scx-radius-small);
   font-size: 12px;
   font-weight: 600;
@@ -234,7 +235,7 @@ body {
     "classic accent"
     "style accent"
     "homage homage";
-  gap: 8px 14px;
+  gap: 16px;
   align-items: start;
 }
 
