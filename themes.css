@@ -407,6 +407,8 @@ html.scx-theme [class*="mui-theme-"] {
   --mui-palette-brand-main: var(--scx-accent) !important;
   --mui-palette-common-white: var(--scx-text) !important;
   --mui-palette-common-black: var(--scx-background) !important;
+  --tag-default-background-color: var(--scx-surface-raised) !important;
+  --tag-default-font-color: var(--scx-text) !important;
 }
 
 html.scx-theme .l-container,
@@ -686,6 +688,27 @@ html.scx-theme a[href*="/you/insights?"]:hover {
 html.scx-theme a[href*="/you/insights?"] svg {
   fill: var(--scx-accent) !important;
   color: var(--scx-accent) !important;
+}
+
+/* Classic .sc-tag reads --tag-default-* (html + body.theme-*). Player iframe
+ * chips ignore those vars and often have no body.theme-dark. */
+html.scx-theme .MuiChip-root {
+  --mui-palette-secondary-main: var(--scx-surface-raised);
+  --mui-palette-secondary-contrastText: var(--scx-text);
+  background-color: var(--scx-surface-raised) !important;
+  color: var(--scx-text) !important;
+  border-color: var(--scx-border) !important;
+  border-radius: var(--scx-radius-small) !important;
+}
+
+html.scx-theme .MuiChip-root:hover {
+  background-color: var(--scx-surface) !important;
+  border-color: var(--scx-accent) !important;
+  color: var(--scx-text) !important;
+}
+
+html.scx-theme .MuiChip-label {
+  color: inherit !important;
 }
 
 html.scx-theme .sc-button:focus-visible,
