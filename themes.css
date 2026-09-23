@@ -365,6 +365,19 @@ html.scx-theme #app {
   background: var(--scx-background) !important;
 }
 
+html.scx-enabled.scx-theme,
+html.scx-enabled.scx-theme * {
+  scrollbar-color: rgb(255 255 255 / 28%) transparent;
+}
+
+html.scx-enabled.scx-theme ::-webkit-scrollbar-thumb {
+  background-color: rgb(255 255 255 / 28%);
+}
+
+html.scx-enabled.scx-theme ::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(255 255 255 / 45%);
+}
+
 html.scx-theme body {
   color: var(--scx-text) !important;
 }

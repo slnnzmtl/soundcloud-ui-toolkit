@@ -4,6 +4,7 @@
   "version": "1.2.0",
   "description": "Widen SoundCloud's layout and queue, with optional color presets. Toggle settings from the toolbar popup.",
   "homepage_url": "https://github.com/slnnzmtl/soundcloud-wide",
+  "minimum_chrome_version": "121",
   "permissions": ["storage", "scripting", "webNavigation"],
   "host_permissions": ["https://soundcloud.com/*"],
   "background": {

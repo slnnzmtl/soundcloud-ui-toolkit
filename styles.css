@@ -1,10 +1,37 @@
 /*
  * SoundCloud Wide
  *
- * Active layout tweaks only. Layout and container rules are gated by
- * html.scx-full-width (Enlarged layout). Queue size/hover also requires
- * the Enlarged queue class. Button chrome lives in themes.css.
+ * Active layout tweaks only. Master switch is html.scx-enabled (tiny
+ * scrollbars). Layout and container rules are gated by html.scx-full-width
+ * (Enlarged layout). Queue size/hover also requires the Enlarged queue
+ * class. Button chrome lives in themes.css.
  */
+
+/* Tiny scrollbars — html.scx-enabled */
+html.scx-enabled,
+html.scx-enabled * {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(0 0 0 / 28%) transparent;
+}
+
+html.scx-enabled ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html.scx-enabled ::-webkit-scrollbar-track,
+html.scx-enabled ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+html.scx-enabled ::-webkit-scrollbar-thumb {
+  background-color: rgb(0 0 0 / 28%);
+  border-radius: 999px;
+}
+
+html.scx-enabled ::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(0 0 0 / 45%);
+}
 
 /* Full width — html.scx-full-width */
 html.scx-full-width .l-container,

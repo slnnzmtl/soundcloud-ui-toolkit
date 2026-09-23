@@ -3,6 +3,10 @@
 Paste these fields into the [Chrome Developer Dashboard](https://chrome.google.com/webstore/devconsole).
 Do not upload until icons, promo tile, screenshots, and privacy URL are ready.
 
+The same zip loads unpacked on other Chromium browsers (Edge, Opera, Brave;
+requires Chrome 121+ / equivalent via `minimum_chrome_version`). Store publish
+here remains Chrome Web Store only.
+
 ## Package
 
 ```bash

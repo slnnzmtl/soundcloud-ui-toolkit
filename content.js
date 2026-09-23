@@ -1,5 +1,6 @@
 (function () {
   const {
+    ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
     THEME_CLASS,
@@ -37,6 +38,7 @@
     }
 
     const active = Boolean(settings.enabled);
+    root.classList.toggle(ENABLED_CLASS, active);
     root.classList.toggle(
       FULL_WIDTH_CLASS,
       active && Boolean(settings.fullWidth)

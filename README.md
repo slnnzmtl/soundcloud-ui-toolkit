@@ -1,8 +1,9 @@
 # SoundCloud Wide
 
-A dependency-free Chrome Manifest V3 extension that widens SoundCloud's main
+A dependency-free Chromium Manifest V3 extension that widens SoundCloud's main
 layout and queue, with optional color presets. Settings live in a toolbar popup
-control center.
+control center. Supported browsers: Chrome, Edge, Opera, and Brave (Chrome 121+
+or equivalent). Firefox and Safari are not supported.
 
 ### What’s new in 1.2.0
 
@@ -12,7 +13,11 @@ unchanged.
 
 ## Install locally
 
-1. Open `chrome://extensions`.
+1. Open the extensions page for your browser:
+   - Chrome: `chrome://extensions`
+   - Edge: `edge://extensions`
+   - Brave: `brave://extensions`
+   - Opera: `opera://extensions`
 2. Enable **Developer mode**.
 3. Click **Load unpacked**.
 4. Select this directory.
@@ -20,7 +25,7 @@ unchanged.
 
 ## Control center
 
-Click the extension icon in the Chrome toolbar to open the **Control center**.
+Click the extension icon in the toolbar to open the **Control center**.
 
 | Setting          | Default | Effect                                              |
 | ---------------- | ------- | --------------------------------------------------- |
@@ -36,7 +41,7 @@ SoundCloud tabs.
 
 | Permission / host              | Why it is needed                                                                 |
 | ------------------------------ | -------------------------------------------------------------------------------- |
-| `storage`                      | Save control-center settings and sync them across Chrome profiles                |
+| `storage`                      | Save control-center settings and sync them across browser profiles               |
 | `scripting`                    | Inject layout CSS/JS into SoundCloud's same-origin player iframe after SPA loads |
 | `webNavigation`                | Detect when that player iframe is created or navigated in-app                    |
 | `https://soundcloud.com/*`     | Run only on SoundCloud                                                           |

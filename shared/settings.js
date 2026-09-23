@@ -4,6 +4,7 @@
  */
 (function (global) {
   const STORAGE_KEY = "scxSettings";
+  const ENABLED_CLASS = "scx-enabled";
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
   const THEME_CLASS = "scx-theme";
@@ -167,6 +168,7 @@
 
   global.ScxSettings = {
     STORAGE_KEY,
+    ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
     THEME_CLASS,
