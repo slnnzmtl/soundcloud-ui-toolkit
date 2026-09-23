@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scx-theme-default scx-radius-md">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SoundCloud Wide</title>
+    <link rel="stylesheet" href="../shared/tokens.css" />
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
@@ -30,31 +31,33 @@
           Features
         </h2>
 
-        <label class="switch-row" for="full-width">
-          <span class="switch-row__label">Enlarged layout</span>
-          <input
-            id="full-width"
-            class="switch-row__input"
-            type="checkbox"
-            role="switch"
-          />
-          <span class="switch-row__track" aria-hidden="true">
-            <span class="switch-row__thumb"></span>
-          </span>
-        </label>
+        <div class="feature-list">
+          <label class="switch-row" for="full-width">
+            <span class="switch-row__label">Enlarged layout</span>
+            <input
+              id="full-width"
+              class="switch-row__input"
+              type="checkbox"
+              role="switch"
+            />
+            <span class="switch-row__track" aria-hidden="true">
+              <span class="switch-row__thumb"></span>
+            </span>
+          </label>
 
-        <label class="switch-row" for="enlarged-queue">
-          <span class="switch-row__label">Enlarged queue</span>
-          <input
-            id="enlarged-queue"
-            class="switch-row__input"
-            type="checkbox"
-            role="switch"
-          />
-          <span class="switch-row__track" aria-hidden="true">
-            <span class="switch-row__thumb"></span>
-          </span>
-        </label>
+          <label class="switch-row" for="enlarged-queue">
+            <span class="switch-row__label">Enlarged queue</span>
+            <input
+              id="enlarged-queue"
+              class="switch-row__input"
+              type="checkbox"
+              role="switch"
+            />
+            <span class="switch-row__track" aria-hidden="true">
+              <span class="switch-row__thumb"></span>
+            </span>
+          </label>
+        </div>
       </section>
 
       <section
@@ -64,6 +67,67 @@
         <h2 id="appearance-heading" class="control-center__group-title">
           Appearance
         </h2>
+
+        <div class="radius-field">
+          <span id="radius-heading" class="radius-field__label">Rounding</span>
+          <div
+            id="radius-list"
+            class="radius-list"
+            role="radiogroup"
+            aria-labelledby="radius-heading"
+          >
+            <label class="radius-option" for="radius-none">
+              <input
+                id="radius-none"
+                class="radius-option__input"
+                type="radio"
+                name="radius"
+                value="none"
+              />
+              <span class="radius-option__chip">none</span>
+            </label>
+            <label class="radius-option" for="radius-sm">
+              <input
+                id="radius-sm"
+                class="radius-option__input"
+                type="radio"
+                name="radius"
+                value="sm"
+              />
+              <span class="radius-option__chip">sm</span>
+            </label>
+            <label class="radius-option" for="radius-md">
+              <input
+                id="radius-md"
+                class="radius-option__input"
+                type="radio"
+                name="radius"
+                value="md"
+              />
+              <span class="radius-option__chip">md</span>
+            </label>
+            <label class="radius-option" for="radius-lg">
+              <input
+                id="radius-lg"
+                class="radius-option__input"
+                type="radio"
+                name="radius"
+                value="lg"
+              />
+              <span class="radius-option__chip">lg</span>
+            </label>
+            <label class="radius-option" for="radius-xl">
+              <input
+                id="radius-xl"
+                class="radius-option__input"
+                type="radio"
+                name="radius"
+                value="xl"
+              />
+              <span class="radius-option__chip">xl</span>
+            </label>
+          </div>
+        </div>
 
         <div
           id="theme-list"

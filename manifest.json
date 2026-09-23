@@ -29,13 +29,13 @@
   "content_scripts": [
     {
       "matches": ["https://soundcloud.com/*"],
-      "css": ["styles.css", "themes.css"],
+      "css": ["styles.css", "shared/tokens.css", "themes.css"],
       "js": ["shared/settings.js", "content.js"],
       "run_at": "document_start"
     },
     {
       "matches": ["https://soundcloud.com/n/*"],
-      "css": ["iframe-player.css", "themes.css"],
+      "css": ["iframe-player.css", "shared/tokens.css", "themes.css"],
       "js": ["shared/settings.js", "content.js"],
       "all_frames": true,
       "match_about_blank": true,

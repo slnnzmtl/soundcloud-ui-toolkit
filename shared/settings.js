@@ -8,6 +8,8 @@
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
   const THEME_CLASS = "scx-theme";
+  const RADIUS_CLASS = "scx-radius";
+  const RADII = Object.freeze(["none", "sm", "md", "lg", "xl"]);
   const THEME_GROUPS = Object.freeze([
     {
       id: "classic",
@@ -40,8 +42,8 @@
       label: "Accent",
       themes: Object.freeze([
         {
-          id: "terminal",
-          label: "Terminal",
+          id: "matrix",
+          label: "Matrix",
           swatches: Object.freeze(["#000000", "#001a00", "#00ff41"]),
         },
         {
@@ -60,8 +62,8 @@
           swatches: Object.freeze(["#0f071e", "#2e1065", "#a78bfa"]),
         },
         {
-          id: "teal",
-          label: "Teal Hue",
+          id: "tide",
+          label: "Tide",
           swatches: Object.freeze(["#050f0f", "#0a1a1a", "#0df2d0"]),
         },
         {
@@ -81,8 +83,8 @@
           swatches: Object.freeze(["#171717", "#262626", "#e5e5e5"]),
         },
         {
-          id: "liquid",
-          label: "Liquid Glass",
+          id: "frost",
+          label: "Frost",
           swatches: Object.freeze(["#090b0f", "#13161b", "#3a8cff"]),
         },
       ]),
@@ -92,13 +94,13 @@
       label: "Homage",
       themes: Object.freeze([
         {
-          id: "spotify",
-          label: "Spotify",
+          id: "grove",
+          label: "Grove",
           swatches: Object.freeze(["#121212", "#181818", "#1db954"]),
         },
         {
-          id: "mimi",
-          label: "Mimi",
+          id: "blush",
+          label: "Blush",
           swatches: Object.freeze(["#12242e", "#e4a2b1", "#fbe2a7"]),
         },
       ]),
@@ -114,17 +116,35 @@
     fullWidth: true,
     enlargedQueue: true,
     theme: "default",
+    radius: "md",
   });
 
   function themeClass(id) {
     return `${THEME_CLASS}-${id}`;
   }
 
+  function radiusClass(id) {
+    return `${RADIUS_CLASS}-${id}`;
+  }
+
+  const THEME_ALIASES = Object.freeze({
+    lifeinvader: "blood",
+    terminal: "matrix",
+    teal: "tide",
+    liquid: "frost",
+    spotify: "grove",
+    mimi: "blush",
+  });
+
   function sanitizeTheme(value) {
-    if (value === "lifeinvader") {
-      value = "blood";
+    if (THEME_ALIASES[value]) {
+      value = THEME_ALIASES[value];
     }
     return THEMES.includes(value) ? value : DEFAULTS.theme;
+  }
+
+  function sanitizeRadius(value) {
+    return RADII.includes(value) ? value : DEFAULTS.radius;
   }
 
   function mergeWithDefaults(stored) {
@@ -136,6 +156,7 @@
     merged.fullWidth = Boolean(merged.fullWidth);
     merged.enlargedQueue = Boolean(merged.enlargedQueue);
     merged.theme = sanitizeTheme(merged.theme);
+    merged.radius = sanitizeRadius(merged.radius);
     return merged;
   }
 
@@ -151,6 +172,7 @@
     return getSettings().then((current) => {
       const next = { ...current, ...partial };
       next.theme = sanitizeTheme(next.theme);
+      next.radius = sanitizeRadius(next.radius);
       return new Promise((resolve) => {
         chrome.storage.sync.set({ [STORAGE_KEY]: next }, () => resolve(next));
       });
@@ -166,20 +188,85 @@
     });
   }
 
+  /**
+   * Apply theme classes on a document root.
+   * @param {string} theme
+   * @param {{ includeDefault?: boolean }} [options]
+   *   includeDefault: popup chrome always uses scx-theme-default / scx-theme-{id}.
+   *   SoundCloud omits classes when theme is default (stock colors).
+   */
+  function applyDocumentTheme(theme, options) {
+    const root = document.documentElement;
+    if (!root) {
+      return;
+    }
+
+    const includeDefault = Boolean(options && options.includeDefault);
+    const next = sanitizeTheme(theme);
+
+    root.classList.remove(THEME_CLASS);
+    for (const legacyId of Object.keys(THEME_ALIASES)) {
+      root.classList.remove(themeClass(legacyId));
+    }
+    for (const id of THEMES) {
+      root.classList.remove(themeClass(id));
+    }
+
+    if (includeDefault) {
+      root.classList.add(themeClass(next));
+      return;
+    }
+
+    if (next && next !== "default") {
+      root.classList.add(THEME_CLASS);
+      root.classList.add(themeClass(next));
+    }
+  }
+
+  /**
+   * Apply radius classes on a document root.
+   * @param {string} radius
+   * @param {{ active?: boolean }} [options]
+   *   active: when false (SoundCloud disabled), clear radius classes.
+   *   Popup always passes active true so chrome previews the setting.
+   */
+  function applyDocumentRadius(radius, options) {
+    const root = document.documentElement;
+    if (!root) {
+      return;
+    }
+
+    const active = !options || options.active !== false;
+    for (const id of RADII) {
+      root.classList.remove(radiusClass(id));
+    }
+
+    if (active) {
+      root.classList.add(radiusClass(sanitizeRadius(radius || DEFAULTS.radius)));
+    }
+  }
+
   global.ScxSettings = {
     STORAGE_KEY,
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
     THEME_CLASS,
+    RADIUS_CLASS,
     THEME_GROUPS,
     THEMES,
+    RADII,
     DEFAULTS,
     themeClass,
+    radiusClass,
+    THEME_ALIASES,
     sanitizeTheme,
+    sanitizeRadius,
     mergeWithDefaults,
     getSettings,
     setSettings,
     onSettingsChanged,
+    applyDocumentTheme,
+    applyDocumentRadius,
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);

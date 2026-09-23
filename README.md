@@ -8,7 +8,7 @@ or equivalent). Firefox and Safari are not supported.
 ### What’s new in 1.2.0
 
 Master enable switch and appearance presets (Classic, Accent, Style, Homage)
-gated by `html.scx-theme-*` in `themes.css`. Layout and queue toggles are
+gated by `html.scx-theme-*` in `shared/tokens.css`. Layout and queue toggles are
 unchanged.
 
 ## Install locally
@@ -32,10 +32,12 @@ Click the extension icon in the toolbar to open the **Control center**.
 | Enabled          | On      | Master switch — turn off to restore stock SoundCloud |
 | Enlarged layout  | On      | Widens the main layout (`.l-container`, player UI)  |
 | Enlarged queue   | On      | Makes the play-queue panel larger                   |
-| Appearance       | Default | Classic (Default, Midnight, OLED, Slate), Accent (Terminal, Fallout, Cyberpunk, Purple, Teal Hue, Blood), Style (Minimal, Liquid Glass), or Homage (Spotify, Mimi) |
+| Rounding         | md      | Corner radius for artwork, buttons, and play (`none` / `sm` / `md` / `lg` / `xl`; play is circular at `xl`) |
+| Appearance       | Default | Classic (Default, Midnight, OLED, Slate), Accent (Matrix, Fallout, Cyberpunk, Purple, Tide, Blood), Style (Minimal, Frost), or Homage (Grove, Blush) |
 
 Preferences sync via `chrome.storage.sync` and apply immediately on open
-SoundCloud tabs.
+SoundCloud tabs. The control-center chrome follows the selected appearance
+preset and rounding scale so you can preview them in the popup.
 
 ## Permissions
 
@@ -50,7 +52,9 @@ SoundCloud tabs.
 
 - Runs only on `https://soundcloud.com/*`.
 - Layout CSS for the main app shell lives in `styles.css`.
-- Appearance presets live in `themes.css` (gated by `html.scx-theme-*`).
+- Appearance presets live in `shared/tokens.css` (gated by `html.scx-theme-*`).
+- Rounding scale lives in `shared/tokens.css` (gated by `html.scx-radius-*`);
+  SoundCloud mapping for both lives in `themes.css`.
 - Player iframe layout lives in `iframe-player.css` (also injected by
   `background.js` when frames appear after the parent page has loaded).
 - Uses semantic class names where possible to reduce breakage when SoundCloud
@@ -59,8 +63,9 @@ SoundCloud tabs.
 Developer notes: `SELECTORS.md` (selector map) and `snapshots/` (normalized
 browser-rendered DOM trees) are for maintenance only and are excluded from the
 store package. Refresh route snapshots with `npm install --include=dev` and
-`npm run snapshot:dom`. Preset catalog lives in `themes.css` and `THEME_GROUPS`
-in `shared/settings.js`.
+`npm run snapshot:dom`. Preset catalog lives in `shared/tokens.css`
+and `THEME_GROUPS` / `RADII` in `shared/settings.js`. SoundCloud token mapping
+lives in `themes.css`.
 
 ## Publishing
 
