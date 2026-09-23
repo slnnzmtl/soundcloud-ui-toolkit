@@ -3,33 +3,12 @@
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
-    THEME_CLASS,
-    THEMES,
     DEFAULTS,
-    themeClass,
+    applyDocumentTheme,
+    applyDocumentRadius,
     getSettings,
     onSettingsChanged,
   } = ScxSettings;
-
-  function applyTheme(theme) {
-    const root = document.documentElement;
-    if (!root) {
-      return;
-    }
-
-    root.classList.remove(THEME_CLASS);
-    root.classList.remove(themeClass("lifeinvader"));
-    for (const id of THEMES) {
-      if (id !== "default") {
-        root.classList.remove(themeClass(id));
-      }
-    }
-
-    if (theme && theme !== "default") {
-      root.classList.add(THEME_CLASS);
-      root.classList.add(themeClass(theme));
-    }
-  }
 
   function applySettings(settings) {
     const root = document.documentElement;
@@ -47,7 +26,8 @@
       ENLARGED_QUEUE_CLASS,
       active && Boolean(settings.enlargedQueue)
     );
-    applyTheme(active ? settings.theme : "default");
+    applyDocumentTheme(active ? settings.theme : "default");
+    applyDocumentRadius(settings.radius, { active });
   }
 
   applySettings(DEFAULTS);

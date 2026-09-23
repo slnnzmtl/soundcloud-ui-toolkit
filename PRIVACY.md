@@ -16,7 +16,8 @@ The only data stored are preferences chosen in the toolbar popup:
 - Enabled (master on/off for all styles)
 - Enlarged layout (on/off)
 - Enlarged queue (on/off)
-- Appearance preset id (`default`, `midnight`, `oled`, `slate`, `terminal`, `fallout`, `cyberpunk`, `purple`, `minimal`, `liquid`, `teal`, `spotify`, `mimi`, or `blood`)
+- Rounding scale (`none`, `sm`, `md`, `lg`, or `xl`)
+- Appearance preset id (`default`, `midnight`, `oled`, `slate`, `matrix`, `fallout`, `cyberpunk`, `purple`, `tide`, `blood`, `minimal`, `frost`, `grove`, or `blush`)
 
 These values are saved with Chrome’s `chrome.storage.sync` API so they can sync
 across Chrome browsers signed into the same Google account. Chrome manages that
@@ -33,7 +34,7 @@ sync; the extension authors do not operate a backend that receives this data.
 
 | Permission / host          | Purpose |
 | -------------------------- | ------- |
-| `storage`                  | Persist the master enable toggle, layout toggles, and the appearance preset id |
+| `storage`                  | Persist the master enable toggle, layout toggles, rounding scale, and the appearance preset id |
 | `scripting`                | Inject layout and theme styles into SoundCloud’s same-origin player iframe |
 | `webNavigation`            | Detect when that iframe is created or navigated |
 | `https://soundcloud.com/*` | Apply CSS only on SoundCloud |

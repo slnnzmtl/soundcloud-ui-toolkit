@@ -1,0 +1,328 @@
+/*
+ * SoundCloud Wide — shared color + radius tokens
+ *
+ * Used by the toolbar popup and by themes.css (SoundCloud mapping).
+ * Color: gated by html.scx-theme-{id}. Rounding: html.scx-radius-{id}.
+ * Default is popup-only chrome; SoundCloud leaves Default as no override.
+ */
+
+:root,
+html.scx-theme-default {
+  --scx-background: #f2f2f2;
+  --scx-surface: #ffffff;
+  --scx-surface-raised: #f7f7f7;
+  --scx-border: #e5e5e5;
+  --scx-text: #121212;
+  --scx-text-muted: #666666;
+  --scx-accent: #ff5500;
+  --scx-link: #ff5500;
+  --scx-focus: #ff5500;
+  --scx-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  --scx-surface-rgb: 255, 255, 255;
+  --scx-highlight-rgb: 247, 247, 247;
+  --scx-primary-rgb: 18, 18, 18;
+  --scx-secondary-rgb: 102, 102, 102;
+  --scx-special-rgb: 255, 85, 0;
+  --scx-link-rgb: 255, 85, 0;
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 10px;
+  --scx-radius-large: 14px;
+  --scx-radius-play: 10px;
+}
+
+/* Midnight — THEME.md palette */
+html.scx-theme-midnight {
+  --scx-background: #0b0d12;
+  --scx-surface: #141821;
+  --scx-surface-raised: #1c2230;
+  --scx-border: #30394a;
+  --scx-text: #f5f7fb;
+  --scx-text-muted: #a7b0c0;
+  --scx-accent: #ff5a1f;
+  --scx-link: #8ab4ff;
+  --scx-focus: #82aaff;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 20, 24, 33;
+  --scx-highlight-rgb: 28, 34, 48;
+  --scx-primary-rgb: 245, 247, 251;
+  --scx-secondary-rgb: 167, 176, 192;
+  --scx-special-rgb: 255, 90, 31;
+  --scx-link-rgb: 138, 180, 255;
+}
+
+/* OLED — near-black surfaces */
+html.scx-theme-oled {
+  --scx-background: #000000;
+  --scx-surface: #0a0a0a;
+  --scx-surface-raised: #141414;
+  --scx-border: #2a2a2a;
+  --scx-text: #f5f7fb;
+  --scx-text-muted: #a0a0a0;
+  --scx-accent: #ff5a1f;
+  --scx-link: #8ab4ff;
+  --scx-focus: #82aaff;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 55%);
+  --scx-surface-rgb: 10, 10, 10;
+  --scx-highlight-rgb: 20, 20, 20;
+  --scx-primary-rgb: 245, 247, 251;
+  --scx-secondary-rgb: 160, 160, 160;
+  --scx-special-rgb: 255, 90, 31;
+  --scx-link-rgb: 138, 180, 255;
+}
+
+/* Matrix — tweakcn Terminal (cmll14cgf000204ky5ms2fdgj) */
+html.scx-theme-matrix {
+  --scx-background: #000000;
+  --scx-surface: #050505;
+  --scx-surface-raised: #001a00;
+  --scx-border: #003b00;
+  --scx-text: #00ff41;
+  --scx-text-muted: #008f11;
+  --scx-accent: #00ff41;
+  --scx-link: #00ff41;
+  --scx-focus: #00ff41;
+  --scx-shadow: 0 0 24px rgb(0 255 65 / 18%);
+  --scx-surface-rgb: 5, 5, 5;
+  --scx-highlight-rgb: 0, 26, 0;
+  --scx-primary-rgb: 0, 255, 65;
+  --scx-secondary-rgb: 0, 143, 17;
+  --scx-special-rgb: 0, 255, 65;
+  --scx-link-rgb: 0, 255, 65;
+}
+
+/* Fallout — tweakcn Fallout (cmoqms5x8000504lbhwlu5snm) */
+html.scx-theme-fallout {
+  --scx-background: #050505;
+  --scx-surface: #121212;
+  --scx-surface-raised: #1a1400;
+  --scx-border: #665200;
+  --scx-text: #ffcc00;
+  --scx-text-muted: #cc9900;
+  --scx-accent: #ffcc00;
+  --scx-link: #ffcc00;
+  --scx-focus: #ffcc00;
+  --scx-shadow: 0 0 24px rgb(255 204 0 / 16%);
+  --scx-surface-rgb: 18, 18, 18;
+  --scx-highlight-rgb: 26, 20, 0;
+  --scx-primary-rgb: 255, 204, 0;
+  --scx-secondary-rgb: 204, 153, 0;
+  --scx-special-rgb: 255, 204, 0;
+  --scx-link-rgb: 255, 204, 0;
+}
+
+/* Cyberpunk — tweakcn community 赛博朋克 (tags=cyberpunk) */
+html.scx-theme-cyberpunk {
+  --scx-background: #050505;
+  --scx-surface: #0d0d0d;
+  --scx-surface-raised: #1a1a1a;
+  --scx-border: #3d2060;
+  --scx-text: #00ff9f;
+  --scx-text-muted: #00a86b;
+  --scx-accent: #bc13fe;
+  --scx-link: #00b8ff;
+  --scx-focus: #bc13fe;
+  --scx-shadow: 0 0 24px rgb(188 19 254 / 22%);
+  --scx-surface-rgb: 13, 13, 13;
+  --scx-highlight-rgb: 26, 26, 26;
+  --scx-primary-rgb: 0, 255, 159;
+  --scx-secondary-rgb: 0, 168, 107;
+  --scx-special-rgb: 188, 19, 254;
+  --scx-link-rgb: 0, 184, 255;
+}
+
+/* Purple — tweakcn Dramatic Purple (community tags=midnight) */
+html.scx-theme-purple {
+  --scx-background: #0f071e;
+  --scx-surface: #1a0b2e;
+  --scx-surface-raised: #2e1065;
+  --scx-border: #4c1d95;
+  --scx-text: #faf5ff;
+  --scx-text-muted: #c4b5fd;
+  --scx-accent: #a78bfa;
+  --scx-link: #c4b5fd;
+  --scx-focus: #a78bfa;
+  --scx-shadow: 0 12px 32px rgb(76 29 149 / 35%);
+  --scx-surface-rgb: 26, 11, 46;
+  --scx-highlight-rgb: 46, 16, 101;
+  --scx-primary-rgb: 250, 245, 255;
+  --scx-secondary-rgb: 196, 181, 253;
+  --scx-special-rgb: 167, 139, 250;
+  --scx-link-rgb: 196, 181, 253;
+}
+
+/* Slate — cooler blue-gray surfaces */
+html.scx-theme-slate {
+  --scx-background: #0e1218;
+  --scx-surface: #161c26;
+  --scx-surface-raised: #1e2734;
+  --scx-border: #2e3a4c;
+  --scx-text: #e8eef6;
+  --scx-text-muted: #9aa8bc;
+  --scx-accent: #ff5a1f;
+  --scx-link: #8ab4ff;
+  --scx-focus: #82aaff;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 22, 28, 38;
+  --scx-highlight-rgb: 30, 39, 52;
+  --scx-primary-rgb: 232, 238, 246;
+  --scx-secondary-rgb: 154, 168, 188;
+  --scx-special-rgb: 255, 90, 31;
+  --scx-link-rgb: 138, 180, 255;
+}
+
+/* Minimal — tweakcn Minimal Neutral (cmho4nr9l000h04l1gu419ckw) */
+html.scx-theme-minimal {
+  --scx-background: #171717;
+  --scx-surface: #0e0e0e;
+  --scx-surface-raised: #262626;
+  --scx-border: #262626;
+  --scx-text: #fafafa;
+  --scx-text-muted: #a1a1a1;
+  --scx-accent: #e5e5e5;
+  --scx-link: #e5e5e5;
+  --scx-focus: #737373;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 40%);
+  --scx-surface-rgb: 14, 14, 14;
+  --scx-highlight-rgb: 38, 38, 38;
+  --scx-primary-rgb: 250, 250, 250;
+  --scx-secondary-rgb: 161, 161, 161;
+  --scx-special-rgb: 229, 229, 229;
+  --scx-link-rgb: 229, 229, 229;
+}
+
+/* Frost — tweakcn Apple Liquid Glass (cmr2flrsp000304ih46yj4y1b) */
+html.scx-theme-frost {
+  --scx-background: #090b0f;
+  --scx-surface: #13161b;
+  --scx-surface-raised: #1a1d22;
+  --scx-border: #26292e;
+  --scx-text: #f0f2f4;
+  --scx-text-muted: #8f9aa4;
+  --scx-accent: #3a8cff;
+  --scx-link: #a5d0ff;
+  --scx-focus: #3a8cff;
+  --scx-shadow: 0 4px 40px rgb(0 0 0 / 45%);
+  --scx-surface-rgb: 19, 22, 27;
+  --scx-highlight-rgb: 26, 29, 34;
+  --scx-primary-rgb: 240, 242, 244;
+  --scx-secondary-rgb: 143, 154, 164;
+  --scx-special-rgb: 58, 140, 255;
+  --scx-link-rgb: 165, 208, 255;
+}
+
+/* Tide — tweakcn Teal Hue (cmm5996cv000004l266hbf4mr) */
+html.scx-theme-tide {
+  --scx-background: #050f0f;
+  --scx-surface: #0a1a1a;
+  --scx-surface-raised: #173336;
+  --scx-border: #203c3c;
+  --scx-text: #f3f7f6;
+  --scx-text-muted: #abbab8;
+  --scx-accent: #0df2d0;
+  --scx-link: #30c9e8;
+  --scx-focus: #0df2d0;
+  --scx-shadow: 0 10px 25px rgb(0 0 0 / 40%);
+  --scx-surface-rgb: 10, 26, 26;
+  --scx-highlight-rgb: 23, 51, 54;
+  --scx-primary-rgb: 243, 247, 246;
+  --scx-secondary-rgb: 171, 186, 184;
+  --scx-special-rgb: 13, 242, 208;
+  --scx-link-rgb: 48, 201, 232;
+}
+
+/* Grove — tweakcn Spotify (cmta2ef4d000004jpd7fed7le) */
+html.scx-theme-grove {
+  --scx-background: #121212;
+  --scx-surface: #181818;
+  --scx-surface-raised: #282828;
+  --scx-border: #282828;
+  --scx-text: #ffffff;
+  --scx-text-muted: #b3b3b3;
+  --scx-accent: #1db954;
+  --scx-link: #1ed760;
+  --scx-focus: #1db954;
+  --scx-shadow: 0 10px 20px rgb(0 0 0 / 50%);
+  --scx-surface-rgb: 24, 24, 24;
+  --scx-highlight-rgb: 40, 40, 40;
+  --scx-primary-rgb: 255, 255, 255;
+  --scx-secondary-rgb: 179, 179, 179;
+  --scx-special-rgb: 29, 185, 84;
+  --scx-link-rgb: 30, 215, 96;
+}
+
+/* Blush — tweakcn Mimi (cmp5lo2aw000304l5fdvdgwa5) */
+html.scx-theme-blush {
+  --scx-background: #12242e;
+  --scx-surface: #1c2e38;
+  --scx-surface-raised: #20333d;
+  --scx-border: #324859;
+  --scx-text: #f3e3ea;
+  --scx-text-muted: #e4a2b1;
+  --scx-accent: #fbe2a7;
+  --scx-link: #e4a2b1;
+  --scx-focus: #50afb6;
+  --scx-shadow: 3px 3px 0 #324859;
+  --scx-surface-rgb: 28, 46, 56;
+  --scx-highlight-rgb: 32, 51, 61;
+  --scx-primary-rgb: 243, 227, 234;
+  --scx-secondary-rgb: 228, 162, 177;
+  --scx-special-rgb: 251, 226, 167;
+  --scx-link-rgb: 228, 162, 177;
+}
+
+/* Blood — red-on-black (from tweakcn Life-Invader cmsq8hzn6000004jw7c68go2f) */
+html.scx-theme-blood {
+  --scx-background: #060606;
+  --scx-surface: #0b0b0c;
+  --scx-surface-raised: #131416;
+  --scx-border: #27292d;
+  --scx-text: #ff2b2b;
+  --scx-text-muted: #a32626;
+  --scx-accent: #db0000;
+  --scx-link: #ff2b2b;
+  --scx-focus: #ff2b2b;
+  --scx-shadow: 0 0 19px rgb(219 0 0 / 40%);
+  --scx-surface-rgb: 11, 11, 12;
+  --scx-highlight-rgb: 19, 20, 22;
+  --scx-primary-rgb: 255, 43, 43;
+  --scx-secondary-rgb: 163, 38, 38;
+  --scx-special-rgb: 219, 0, 0;
+  --scx-link-rgb: 255, 43, 43;
+}
+
+/* Rounding scale — independent of color themes. Artwork uses medium
+ * (never 50%); play uses --scx-radius-play (50% at xl only). */
+html.scx-radius-none {
+  --scx-radius-small: 0;
+  --scx-radius-medium: 0;
+  --scx-radius-large: 0;
+  --scx-radius-play: 0;
+}
+
+html.scx-radius-sm {
+  --scx-radius-small: 4px;
+  --scx-radius-medium: 4px;
+  --scx-radius-large: 8px;
+  --scx-radius-play: 6px;
+}
+
+html.scx-radius-md {
+  --scx-radius-small: 6px;
+  --scx-radius-medium: 10px;
+  --scx-radius-large: 14px;
+  --scx-radius-play: 10px;
+}
+
+html.scx-radius-lg {
+  --scx-radius-small: 10px;
+  --scx-radius-medium: 16px;
+  --scx-radius-large: 20px;
+  --scx-radius-play: 16px;
+}
+
+html.scx-radius-xl {
+  --scx-radius-small: 12px;
+  --scx-radius-medium: 22px;
+  --scx-radius-large: 28px;
+  --scx-radius-play: 50%;
+}

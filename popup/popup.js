@@ -1,5 +1,14 @@
 (function () {
-  const { THEME_GROUPS, getSettings, setSettings, sanitizeTheme } = ScxSettings;
+  const {
+    THEME_GROUPS,
+    getSettings,
+    setSettings,
+    sanitizeTheme,
+    sanitizeRadius,
+    applyDocumentTheme,
+    applyDocumentRadius,
+    onSettingsChanged,
+  } = ScxSettings;
 
   const switches = [
     { id: "full-width", key: "fullWidth" },
@@ -8,6 +17,11 @@
 
   const body = document.getElementById("control-center-body");
   const enabledInput = document.getElementById("extension-enabled");
+
+  function applyPopupChrome(settings) {
+    applyDocumentTheme(settings.theme, { includeDefault: true });
+    applyDocumentRadius(settings.radius, { active: true });
+  }
 
   function setBodyActive(active) {
     body.classList.toggle("control-center__body--disabled", !active);
@@ -43,6 +57,7 @@
       const active = Boolean(settings.enabled);
       syncSwitch(enabledInput, active);
       setBodyActive(active);
+      applyPopupChrome(settings);
     }
 
     getSettings().then(sync);
@@ -51,7 +66,7 @@
       const active = enabledInput.checked;
       syncSwitch(enabledInput, active);
       setBodyActive(active);
-      setSettings({ enabled: active });
+      setSettings({ enabled: active }).then(applyPopupChrome);
     });
   }
 
@@ -101,7 +116,7 @@
 
     THEME_GROUPS.forEach((group) => {
       const section = document.createElement("div");
-      section.className = "theme-group";
+      section.className = `theme-group theme-group--${group.id}`;
 
       const title = document.createElement("h3");
       title.className = "theme-group__title";
@@ -130,6 +145,7 @@
       inputs.forEach((input) => {
         input.checked = input.value === theme;
       });
+      applyPopupChrome(settings);
     }
 
     getSettings().then(sync);
@@ -139,7 +155,36 @@
         if (!input.checked) {
           return;
         }
-        setSettings({ theme: sanitizeTheme(input.value) });
+        setSettings({ theme: sanitizeTheme(input.value) }).then(
+          applyPopupChrome
+        );
+      });
+    });
+  }
+
+  function bindRadiusRadios() {
+    const inputs = Array.from(
+      document.querySelectorAll('input[name="radius"]')
+    );
+
+    function sync(settings) {
+      const radius = sanitizeRadius(settings.radius);
+      inputs.forEach((input) => {
+        input.checked = input.value === radius;
+      });
+      applyPopupChrome(settings);
+    }
+
+    getSettings().then(sync);
+
+    inputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        if (!input.checked) {
+          return;
+        }
+        setSettings({ radius: sanitizeRadius(input.value) }).then(
+          applyPopupChrome
+        );
       });
     });
   }
@@ -147,6 +192,7 @@
   switches.forEach(({ id, key }) => bindSwitch(id, key));
   renderThemeList();
   bindThemeRadios();
+  bindRadiusRadios();
   bindEnabledSwitch();
+  onSettingsChanged(applyPopupChrome);
 })();
-
