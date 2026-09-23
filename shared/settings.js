@@ -163,10 +163,45 @@
     return merged;
   }
 
+  function settingsNeedPersist(raw, merged) {
+    if (!raw || typeof raw !== "object") {
+      return true;
+    }
+    return (
+      raw.enabled !== merged.enabled ||
+      raw.fullWidth !== merged.fullWidth ||
+      raw.enlargedQueue !== merged.enlargedQueue ||
+      raw.theme !== merged.theme ||
+      raw.radius !== merged.radius
+    );
+  }
+
   function getSettings() {
     return new Promise((resolve) => {
       chrome.storage.sync.get(STORAGE_KEY, (result) => {
-        resolve(mergeWithDefaults(result[STORAGE_KEY]));
+        const raw = result[STORAGE_KEY];
+        const merged = mergeWithDefaults(raw);
+        if (!settingsNeedPersist(raw, merged)) {
+          resolve(merged);
+          return;
+        }
+        chrome.storage.sync.set({ [STORAGE_KEY]: merged }, () =>
+          resolve(merged)
+        );
+      });
+    });
+  }
+
+  function setSettings(partial) {
+    return getSettings().then((current) => {
+      const next = { ...current, ...partial };
+      next.enabled = Boolean(next.enabled);
+      next.fullWidth = Boolean(next.fullWidth);
+      next.enlargedQueue = Boolean(next.enlargedQueue);
+      next.theme = sanitizeTheme(next.theme);
+      next.radius = sanitizeRadius(next.radius);
+      return new Promise((resolve) => {
+        chrome.storage.sync.set({ [STORAGE_KEY]: next }, () => resolve(next));
       });
     });
   }
@@ -177,7 +212,12 @@
       if (!raw) {
         return null;
       }
-      return mergeWithDefaults(JSON.parse(raw));
+      const parsed = JSON.parse(raw);
+      const merged = mergeWithDefaults(parsed);
+      if (settingsNeedPersist(parsed, merged)) {
+        writePageCache(merged);
+      }
+      return merged;
     } catch {
       return null;
     }
@@ -189,17 +229,6 @@
     } catch {
       /* private mode or blocked storage */
     }
-  }
-
-  function setSettings(partial) {
-    return getSettings().then((current) => {
-      const next = { ...current, ...partial };
-      next.theme = sanitizeTheme(next.theme);
-      next.radius = sanitizeRadius(next.radius);
-      return new Promise((resolve) => {
-        chrome.storage.sync.set({ [STORAGE_KEY]: next }, () => resolve(next));
-      });
-    });
   }
 
   function onSettingsChanged(callback) {
@@ -214,14 +243,15 @@
   /**
    * Apply theme classes on a document root.
    * @param {string} theme
-   * @param {{ includeDefault?: boolean, nativeScheme?: string }} [options]
+   * @param {{ includeDefault?: boolean, nativeScheme?: string, root?: Element }} [options]
    *   includeDefault: popup chrome always uses scx-theme-default / scx-theme-{id}.
    *   SoundCloud omits classes when theme is default (stock colors).
    *   nativeScheme: popup-only; with includeDefault + theme default, "dark"
    *   adds scx-native-dark so chrome matches SoundCloud body.theme-dark.
+   *   root: optional documentElement (iframe paint).
    */
   function applyDocumentTheme(theme, options) {
-    const root = document.documentElement;
+    const root = (options && options.root) || document.documentElement;
     if (!root) {
       return;
     }
@@ -256,13 +286,13 @@
   /**
    * Apply radius classes on a document root.
    * @param {string} radius
-   * @param {{ active?: boolean }} [options]
+   * @param {{ active?: boolean, root?: Element }} [options]
    *   active: when false (SoundCloud disabled), clear radius classes.
    *   Popup always passes active true so chrome previews the setting.
    *   "default" clears all scx-radius-* (stock SoundCloud corners).
    */
   function applyDocumentRadius(radius, options) {
-    const root = document.documentElement;
+    const root = (options && options.root) || document.documentElement;
     if (!root) {
       return;
     }
@@ -283,6 +313,25 @@
     if (next !== "default") {
       root.classList.add(radiusClass(next));
     }
+  }
+
+  function copyScxClasses(fromRoot, toRoot) {
+    if (!fromRoot || !toRoot || fromRoot === toRoot || !fromRoot.classList) {
+      return false;
+    }
+    let copied = false;
+    const classes = fromRoot.classList;
+    const items =
+      typeof classes.forEach === "function"
+        ? classes
+        : Array.from(classes);
+    items.forEach((cls) => {
+      if (typeof cls === "string" && cls.startsWith("scx-")) {
+        toRoot.classList.add(cls);
+        copied = true;
+      }
+    });
+    return copied;
   }
 
   global.ScxSettings = {
@@ -306,10 +355,11 @@
     mergeWithDefaults,
     getSettings,
     setSettings,
+    readPageCache,
+    writePageCache,
     onSettingsChanged,
     applyDocumentTheme,
     applyDocumentRadius,
-    readPageCache,
-    writePageCache,
+    copyScxClasses,
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);
