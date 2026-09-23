@@ -4,11 +4,14 @@
  */
 (function (global) {
   const STORAGE_KEY = "scxSettings";
+  const PAGE_CACHE_KEY = "scxSettingsCache";
   const ENABLED_CLASS = "scx-enabled";
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
   const THEME_CLASS = "scx-theme";
   const RADIUS_CLASS = "scx-radius";
+  const NATIVE_DARK_CLASS = "scx-native-dark";
+  const NATIVE_SCHEME_KEY = "scxNativeScheme";
   const RADII = Object.freeze(["default", "none", "sm", "md", "lg", "xl"]);
   const THEME_GROUPS = Object.freeze([
     {
@@ -168,6 +171,26 @@
     });
   }
 
+  function readPageCache() {
+    try {
+      const raw = global.localStorage.getItem(PAGE_CACHE_KEY);
+      if (!raw) {
+        return null;
+      }
+      return mergeWithDefaults(JSON.parse(raw));
+    } catch {
+      return null;
+    }
+  }
+
+  function writePageCache(settings) {
+    try {
+      global.localStorage.setItem(PAGE_CACHE_KEY, JSON.stringify(settings));
+    } catch {
+      /* private mode or blocked storage */
+    }
+  }
+
   function setSettings(partial) {
     return getSettings().then((current) => {
       const next = { ...current, ...partial };
@@ -191,9 +214,11 @@
   /**
    * Apply theme classes on a document root.
    * @param {string} theme
-   * @param {{ includeDefault?: boolean }} [options]
+   * @param {{ includeDefault?: boolean, nativeScheme?: string }} [options]
    *   includeDefault: popup chrome always uses scx-theme-default / scx-theme-{id}.
    *   SoundCloud omits classes when theme is default (stock colors).
+   *   nativeScheme: popup-only; with includeDefault + theme default, "dark"
+   *   adds scx-native-dark so chrome matches SoundCloud body.theme-dark.
    */
   function applyDocumentTheme(theme, options) {
     const root = document.documentElement;
@@ -202,9 +227,11 @@
     }
 
     const includeDefault = Boolean(options && options.includeDefault);
+    const nativeScheme = options && options.nativeScheme;
     const next = sanitizeTheme(theme);
 
     root.classList.remove(THEME_CLASS);
+    root.classList.remove(NATIVE_DARK_CLASS);
     for (const legacyId of Object.keys(THEME_ALIASES)) {
       root.classList.remove(themeClass(legacyId));
     }
@@ -214,6 +241,9 @@
 
     if (includeDefault) {
       root.classList.add(themeClass(next));
+      if (next === "default" && nativeScheme === "dark") {
+        root.classList.add(NATIVE_DARK_CLASS);
+      }
       return;
     }
 
@@ -257,11 +287,13 @@
 
   global.ScxSettings = {
     STORAGE_KEY,
+    NATIVE_SCHEME_KEY,
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
     THEME_CLASS,
     RADIUS_CLASS,
+    NATIVE_DARK_CLASS,
     THEME_GROUPS,
     THEMES,
     RADII,
@@ -277,5 +309,7 @@
     onSettingsChanged,
     applyDocumentTheme,
     applyDocumentRadius,
+    readPageCache,
+    writePageCache,
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);

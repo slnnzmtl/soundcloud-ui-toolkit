@@ -23,6 +23,11 @@ These values are saved with Chrome’s `chrome.storage.sync` API so they can syn
 across Chrome browsers signed into the same Google account. Chrome manages that
 sync; the extension authors do not operate a backend that receives this data.
 
+Separately, `chrome.storage.local` may hold a short-lived native light/dark flag
+(`scxNativeScheme`) so the toolbar popup’s Default chrome can match SoundCloud’s
+current `body.theme-light` / `body.theme-dark`. That value does not sync and is
+not personal data.
+
 ## Data we do not collect
 
 - No analytics or telemetry
@@ -34,7 +39,7 @@ sync; the extension authors do not operate a backend that receives this data.
 
 | Permission / host          | Purpose |
 | -------------------------- | ------- |
-| `storage`                  | Persist the master enable toggle, layout toggles, rounding scale, and the appearance preset id |
+| `storage`                  | Persist the master enable toggle, layout toggles, rounding scale, and the appearance preset id; also a local native light/dark flag for Default popup chrome |
 | `scripting`                | Inject layout and theme styles into SoundCloud’s same-origin player iframe |
 | `webNavigation`            | Detect when that iframe is created or navigated |
 | `https://soundcloud.com/*` | Apply CSS only on SoundCloud |

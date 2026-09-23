@@ -2,6 +2,7 @@
   const {
     THEME_GROUPS,
     RADII,
+    NATIVE_SCHEME_KEY,
     getSettings,
     setSettings,
     sanitizeTheme,
@@ -18,10 +19,20 @@
 
   const body = document.getElementById("control-center-body");
   const enabledInput = document.getElementById("extension-enabled");
+  let nativeScheme = "light";
+  let currentSettings = null;
 
   function applyPopupChrome(settings) {
-    applyDocumentTheme(settings.theme, { includeDefault: true });
-    applyDocumentRadius(settings.radius, { active: true });
+    const next = settings || currentSettings;
+    if (!next) {
+      return;
+    }
+    currentSettings = next;
+    applyDocumentTheme(next.theme, {
+      includeDefault: true,
+      nativeScheme,
+    });
+    applyDocumentRadius(next.radius, { active: true });
   }
 
   function setBodyActive(active) {
@@ -195,9 +206,33 @@
     });
   }
 
+  function loadNativeScheme() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(NATIVE_SCHEME_KEY, (result) => {
+        const value = result[NATIVE_SCHEME_KEY];
+        nativeScheme = value === "dark" || value === "light" ? value : "light";
+        resolve(nativeScheme);
+      });
+    });
+  }
+
+  function onNativeSchemeChanged() {
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName !== "local" || !changes[NATIVE_SCHEME_KEY]) {
+        return;
+      }
+      const value = changes[NATIVE_SCHEME_KEY].newValue;
+      nativeScheme = value === "dark" || value === "light" ? value : "light";
+      applyPopupChrome();
+    });
+  }
+
   renderRadiusList();
   renderThemeList();
   bindControls();
-  getSettings().then(syncAllControls);
+  onNativeSchemeChanged();
+  Promise.all([getSettings(), loadNativeScheme()]).then(([settings]) => {
+    syncAllControls(settings);
+  });
   onSettingsChanged(syncAllControls);
 })();

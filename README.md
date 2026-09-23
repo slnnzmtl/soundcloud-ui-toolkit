@@ -33,7 +33,7 @@ Click the extension icon in the toolbar to open the **Control center**.
 | Enlarged layout  | On      | Widens the main layout (`.l-container`, player UI)  |
 | Enlarged queue   | On      | Makes the play-queue panel larger                   |
 | Rounding         | md      | Corner radius for artwork, buttons, and play (`default` = native; `none` / `sm` / `md` / `lg` / `xl`; play is circular at `xl`) |
-| Appearance       | Default | Classic (Default, Midnight, OLED, Slate), Accent (Matrix, Fallout, Cyberpunk, Purple, Tide, Blood), Style (Minimal, Frost), or Homage (Grove, Blush) |
+| Appearance       | Default | Classic (Default follows SoundCloud light/dark in the popup; Midnight, OLED, Slate), Accent (Matrix, Fallout, Cyberpunk, Purple, Tide, Blood), Style (Minimal, Frost), or Homage (Grove, Blush) |
 
 Preferences sync via `chrome.storage.sync` and apply immediately on open
 SoundCloud tabs. The control-center chrome follows the selected appearance

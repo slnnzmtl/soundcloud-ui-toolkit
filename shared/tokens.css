@@ -4,6 +4,7 @@
  * Used by the toolbar popup and by themes.css (SoundCloud mapping).
  * Color: gated by html.scx-theme-{id}. Rounding: html.scx-radius-{id}.
  * Default is popup-only chrome; SoundCloud leaves Default as no override.
+ * With scx-native-dark, Default chrome follows SoundCloud body.theme-dark.
  */
 
 :root,
@@ -28,6 +29,26 @@ html.scx-theme-default {
   --scx-radius-medium: 10px;
   --scx-radius-large: 14px;
   --scx-radius-play: 10px;
+}
+
+/* Default + SoundCloud dark — stock SC dark, not Midnight/OLED */
+html.scx-theme-default.scx-native-dark {
+  --scx-background: #111111;
+  --scx-surface: #181818;
+  --scx-surface-raised: #222222;
+  --scx-border: #333333;
+  --scx-text: #f2f2f2;
+  --scx-text-muted: #999999;
+  --scx-accent: #ff5500;
+  --scx-link: #ff5500;
+  --scx-focus: #ff5500;
+  --scx-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  --scx-surface-rgb: 24, 24, 24;
+  --scx-highlight-rgb: 34, 34, 34;
+  --scx-primary-rgb: 242, 242, 242;
+  --scx-secondary-rgb: 153, 153, 153;
+  --scx-special-rgb: 255, 85, 0;
+  --scx-link-rgb: 255, 85, 0;
 }
 
 /* Midnight — THEME.md palette */
