@@ -549,19 +549,13 @@ html.scx-theme .playControlsPanel__inner {
   box-shadow: none !important;
 }
 
-/* Custom rounding: outer shell is the rounded clip; flatten inner cards. */
-html.scx-theme[class*="scx-radius-"] .queue {
+html.scx-theme .queue {
   --background-surface-color: var(--scx-background) !important;
   --surface-color: var(--scx-background) !important;
-  background: var(--scx-background) !important;
   background-color: var(--scx-background) !important;
   border: 1px solid var(--scx-border) !important;
+  overflow: hidden !important;
   box-shadow: var(--scx-shadow) !important;
-  overflow: hidden !important;
-}
-
-html.scx-theme .queue {
-  overflow: hidden !important;
 }
 
 html[class*="scx-radius-"] .queue__panel,
