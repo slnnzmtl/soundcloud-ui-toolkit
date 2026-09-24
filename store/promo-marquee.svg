@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="560" viewBox="0 0 1400 560" fill="none">
+  <rect width="1400" height="560" fill="#0b0d12"/>
+
+  <!-- Atmosphere -->
+  <circle cx="1120" cy="280" r="320" fill="#ff5a1f" opacity="0.07"/>
+  <circle cx="200" cy="480" r="200" fill="#a855f7" opacity="0.05"/>
+
+  <!-- Left copy -->
+  <text
+    x="96"
+    y="232"
+    fill="#f5f7fb"
+    font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="64"
+    font-weight="700"
+    letter-spacing="-0.035em"
+  >SoundCloud UI Toolkit</text>
+  <text
+    x="96"
+    y="292"
+    fill="#a7b0c0"
+    font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="28"
+    font-weight="500"
+  >Widen layout, larger queue, and appearance presets</text>
+
+  <!-- Feature chips -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600">
+    <rect x="96" y="340" width="148" height="40" rx="20" fill="#141821" stroke="#30394a"/>
+    <text x="170" y="366" fill="#f5f7fb" text-anchor="middle">Layout</text>
+
+    <rect x="260" y="340" width="132" height="40" rx="20" fill="#141821" stroke="#30394a"/>
+    <text x="326" y="366" fill="#f5f7fb" text-anchor="middle">Queue</text>
+
+    <rect x="408" y="340" width="148" height="40" rx="20" fill="#141821" stroke="#30394a"/>
+    <text x="482" y="366" fill="#f5f7fb" text-anchor="middle">Themes</text>
+
+    <rect x="572" y="340" width="168" height="40" rx="20" fill="#141821" stroke="#30394a"/>
+    <text x="656" y="366" fill="#f5f7fb" text-anchor="middle">Rounding</text>
+  </g>
+
+  <!-- Right visual: wide bars + theme swatches -->
+  <g>
+    <rect x="980" y="168" width="260" height="36" rx="18" fill="#ff5a1f"/>
+    <rect x="1040" y="224" width="200" height="36" rx="18" fill="#ff5a1f" opacity="0.9"/>
+    <rect x="1000" y="280" width="240" height="36" rx="18" fill="#ff5a1f" opacity="0.75"/>
+    <rect x="1070" y="336" width="170" height="36" rx="18" fill="#ff5a1f" opacity="0.6"/>
+  </g>
+  <g>
+    <circle cx="1000" cy="420" r="16" fill="#ff5a1f"/>
+    <circle cx="1044" cy="420" r="16" fill="#a855f7"/>
+    <circle cx="1088" cy="420" r="16" fill="#22c55e"/>
+    <circle cx="1132" cy="420" r="16" fill="#38bdf8"/>
+    <circle cx="1176" cy="420" r="16" fill="#f43f5e"/>
+    <circle cx="1220" cy="420" r="16" fill="#f59e0b"/>
+  </g>
+</svg>

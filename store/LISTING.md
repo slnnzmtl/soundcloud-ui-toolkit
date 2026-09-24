@@ -78,16 +78,19 @@ Use these answers in the dashboard Privacy tab.
 | ----- | ---- | ---- | -------- |
 | Extension icons | `icons/icon-{16,32,48,128}.png` | 16 / 32 / 48 / 128 | Yes (in zip) |
 | Small promo tile | `store/promo-small.png` | 440×280 | Yes (upload in dashboard) |
+| Marquee promo | `store/promo-marquee.png` | 1400×560 | Optional |
 | Screenshots | `store/screenshots/*.png` | 1280×800 | Yes (≥1) |
-| Marquee promo | — | 1400×560 | Optional |
+
+Sources: `store/promo-small.svg`, `store/promo-marquee.svg` (regenerate PNGs with `rsvg-convert`).
 
 ### Screenshots (upload in this order)
 
 | # | File | Shows |
 | - | ---- | ----- |
-| 1 | [`store/screenshots/01-after-layout.png`](screenshots/01-after-layout.png) | **After** — enlarged layout (wide playlist + sidebar) |
-| 2 | [`store/screenshots/02-after-queue.png`](screenshots/02-after-queue.png) | **After** — enlarged queue (“Next up” panel) |
-| 3 | [`store/screenshots/03-before.png`](screenshots/03-before.png) | **Before** — default SoundCloud width (comparison) |
+| 1 | [`store/screenshots/01-before.png`](screenshots/01-before.png) | **Before** — default SoundCloud width (comparison) |
+| 2 | [`store/screenshots/02-enlarged.png`](screenshots/02-enlarged.png) | **After** — enlarged layout + queue |
+| 3 | [`store/screenshots/03-purple.png`](screenshots/03-purple.png) | Appearance preset (Accent / Purple) |
+| 4 | [`store/screenshots/04-control-panel.png`](screenshots/04-control-panel.png) | Toolbar popup + Cyberpunk theme |
 
 These are full-bleed 1280×800 PNGs ready for the dashboard. They are **not** included in the store zip (upload separately).
 
@@ -112,6 +115,6 @@ Load unpacked from this repo (or from the unzipped store package):
 - [ ] Player iframe (`/n/*`) still gets wide layout / theme after in-app navigation
 - [ ] `PRIVACY.md` is public on GitHub `main`
 - [ ] At least one 1280×800 screenshot uploaded (`store/screenshots/`)
-- [ ] `store/promo-small.png` uploaded as small promo tile
+- [ ] `store/promo-small.png` uploaded as small promo tile (optional: `store/promo-marquee.png`)
 - [ ] Permission justifications pasted and match the zip
 - [ ] Listing name/description say **SoundCloud UI Toolkit** (layout + optional presets; groups only, no third-party brand names)

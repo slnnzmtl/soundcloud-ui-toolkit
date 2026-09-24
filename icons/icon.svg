@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
-  <!-- Transparent canvas; dark rounded plate + orange wide bars -->
+  <!-- SoundCloud UI Toolkit — dark plate + staggered orange bars -->
   <rect x="8" y="8" width="112" height="112" rx="28" fill="#0b0d12"/>
-  <rect x="28" y="46" width="72" height="14" rx="7" fill="#ff5a1f"/>
-  <rect x="40" y="68" width="48" height="14" rx="7" fill="#ff5a1f"/>
+  <rect x="24" y="30" width="80" height="18" rx="9" fill="#ff5a1f"/>
+  <rect x="36" y="55" width="56" height="18" rx="9" fill="#ff5a1f"/>
+  <rect x="28" y="80" width="72" height="18" rx="9" fill="#ff5a1f"/>
 </svg>
