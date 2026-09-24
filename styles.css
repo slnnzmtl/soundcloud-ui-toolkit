@@ -117,10 +117,12 @@ html.scx-full-width .playbackSoundBadge__actions {
 }
 
 /* Stream / history track rows */
-html.scx-full-width .sound__coverArt {
-  width: 220px !important;
-  height: 220px !important;
-  --artwork-20x-size: 220px;
+@media (min-width: 1800px) {
+  html.scx-full-width .sound__coverArt {
+    width: 220px !important;
+    height: 220px !important;
+    --artwork-20x-size: 220px;
+  }
 }
 
 html.scx-full-width .sound__coverArt .sc-artwork-20x {
@@ -147,8 +149,11 @@ html.scx-full-width .playHistory .badgeList__item {
   width: calc(100% / 6 - 16px) !important;
 }
 
-html.scx-full-width .tileGallery__sliderPanel:not(:has(.artistConnectItem)) {
-  max-height: 270px !important;
+
+@media screen and (min-width: 1400px) {
+  html.scx-full-width .tileGallery__sliderPanel:not(:has(.artistConnectItem)) {
+    max-height: 270px !important;
+  }
 }
 
 html.scx-full-width
