@@ -97,8 +97,8 @@ html.scx-theme-matrix {
   --scx-surface: #050505;
   --scx-surface-raised: #001a00;
   --scx-border: #003b00;
-  --scx-text: #00ff41;
-  --scx-text-muted: #008f11;
+  --scx-text: #00bb2f;
+  --scx-text-muted: #007a0e;
   --scx-accent: #00ff41;
   --scx-link: #00ff41;
   --scx-focus: #00ff41;
@@ -117,11 +117,11 @@ html.scx-theme-fallout {
   --scx-surface: #121212;
   --scx-surface-raised: #1a1400;
   --scx-border: #665200;
-  --scx-text: #ffcc00;
-  --scx-text-muted: #cc9900;
-  --scx-accent: #ffcc00;
-  --scx-link: #ffcc00;
-  --scx-focus: #ffcc00;
+  --scx-text: #ffe100;
+  --scx-text-muted: #8e6a00;
+  --scx-accent: #ffc14f;
+  --scx-link: #ffa600;
+  --scx-focus: #ffa600;
   --scx-shadow: 0 0 24px rgb(255 204 0 / 16%);
   --scx-surface-rgb: 18, 18, 18;
   --scx-highlight-rgb: 26, 20, 0;
@@ -158,8 +158,8 @@ html.scx-theme-purple {
   --scx-surface-raised: #2e1065;
   --scx-border: #4c1d95;
   --scx-text: #faf5ff;
-  --scx-text-muted: #c4b5fd;
-  --scx-accent: #a78bfa;
+  --scx-text-muted: #685b9c;
+  --scx-accent: #bba5ff;
   --scx-link: #c4b5fd;
   --scx-focus: #a78bfa;
   --scx-shadow: 0 12px 32px rgb(76 29 149 / 35%);
@@ -199,7 +199,7 @@ html.scx-theme-minimal {
   --scx-border: #262626;
   --scx-text: #fafafa;
   --scx-text-muted: #a1a1a1;
-  --scx-accent: #e5e5e5;
+  --scx-accent: #f5f5f5;
   --scx-link: #e5e5e5;
   --scx-focus: #737373;
   --scx-shadow: 0 12px 32px rgb(0 0 0 / 40%);
@@ -298,8 +298,8 @@ html.scx-theme-blood {
   --scx-surface-raised: #131416;
   --scx-border: #27292d;
   --scx-text: #ff2b2b;
-  --scx-text-muted: #a32626;
-  --scx-accent: #db0000;
+  --scx-text-muted: #a23232;
+  --scx-accent: #f60000;
   --scx-link: #ff2b2b;
   --scx-focus: #ff2b2b;
   --scx-shadow: 0 0 19px rgb(219 0 0 / 40%);

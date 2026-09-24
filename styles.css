@@ -11,7 +11,7 @@
  * Themed pages override color in themes.css (html.scx-enabled.scx-theme). */
 html.scx-enabled {
   scrollbar-width: thin;
-  scrollbar-color: rgb(0 0 0 / 28%) transparent;
+  scrollbar-color: rgb(255 255 255 / 28%) transparent;
 }
 
 html.scx-enabled * {
@@ -23,13 +23,17 @@ html.scx-enabled ::-webkit-scrollbar {
   height: 6px;
 }
 
+html.scx-enabled .playbackSoundBadge__actions > .sc-button {
+  background-color: transparent !important;
+}
+
 html.scx-enabled ::-webkit-scrollbar-track,
 html.scx-enabled ::-webkit-scrollbar-corner {
   background: transparent;
 }
 
 html.scx-enabled ::-webkit-scrollbar-thumb {
-  background-color: rgb(0 0 0 / 28%);
+  background-color: rgba(137, 137, 137, 0.28);
   border-radius: 999px;
 }
 
@@ -55,6 +59,11 @@ html.scx-full-width .profileHeader {
 
 html.scx-full-width .profileHeaderBackground__visual {
   background-size: cover !important;
+}
+
+html.scx-full-width .dropbar {
+  width: 100% !important;
+  max-width: 1800px !important;
 }
 
 html.scx-full-width .spotlightUpsellBanner__background {
@@ -159,7 +168,7 @@ html.scx-full-width .playHistory .badgeList__item {
 html.scx-full-width
   .tileGallery__sliderPanel:not(:has(.artistConnectItem))
   .tileGallery__sliderPanelInner {
-  max-width: 100% !important;
+  /* max-width: 100% !important; */
 }
 
 /* "View all" overlay — SC uses top: -10px sized for default tiles */
@@ -177,18 +186,6 @@ html.scx-enlarged-queue .playControls__queue {
   width: 50vw !important;
   height: 80vh !important;
   padding: 0 !important;
-}
-
-html.scx-enlarged-queue .playControls__queue .queue__scrollable {
-  top: 69px !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  height: auto !important;
-}
-
-html.scx-enlarged-queue .playControls__queue .queue__scrollableInner {
-  height: 100% !important;
 }
 
 html.scx-enlarged-queue .queue__itemsHeight {
