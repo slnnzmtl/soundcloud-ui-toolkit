@@ -116,6 +116,14 @@
 
         <div id="custom-theme-panel" class="custom-theme" hidden>
           <div
+            id="custom-preset-list"
+            class="custom-theme__presets"
+            role="radiogroup"
+            aria-labelledby="custom-preset-heading"
+            hidden
+          ></div>
+
+          <div
             class="custom-theme__preview"
             id="custom-theme-preview"
             aria-hidden="true"
@@ -127,16 +135,20 @@
 
           <div class="custom-theme__fields" id="custom-theme-fields"></div>
 
-          <p
-            id="custom-theme-contrast"
-            class="custom-theme__contrast"
-            role="status"
-          ></p>
-
-          <div class="custom-theme__actions">
-            <button type="button" class="custom-theme__btn" id="custom-reset">
-              Reset colors
-            </button>
+          <div class="custom-theme__footer">
+            <p
+              id="custom-theme-contrast"
+              class="custom-theme__contrast"
+              role="status"
+            ></p>
+            <div class="custom-theme__actions">
+              <button type="button" class="custom-theme__btn" id="custom-reset">
+                Reset colors
+              </button>
+              <button type="button" class="custom-theme__btn" id="custom-save">
+                Save preset
+              </button>
+            </div>
           </div>
         </div>
       </section>

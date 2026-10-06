@@ -9,6 +9,8 @@
     applyDocumentRadius,
     applyCustomThemeVariables,
     clearCustomThemeVariables,
+    isCustomThemeId,
+    CUSTOM_THEME_STYLE_ID,
     getSettings,
     mergeWithDefaults,
     readPageCache,
@@ -134,7 +136,7 @@
     );
     const theme = active ? settings.theme : "default";
     applyDocumentTheme(theme, { root });
-    if (active && theme === "custom") {
+    if (active && isCustomThemeId(theme)) {
       applyCustomThemeVariables(root, settings);
     } else {
       clearCustomThemeVariables(root);
@@ -191,13 +193,13 @@
   }
 
   function applySettings(settings) {
-    latestSettings = settings;
-    paintRoot(document.documentElement, settings);
+    latestSettings = mergeWithDefaults(settings);
+    paintRoot(document.documentElement, latestSettings);
     if (window !== window.top) {
       return;
     }
-    paintSameOriginFrames(settings);
-    broadcastSettings(settings);
+    paintSameOriginFrames(latestSettings);
+    broadcastSettings(latestSettings);
     scheduleFramePaint();
   }
 
@@ -309,12 +311,14 @@
         return;
       }
       const theme = latestSettings.theme;
-      if (
-        !latestSettings.enabled ||
-        !theme ||
-        theme === "default" ||
-        root.classList.contains("scx-theme")
-      ) {
+      if (!latestSettings.enabled || !theme || theme === "default") {
+        return;
+      }
+      const missingThemeClasses = !root.classList.contains("scx-theme");
+      const missingCustomVars =
+        isCustomThemeId(theme) &&
+        !document.getElementById(CUSTOM_THEME_STYLE_ID)?.textContent;
+      if (!missingThemeClasses && !missingCustomVars) {
         return;
       }
       paintingRoot = true;
@@ -372,8 +376,8 @@
     } else {
       inheritStyleFromParent();
     }
-    latestSettings = data.settings;
-    paintRoot(document.documentElement, data.settings);
+    latestSettings = mergeWithDefaults(data.settings);
+    paintRoot(document.documentElement, latestSettings);
   });
 
   if (window !== window.top) {

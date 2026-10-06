@@ -17,6 +17,10 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   width: 520px;
@@ -34,7 +38,7 @@ body {
 }
 
 .control-center {
-  padding: 12px 14px 14px;
+  padding: 8px 12px 10px;
 }
 
 .control-center__header {
@@ -42,7 +46,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .control-center__title {
@@ -72,7 +76,7 @@ body {
   background: var(--scx-surface);
   border: 1px solid var(--scx-border);
   border-radius: var(--scx-radius-medium);
-  gap: 16px;
+  gap: 10px;
   display: flex;
   flex-direction: column;
 }
@@ -82,7 +86,7 @@ body {
 }
 
 .control-center__group-title {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -316,6 +320,25 @@ body {
   color: var(--scx-text);
 }
 
+.theme-row__delete {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--scx-radius-small);
+  background: transparent;
+  color: var(--scx-text-muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.theme-row__delete:hover {
+  color: var(--scx-text);
+  background: color-mix(in srgb, var(--scx-text) 10%, transparent);
+}
+
 .theme-row__input {
   position: absolute;
   width: 1px;
@@ -363,7 +386,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .theme-mode__label {
@@ -418,9 +441,9 @@ body {
 .custom-theme {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 8px;
-  padding: 10px;
+  gap: 8px;
+  margin-top: 0;
+  padding: 8px;
   border-radius: var(--scx-radius-medium);
   border: 1px solid var(--scx-border);
   background: var(--scx-surface-raised);
@@ -430,13 +453,46 @@ body {
   display: none !important;
 }
 
+.custom-theme__presets[hidden] {
+  display: none !important;
+}
+
+.custom-theme__presets {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.custom-theme__presets .theme-group__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 88px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.custom-theme__presets .theme-row {
+  margin: 0;
+  min-width: 0;
+}
+
+.custom-theme__presets .theme-row__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-theme__presets .theme-group__title {
+  margin: 0 0 6px;
+}
+
 .custom-theme__preview {
   display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
-  gap: 6px 10px;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
   align-items: center;
-  padding: 10px;
+  padding: 6px 8px;
   border-radius: var(--scx-radius-small);
   background: var(--preview-bg, var(--scx-background));
   border: 1px solid color-mix(in srgb, var(--preview-text, var(--scx-text)) 12%, transparent);
@@ -444,34 +500,34 @@ body {
 
 .custom-theme__preview-surface {
   grid-column: 1;
-  height: 28px;
+  height: 20px;
   border-radius: var(--scx-radius-small);
   background: var(--preview-surface, var(--scx-surface));
 }
 
 .custom-theme__preview-accent {
   grid-column: 2;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: var(--preview-accent, var(--scx-accent));
 }
 
 .custom-theme__preview-text {
-  grid-column: 1 / -1;
-  font-size: 18px;
+  grid-column: 3;
+  font-size: 13px;
   font-weight: 600;
   color: var(--preview-text, var(--scx-text));
 }
 
 .custom-theme__fields {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .custom-theme__row {
   display: grid;
-  grid-template-columns: 72px 32px 1fr;
+  grid-template-columns: 72px 28px 1fr;
   align-items: center;
   gap: 8px;
 }
@@ -483,8 +539,8 @@ body {
 }
 
 .custom-theme__color {
-  width: 32px;
-  height: 28px;
+  width: 28px;
+  height: 24px;
   padding: 0;
   border: 1px solid var(--scx-border);
   border-radius: var(--scx-radius-small);
@@ -494,7 +550,7 @@ body {
 
 .custom-theme__hex {
   width: 100%;
-  padding: 5px 8px;
+  padding: 4px 8px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
   color: var(--scx-text);
@@ -507,6 +563,13 @@ body {
   border-color: var(--scx-accent);
 }
 
+.custom-theme__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .custom-theme__contrast {
   margin: 0;
   font-size: 11px;
@@ -515,7 +578,7 @@ body {
 
 .custom-theme__actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-shrink: 0;
   gap: 6px;
 }
 

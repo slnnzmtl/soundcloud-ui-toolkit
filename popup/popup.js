@@ -4,6 +4,7 @@
     RADII,
     CUSTOM_PALETTE_KEYS,
     DEFAULT_CUSTOM_PALETTE,
+    MAX_CUSTOM_PRESETS,
     NATIVE_SCHEME_KEY,
     getSettings,
     setSettings,
@@ -14,6 +15,10 @@
     customPalettesEqual,
     isCompleteCustomPaletteInput,
     sanitizeCustomPalette,
+    createCustomPreset,
+    findCustomPreset,
+    isCustomThemeId,
+    isSavedCustomThemeId,
     applyDocumentTheme,
     applyDocumentRadius,
     applyCustomThemeVariables,
@@ -41,7 +46,9 @@
   const customPreview = document.getElementById("custom-theme-preview");
   const customContrast = document.getElementById("custom-theme-contrast");
   const customReset = document.getElementById("custom-reset");
+  const customSave = document.getElementById("custom-save");
   const customFieldsMount = document.getElementById("custom-theme-fields");
+  const customPresetList = document.getElementById("custom-preset-list");
 
   const CUSTOM_PALETTE_PERSIST_MS = 220;
   const LIVE_SETTINGS_MESSAGE = "scx-settings-live";
@@ -69,15 +76,13 @@
       return;
     }
     currentSettings = next;
-    const theme = next.theme === "custom" ? "custom" : sanitizeTheme(next.theme);
+    const theme = next.theme;
     applyDocumentTheme(theme, {
       includeDefault: true,
       nativeScheme,
     });
-    if (theme === "custom") {
-      applyCustomThemeVariables(document.documentElement, {
-        customPalette: next.customPalette,
-      });
+    if (isCustomThemeId(theme)) {
+      applyCustomThemeVariables(document.documentElement, next);
     } else {
       clearCustomThemeVariables(document.documentElement);
     }
@@ -102,17 +107,42 @@
     return settings && settings.theme === "custom";
   }
 
+  function usesCustomTab(settings) {
+    if (!settings) {
+      return false;
+    }
+    return settings.theme === "custom" || isSavedCustomThemeId(settings.theme);
+  }
+
+  function rememberCatalogTheme(themeId) {
+    if (!isSavedCustomThemeId(themeId) && themeId !== "custom") {
+      lastPresetTheme = sanitizeTheme(themeId);
+    }
+  }
+
+  function currentPresets() {
+    return (currentSettings && currentSettings.customPresets) || [];
+  }
+
   function resolveActivePresetTheme() {
     const checked = document.querySelector('input[name="theme"]:checked');
     if (checked) {
-      lastPresetTheme = sanitizeTheme(checked.value);
+      lastPresetTheme = sanitizeTheme(checked.value, currentPresets());
     }
     return lastPresetTheme;
   }
 
   function paletteFromLastPreset() {
+    resolveActivePresetTheme();
+    const preset = findCustomPreset(currentPresets(), lastPresetTheme);
+    if (preset) {
+      return { ...preset.palette };
+    }
+    const catalogId = isSavedCustomThemeId(lastPresetTheme)
+      ? "midnight"
+      : sanitizeTheme(lastPresetTheme);
     return readPresetSourcePalette(
-      resolveActivePresetTheme(),
+      catalogId,
       document.documentElement,
       { nativeScheme }
     );
@@ -192,17 +222,29 @@
   }
 
   function syncThemeModeUi(settings) {
-    const custom = isCustomMode(settings);
+    const customTab = usesCustomTab(settings);
     document.querySelectorAll('input[name="theme-mode"]').forEach((input) => {
-      input.checked = custom
+      input.checked = customTab
         ? input.value === "custom"
         : input.value === "presets";
     });
-    themeList.hidden = custom;
-    customPanel.hidden = !custom;
-    if (!custom && settings.theme !== "custom") {
-      lastPresetTheme = sanitizeTheme(settings.theme);
+    themeList.hidden = customTab;
+    customPanel.hidden = !customTab;
+    rememberCatalogTheme(settings.theme);
+  }
+
+  function paletteForCustomFields(settings) {
+    if (!settings) {
+      return { ...DEFAULT_CUSTOM_PALETTE };
     }
+    if (settings.theme === "custom") {
+      return settings.customPalette;
+    }
+    const preset = findCustomPreset(settings.customPresets, settings.theme);
+    if (preset) {
+      return preset.palette;
+    }
+    return settings.customPalette;
   }
 
   function updateContrastStatus(palette) {
@@ -351,8 +393,9 @@
     return swatch;
   }
 
-  function createThemeRow(theme) {
+  function createThemeRow(theme, options) {
     const inputId = `theme-${theme.id}`;
+    const deletable = Boolean(options && options.deletable);
 
     const label = document.createElement("label");
     label.className = "theme-row";
@@ -380,7 +423,22 @@
     radio.className = "theme-row__radio";
     radio.setAttribute("aria-hidden", "true");
 
-    label.append(swatches, name, input, radio);
+    label.append(swatches, name);
+    if (deletable) {
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "theme-row__delete";
+      remove.dataset.presetId = theme.id;
+      remove.setAttribute("aria-label", `Delete ${theme.label}`);
+      remove.textContent = "×";
+      remove.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        deleteCustomPreset(theme.id);
+      });
+      label.append(remove);
+    }
+    label.append(input, radio);
     return label;
   }
 
@@ -431,6 +489,89 @@
     mount.replaceChildren(fragment);
   }
 
+  function renderSavedPresetList(customPresets) {
+    if (!customPresetList) {
+      return;
+    }
+    const presets = Array.isArray(customPresets) ? customPresets : [];
+    if (!presets.length) {
+      customPresetList.hidden = true;
+      customPresetList.replaceChildren();
+      return;
+    }
+
+    const title = document.createElement("h3");
+    title.id = "custom-preset-heading";
+    title.className = "theme-group__title";
+    title.textContent = "Saved";
+
+    const rows = document.createElement("div");
+    rows.className = "theme-group__rows";
+    presets.forEach((preset) => {
+      rows.appendChild(
+        createThemeRow(
+          {
+            id: preset.id,
+            label: preset.label,
+            swatches: [
+              preset.palette.background,
+              preset.palette.surface,
+              preset.palette.accent,
+            ],
+          },
+          { deletable: true }
+        )
+      );
+    });
+
+    customPresetList.hidden = false;
+    customPresetList.replaceChildren(title, rows);
+  }
+
+  function syncSavePresetButton(settings) {
+    if (!customSave) {
+      return;
+    }
+    const count = (settings && settings.customPresets
+      ? settings.customPresets
+      : []
+    ).length;
+    customSave.disabled =
+      !settings || !settings.enabled || count >= MAX_CUSTOM_PRESETS;
+  }
+
+  function deleteCustomPreset(id) {
+    const presets = currentPresets().filter((preset) => preset.id !== id);
+    const patch = { customPresets: presets };
+    if (currentSettings && currentSettings.theme === id) {
+      patch.theme = "default";
+      lastPresetTheme = "default";
+    }
+    setSettings(patch).then(syncAllControls);
+  }
+
+  function saveCustomPreset() {
+    flushCustomPalettePersist().then((settings) => {
+      const current = settings || currentSettings;
+      if (!current) {
+        return;
+      }
+      const existing = current.customPresets || [];
+      if (existing.length >= MAX_CUSTOM_PRESETS) {
+        return;
+      }
+      const palette = sanitizeCustomPalette(
+        customPaletteDraft || current.customPalette
+      );
+      const preset = createCustomPreset(palette, existing);
+      lastPresetTheme = preset.id;
+      return setSettings({
+        theme: preset.id,
+        customPresets: [...existing, preset],
+      }).then(syncAllControls);
+    });
+  }
+
   function renderRadiusList() {
     const mount = document.getElementById("radius-list");
     const fragment = document.createDocumentFragment();
@@ -449,9 +590,12 @@
       syncSwitch(document.getElementById(id), Boolean(settings[key]));
     });
 
-    const theme = sanitizeTheme(settings.theme);
+    const theme = sanitizeTheme(settings.theme, settings.customPresets);
+    renderThemeList();
+    renderSavedPresetList(settings.customPresets);
+    const activeTheme = settings.theme === "custom" ? null : theme;
     document.querySelectorAll('input[name="theme"]').forEach((input) => {
-      input.checked = !isCustomMode(settings) && input.value === theme;
+      input.checked = activeTheme !== null && input.value === activeTheme;
     });
 
     const radius = sanitizeRadius(settings.radius);
@@ -460,8 +604,10 @@
     });
 
     syncThemeModeUi(settings);
-    syncCustomFields(settings.customPalette);
+    syncCustomFields(paletteForCustomFields(settings));
+    syncSavePresetButton(settings);
     applyPopupChrome(settings);
+    broadcastLiveSettings();
   }
 
   function bindControls() {
@@ -498,15 +644,20 @@
       });
     });
 
-    document.querySelectorAll('input[name="theme"]').forEach((input) => {
-      input.addEventListener("change", () => {
-        if (!input.checked) {
-          return;
-        }
-        lastPresetTheme = sanitizeTheme(input.value);
-        setSettings({ theme: lastPresetTheme }).then(syncAllControls);
-      });
-    });
+    function onThemeRadioChange(event) {
+      const input = event.target;
+      if (!input || input.name !== "theme" || !input.checked) {
+        return;
+      }
+      const next = sanitizeTheme(input.value, currentPresets());
+      if (!isSavedCustomThemeId(next)) {
+        rememberCatalogTheme(next);
+      }
+      setSettings({ theme: next }).then(syncAllControls);
+    }
+
+    themeList.addEventListener("change", onThemeRadioChange);
+    customPresetList.addEventListener("change", onThemeRadioChange);
 
     document.querySelectorAll('input[name="radius"]').forEach((input) => {
       input.addEventListener("change", () => {
@@ -526,6 +677,10 @@
           customPalette: { ...DEFAULT_CUSTOM_PALETTE },
         }).then(syncAllControls)
       );
+    });
+
+    customSave.addEventListener("click", () => {
+      saveCustomPreset();
     });
 
   }
@@ -557,9 +712,7 @@
   bindControls();
   onNativeSchemeChanged();
   Promise.all([getSettings(), loadNativeScheme()]).then(([settings]) => {
-    if (settings.theme !== "custom") {
-      lastPresetTheme = sanitizeTheme(settings.theme);
-    }
+    rememberCatalogTheme(settings.theme);
     syncAllControls(settings);
   });
   onSettingsChanged((settings) => {

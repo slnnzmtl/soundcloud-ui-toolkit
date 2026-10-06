@@ -5,6 +5,7 @@
 (function (global) {
   const STORAGE_KEY = "scxSettings";
   const PAGE_CACHE_KEY = "scxSettingsCache";
+  const CUSTOM_THEME_STYLE_ID = "scx-custom-theme-vars";
   const ENABLED_CLASS = "scx-enabled";
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
@@ -115,6 +116,8 @@
   );
 
   const THEMES = Object.freeze([...PRESET_THEMES, "custom"]);
+  const MAX_CUSTOM_PRESETS = 12;
+  const CUSTOM_PRESET_ID_RE = /^c_[a-z0-9]+$/;
 
   const CUSTOM_PALETTE_KEYS = Object.freeze([
     "background",
@@ -164,6 +167,7 @@
     theme: "default",
     radius: "md",
     customPalette: DEFAULT_CUSTOM_PALETTE,
+    customPresets: Object.freeze([]),
   });
 
   function themeClass(id) {
@@ -183,11 +187,155 @@
     mimi: "blush",
   });
 
-  function sanitizeTheme(value) {
+  function isSavedCustomThemeId(value) {
+    return typeof value === "string" && CUSTOM_PRESET_ID_RE.test(value);
+  }
+
+  function isCustomThemeId(value) {
+    return value === "custom" || isSavedCustomThemeId(value);
+  }
+
+  function findCustomPreset(presets, id) {
+    if (!Array.isArray(presets) || !id) {
+      return null;
+    }
+    for (const preset of presets) {
+      if (preset && preset.id === id) {
+        return preset;
+      }
+    }
+    return null;
+  }
+
+  function nextCustomPresetLabel(existingLabels) {
+    const labels = existingLabels instanceof Set ? existingLabels : new Set();
+    let n = 1;
+    while (labels.has(`Custom ${n}`)) {
+      n += 1;
+    }
+    return `Custom ${n}`;
+  }
+
+  function generateCustomPresetId() {
+    const bytes = new Uint8Array(6);
+    if (global.crypto && global.crypto.getRandomValues) {
+      global.crypto.getRandomValues(bytes);
+    } else {
+      for (let i = 0; i < bytes.length; i += 1) {
+        bytes[i] = Math.floor(Math.random() * 256);
+      }
+    }
+    let id = "c_";
+    for (const byte of bytes) {
+      id += byte.toString(16).padStart(2, "0");
+    }
+    return id;
+  }
+
+  function sanitizeCustomPreset(value, usedIds, usedLabels) {
+    if (!value || typeof value !== "object") {
+      return null;
+    }
+    if (!isSavedCustomThemeId(value.id) || usedIds.has(value.id)) {
+      return null;
+    }
+    if (!isCompleteCustomPaletteInput(value.palette)) {
+      return null;
+    }
+    let label = typeof value.label === "string" ? value.label.trim() : "";
+    if (label.length > 32) {
+      label = label.slice(0, 32).trim();
+    }
+    if (!label) {
+      label = nextCustomPresetLabel(usedLabels);
+    }
+    return {
+      id: value.id,
+      label,
+      palette: sanitizeCustomPalette(value.palette),
+    };
+  }
+
+  function sanitizeCustomPresets(value) {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    const usedIds = new Set();
+    const usedLabels = new Set();
+    const out = [];
+    for (const item of value) {
+      if (out.length >= MAX_CUSTOM_PRESETS) {
+        break;
+      }
+      const next = sanitizeCustomPreset(item, usedIds, usedLabels);
+      if (!next) {
+        continue;
+      }
+      usedIds.add(next.id);
+      usedLabels.add(next.label);
+      out.push(next);
+    }
+    return out;
+  }
+
+  function customPresetsEqual(a, b) {
+    if (a === b) {
+      return true;
+    }
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+      return false;
+    }
+    return a.every((preset, index) => {
+      const other = b[index];
+      return (
+        preset &&
+        other &&
+        preset.id === other.id &&
+        preset.label === other.label &&
+        customPalettesEqual(preset.palette, other.palette)
+      );
+    });
+  }
+
+  function createCustomPreset(palette, existingPresets) {
+    const presets = sanitizeCustomPresets(existingPresets);
+    const usedIds = new Set(presets.map((preset) => preset.id));
+    const usedLabels = new Set(presets.map((preset) => preset.label));
+    let id = generateCustomPresetId();
+    while (usedIds.has(id)) {
+      id = generateCustomPresetId();
+    }
+    return {
+      id,
+      label: nextCustomPresetLabel(usedLabels),
+      palette: sanitizeCustomPalette(palette),
+    };
+  }
+
+  function resolveCustomPalette(settings) {
+    if (!settings) {
+      return { ...DEFAULT_CUSTOM_PALETTE };
+    }
+    if (isSavedCustomThemeId(settings.theme)) {
+      const preset = findCustomPreset(settings.customPresets, settings.theme);
+      if (preset) {
+        return { ...preset.palette };
+      }
+    }
+    return sanitizeCustomPalette(settings.customPalette);
+  }
+
+  function sanitizeTheme(value, presets) {
     if (THEME_ALIASES[value]) {
       value = THEME_ALIASES[value];
     }
-    return THEMES.includes(value) ? value : DEFAULTS.theme;
+    if (THEMES.includes(value)) {
+      return value;
+    }
+    if (findCustomPreset(presets, value)) {
+      return value;
+    }
+    return DEFAULTS.theme;
   }
 
   function sanitizeRadius(value) {
@@ -408,7 +556,10 @@
     merged.enabled = Boolean(merged.enabled);
     merged.fullWidth = Boolean(merged.fullWidth);
     merged.enlargedQueue = Boolean(merged.enlargedQueue);
-    merged.theme = sanitizeTheme(merged.theme);
+    merged.customPresets = sanitizeCustomPresets(
+      stored && typeof stored === "object" ? stored.customPresets : []
+    );
+    merged.theme = sanitizeTheme(merged.theme, merged.customPresets);
     merged.radius = sanitizeRadius(merged.radius);
     if (
       stored &&
@@ -433,8 +584,14 @@
       theme: settings.theme,
       radius: settings.radius,
     };
+    const presets = sanitizeCustomPresets(settings.customPresets);
+    if (presets.length) {
+      out.customPresets = presets;
+    }
     if (settings.theme === "custom") {
       out.customPalette = sanitizeCustomPalette(settings.customPalette);
+    } else if (isSavedCustomThemeId(settings.theme)) {
+      out.customPalette = sanitizeCustomPalette(resolveCustomPalette(settings));
     }
     return out;
   }
@@ -460,7 +617,8 @@
       raw.enlargedQueue !== merged.enlargedQueue ||
       raw.theme !== merged.theme ||
       raw.radius !== merged.radius ||
-      paletteChanged
+      paletteChanged ||
+      !customPresetsEqual(raw.customPresets || [], merged.customPresets)
     );
   }
 
@@ -489,7 +647,12 @@
       next.enabled = Boolean(next.enabled);
       next.fullWidth = Boolean(next.fullWidth);
       next.enlargedQueue = Boolean(next.enlargedQueue);
-      next.theme = sanitizeTheme(next.theme);
+      if (partial && Object.prototype.hasOwnProperty.call(partial, "customPresets")) {
+        next.customPresets = sanitizeCustomPresets(partial.customPresets);
+      } else {
+        next.customPresets = sanitizeCustomPresets(next.customPresets);
+      }
+      next.theme = sanitizeTheme(next.theme, next.customPresets);
       next.radius = sanitizeRadius(next.radius);
       if (partial && partial.customPalette) {
         next.customPalette = sanitizeCustomPalette(partial.customPalette);
@@ -569,7 +732,13 @@
 
     const includeDefault = Boolean(options && options.includeDefault);
     const nativeScheme = options && options.nativeScheme;
-    const next = sanitizeTheme(theme);
+    let requested = theme;
+    if (THEME_ALIASES[requested]) {
+      requested = THEME_ALIASES[requested];
+    }
+    const next = isCustomThemeId(requested)
+      ? "custom"
+      : sanitizeTheme(requested);
 
     root.classList.remove(THEME_CLASS);
     root.classList.remove(NATIVE_DARK_CLASS);
@@ -594,30 +763,63 @@
     }
   }
 
+  function customThemeStyleHost(root) {
+    const el = root || document.documentElement;
+    if (!el) {
+      return null;
+    }
+    const doc = el.ownerDocument || document;
+    if (!doc) {
+      return null;
+    }
+    let styleEl = doc.getElementById(CUSTOM_THEME_STYLE_ID);
+    if (!styleEl) {
+      styleEl = doc.createElement("style");
+      styleEl.id = CUSTOM_THEME_STYLE_ID;
+      const parent = doc.head || doc.documentElement;
+      parent.appendChild(styleEl);
+    }
+    return styleEl;
+  }
+
   function clearCustomThemeVariables(root) {
     const el = root || document.documentElement;
-    if (!el || !el.style) {
-      return;
+    const styleEl = customThemeStyleHost(el);
+    if (styleEl) {
+      styleEl.textContent = "";
     }
-    for (const name of SCX_DERIVED_VAR_NAMES) {
-      el.style.removeProperty(name);
+    if (el && el.style) {
+      for (const name of SCX_DERIVED_VAR_NAMES) {
+        el.style.removeProperty(name);
+      }
     }
   }
 
   /**
    * Apply resolved custom palette variables on a document root.
+   * Uses a dedicated style tag so SoundCloud cannot wipe vars from html[style].
    * @param {Element} root
    * @param {{ customPalette?: object, colorScheme?: string }} settings
    */
   function applyCustomThemeVariables(root, settings) {
     const el = root || document.documentElement;
-    if (!el || !el.style) {
+    if (!el) {
       return;
     }
-    const palette = derivePalette(settings && settings.customPalette);
+    const palette = derivePalette(resolveCustomPalette(settings));
+    const lines = [];
     for (const name of SCX_DERIVED_VAR_NAMES) {
       if (palette[name] != null) {
-        el.style.setProperty(name, palette[name]);
+        lines.push(`  ${name}: ${palette[name]};`);
+      }
+    }
+    const styleEl = customThemeStyleHost(el);
+    if (styleEl) {
+      styleEl.textContent = `html.scx-theme-custom {\n${lines.join("\n")}\n}`;
+    }
+    if (el.style) {
+      for (const name of SCX_DERIVED_VAR_NAMES) {
+        el.style.removeProperty(name);
       }
     }
   }
@@ -682,6 +884,7 @@
 
   global.ScxSettings = {
     STORAGE_KEY,
+    CUSTOM_THEME_STYLE_ID,
     NATIVE_SCHEME_KEY,
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
@@ -693,12 +896,19 @@
     THEMES,
     CUSTOM_PALETTE_KEYS,
     DEFAULT_CUSTOM_PALETTE,
+    MAX_CUSTOM_PRESETS,
     RADII,
     DEFAULTS,
     themeClass,
     radiusClass,
     THEME_ALIASES,
     sanitizeTheme,
+    sanitizeCustomPresets,
+    findCustomPreset,
+    isCustomThemeId,
+    isSavedCustomThemeId,
+    createCustomPreset,
+    resolveCustomPalette,
     sanitizeRadius,
     normalizeHexColor,
     contrastRatio,
