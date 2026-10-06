@@ -110,9 +110,52 @@
     },
   ]);
 
-  const THEMES = Object.freeze(
+  const PRESET_THEMES = Object.freeze(
     THEME_GROUPS.flatMap((group) => group.themes.map((theme) => theme.id))
   );
+
+  const THEMES = Object.freeze([...PRESET_THEMES, "custom"]);
+
+  const CUSTOM_PALETTE_KEYS = Object.freeze([
+    "background",
+    "surface",
+    "text",
+    "accent",
+  ]);
+
+  /** Stock SoundCloud dark (html.scx-theme-default.scx-native-dark), not Midnight. */
+  const DEFAULT_CUSTOM_PALETTE = Object.freeze({
+    background: "#111111",
+    surface: "#181818",
+    text: "#f2f2f2",
+    accent: "#ff5500",
+  });
+
+  const SCX_DERIVED_VAR_NAMES = Object.freeze([
+    "--scx-background",
+    "--scx-surface",
+    "--scx-surface-raised",
+    "--scx-border",
+    "--scx-text",
+    "--scx-text-muted",
+    "--scx-accent",
+    "--scx-link",
+    "--scx-focus",
+    "--scx-shadow",
+    "--scx-surface-rgb",
+    "--scx-highlight-rgb",
+    "--scx-primary-rgb",
+    "--scx-secondary-rgb",
+    "--scx-special-rgb",
+    "--scx-link-rgb",
+    "--scx-color-scheme",
+    "--scx-overlay",
+    "--scx-overlay-default",
+    "--scx-image-border",
+    "--scx-scrollbar",
+    "--scx-scrollbar-hover",
+    "--scx-player-shadow",
+  ]);
 
   const DEFAULTS = Object.freeze({
     enabled: true,
@@ -120,6 +163,7 @@
     enlargedQueue: true,
     theme: "default",
     radius: "md",
+    customPalette: DEFAULT_CUSTOM_PALETTE,
   });
 
   function themeClass(id) {
@@ -150,6 +194,212 @@
     return RADII.includes(value) ? value : DEFAULTS.radius;
   }
 
+  function normalizeHexColor(value) {
+    if (value == null) {
+      return null;
+    }
+    let raw = String(value).trim().toLowerCase();
+    if (!raw) {
+      return null;
+    }
+    if (!raw.startsWith("#")) {
+      raw = `#${raw}`;
+    }
+    if (/^#[0-9a-f]{3}$/.test(raw)) {
+      raw = `#${raw[1]}${raw[1]}${raw[2]}${raw[2]}${raw[3]}${raw[3]}`;
+    } else if (/^#[0-9a-f]{4}$/.test(raw)) {
+      raw = `#${raw[1]}${raw[1]}${raw[2]}${raw[2]}${raw[3]}${raw[3]}${raw[4]}${raw[4]}`;
+    } else if (/^#[0-9a-f]{8}$/.test(raw)) {
+      raw = raw.slice(0, 7);
+    }
+    if (!/^#[0-9a-f]{6}$/.test(raw)) {
+      return null;
+    }
+    return raw;
+  }
+
+  function parseHexColor(hex) {
+    const normalized = normalizeHexColor(hex);
+    if (!normalized) {
+      return null;
+    }
+    return {
+      r: parseInt(normalized.slice(1, 3), 16),
+      g: parseInt(normalized.slice(3, 5), 16),
+      b: parseInt(normalized.slice(5, 7), 16),
+    };
+  }
+
+  function rgbToHex({ r, g, b }) {
+    const clamp = (n) => Math.max(0, Math.min(255, Math.round(n)));
+    const toPart = (n) => clamp(n).toString(16).padStart(2, "0");
+    return `#${toPart(r)}${toPart(g)}${toPart(b)}`;
+  }
+
+  function mixRgb(a, b, weightB) {
+    const w = Math.max(0, Math.min(1, weightB));
+    return {
+      r: a.r + (b.r - a.r) * w,
+      g: a.g + (b.g - a.g) * w,
+      b: a.b + (b.b - a.b) * w,
+    };
+  }
+
+  function relativeLuminance({ r, g, b }) {
+    const channel = (c) => {
+      const s = c / 255;
+      return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  }
+
+  function contrastRatio(foreground, background) {
+    const fg = parseHexColor(foreground);
+    const bg = parseHexColor(background);
+    if (!fg || !bg) {
+      return null;
+    }
+    const l1 = relativeLuminance(fg);
+    const l2 = relativeLuminance(bg);
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  function detectColorScheme(backgroundHex, override) {
+    if (override === "light" || override === "dark") {
+      return override;
+    }
+    const rgb = parseHexColor(backgroundHex);
+    if (!rgb) {
+      return "dark";
+    }
+    return relativeLuminance(rgb) > 0.4 ? "light" : "dark";
+  }
+
+  function rgbTriplet(hex) {
+    const rgb = parseHexColor(hex);
+    if (!rgb) {
+      return "0, 0, 0";
+    }
+    return `${rgb.r}, ${rgb.g}, ${rgb.b}`;
+  }
+
+  function sanitizeCustomPalette(value) {
+    const source =
+      value && typeof value === "object" ? value : DEFAULT_CUSTOM_PALETTE;
+    const next = {};
+    let valid = true;
+    for (const key of CUSTOM_PALETTE_KEYS) {
+      const normalized = normalizeHexColor(source[key]);
+      if (!normalized) {
+        valid = false;
+        break;
+      }
+      next[key] = normalized;
+    }
+    if (!valid) {
+      return { ...DEFAULT_CUSTOM_PALETTE };
+    }
+    return next;
+  }
+
+  function customPalettesEqual(a, b) {
+    if (!a || !b) {
+      return false;
+    }
+    return CUSTOM_PALETTE_KEYS.every((key) => a[key] === b[key]);
+  }
+
+  function isCompleteCustomPaletteInput(value) {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    return CUSTOM_PALETTE_KEYS.every((key) => normalizeHexColor(value[key]));
+  }
+
+  /**
+   * Deterministic supporting palette from four source colors.
+   * @param {{ background: string, surface: string, text: string, accent: string }} palette
+   */
+  function derivePalette(palette) {
+    const base = sanitizeCustomPalette(palette);
+    const bg = parseHexColor(base.background);
+    const surface = parseHexColor(base.surface);
+    const text = parseHexColor(base.text);
+    const accent = parseHexColor(base.accent);
+    if (!bg || !surface || !text || !accent) {
+      return derivePalette(DEFAULT_CUSTOM_PALETTE);
+    }
+
+    const scheme = detectColorScheme(base.background);
+    const isDark = scheme === "dark";
+
+    const surfaceRaised = rgbToHex(
+      mixRgb(surface, text, isDark ? 0.1 : 0.06)
+    );
+    const border = rgbToHex(mixRgb(surface, text, isDark ? 0.38 : 0.18));
+    const textMuted = rgbToHex(mixRgb(text, bg, 0.42));
+    const linkBlue = { r: 138, g: 180, b: 255 };
+    const link = isDark
+      ? rgbToHex(mixRgb(linkBlue, accent, 0.12))
+      : rgbToHex(mixRgb(accent, text, 0.35));
+    const focus = isDark ? rgbToHex(mixRgb(linkBlue, accent, 0.2)) : link;
+
+    const shadow = isDark
+      ? "0 12px 32px rgb(0 0 0 / 35%)"
+      : "0 8px 24px rgb(0 0 0 / 12%)";
+    const playerShadow = isDark
+      ? "0 -1px 0 var(--scx-border), 0 -12px 32px rgb(0 0 0 / 22%)"
+      : "0 -1px 0 var(--scx-border), 0 -8px 24px rgb(0 0 0 / 12%)";
+    const overlay = isDark ? "rgb(0 0 0 / 62%)" : "rgb(0 0 0 / 45%)";
+    const imageBorder = isDark
+      ? "rgb(255 255 255 / 12%)"
+      : "rgb(0 0 0 / 12%)";
+    const scrollbar = isDark
+      ? "rgb(255 255 255 / 28%)"
+      : "rgb(0 0 0 / 28%)";
+    const scrollbarHover = isDark
+      ? "rgb(255 255 255 / 45%)"
+      : "rgb(0 0 0 / 45%)";
+
+    const raisedRgb = parseHexColor(surfaceRaised);
+    const mutedRgb = parseHexColor(textMuted);
+    const linkRgb = parseHexColor(link);
+
+    return {
+      "--scx-background": base.background,
+      "--scx-surface": base.surface,
+      "--scx-surface-raised": surfaceRaised,
+      "--scx-border": border,
+      "--scx-text": base.text,
+      "--scx-text-muted": textMuted,
+      "--scx-accent": base.accent,
+      "--scx-link": link,
+      "--scx-focus": focus,
+      "--scx-shadow": shadow,
+      "--scx-surface-rgb": rgbTriplet(base.surface),
+      "--scx-highlight-rgb": raisedRgb
+        ? `${raisedRgb.r}, ${raisedRgb.g}, ${raisedRgb.b}`
+        : rgbTriplet(surfaceRaised),
+      "--scx-primary-rgb": rgbTriplet(base.text),
+      "--scx-secondary-rgb": mutedRgb
+        ? `${mutedRgb.r}, ${mutedRgb.g}, ${mutedRgb.b}`
+        : rgbTriplet(textMuted),
+      "--scx-special-rgb": rgbTriplet(base.accent),
+      "--scx-link-rgb": linkRgb
+        ? `${linkRgb.r}, ${linkRgb.g}, ${linkRgb.b}`
+        : rgbTriplet(link),
+      "--scx-color-scheme": scheme,
+      "--scx-overlay": overlay,
+      "--scx-overlay-default": overlay,
+      "--scx-image-border": imageBorder,
+      "--scx-scrollbar": scrollbar,
+      "--scx-scrollbar-hover": scrollbarHover,
+      "--scx-player-shadow": playerShadow,
+    };
+  }
+
   function mergeWithDefaults(stored) {
     const merged = {
       ...DEFAULTS,
@@ -160,19 +410,57 @@
     merged.enlargedQueue = Boolean(merged.enlargedQueue);
     merged.theme = sanitizeTheme(merged.theme);
     merged.radius = sanitizeRadius(merged.radius);
+    if (
+      stored &&
+      typeof stored === "object" &&
+      stored.customPalette &&
+      typeof stored.customPalette === "object"
+    ) {
+      merged.customPalette = sanitizeCustomPalette(stored.customPalette);
+    } else if (merged.theme === "custom") {
+      merged.customPalette = sanitizeCustomPalette(stored && stored.customPalette);
+    } else {
+      merged.customPalette = { ...DEFAULT_CUSTOM_PALETTE };
+    }
     return merged;
+  }
+
+  function persistableSettings(settings) {
+    const out = {
+      enabled: settings.enabled,
+      fullWidth: settings.fullWidth,
+      enlargedQueue: settings.enlargedQueue,
+      theme: settings.theme,
+      radius: settings.radius,
+    };
+    if (settings.theme === "custom") {
+      out.customPalette = sanitizeCustomPalette(settings.customPalette);
+    }
+    return out;
   }
 
   function settingsNeedPersist(raw, merged) {
     if (!raw || typeof raw !== "object") {
       return true;
     }
+    const palettePersist =
+      merged.theme === "custom" ||
+      (raw.customPalette && typeof raw.customPalette === "object");
+    const paletteChanged =
+      palettePersist &&
+      !customPalettesEqual(
+        raw.customPalette && typeof raw.customPalette === "object"
+          ? raw.customPalette
+          : null,
+        merged.customPalette
+      );
     return (
       raw.enabled !== merged.enabled ||
       raw.fullWidth !== merged.fullWidth ||
       raw.enlargedQueue !== merged.enlargedQueue ||
       raw.theme !== merged.theme ||
-      raw.radius !== merged.radius
+      raw.radius !== merged.radius ||
+      paletteChanged
     );
   }
 
@@ -185,14 +473,17 @@
           resolve(merged);
           return;
         }
-        chrome.storage.sync.set({ [STORAGE_KEY]: merged }, () =>
-          resolve(merged)
+        chrome.storage.sync.set(
+          { [STORAGE_KEY]: persistableSettings(merged) },
+          () => resolve(merged)
         );
       });
     });
   }
 
-  function setSettings(partial) {
+  let settingsWriteTail = Promise.resolve();
+
+  function applySettingsPartial(partial) {
     return getSettings().then((current) => {
       const next = { ...current, ...partial };
       next.enabled = Boolean(next.enabled);
@@ -200,10 +491,30 @@
       next.enlargedQueue = Boolean(next.enlargedQueue);
       next.theme = sanitizeTheme(next.theme);
       next.radius = sanitizeRadius(next.radius);
-      return new Promise((resolve) => {
-        chrome.storage.sync.set({ [STORAGE_KEY]: next }, () => resolve(next));
+      if (partial && partial.customPalette) {
+        next.customPalette = sanitizeCustomPalette(partial.customPalette);
+      } else {
+        next.customPalette = sanitizeCustomPalette(next.customPalette);
+      }
+      return new Promise((resolve, reject) => {
+        chrome.storage.sync.set(
+          { [STORAGE_KEY]: persistableSettings(next) },
+          () => {
+            if (chrome.runtime.lastError) {
+              reject(chrome.runtime.lastError);
+              return;
+            }
+            resolve(next);
+          }
+        );
       });
     });
+  }
+
+  function setSettings(partial) {
+    const result = settingsWriteTail.then(() => applySettingsPartial(partial));
+    settingsWriteTail = result.catch(() => {});
+    return result;
   }
 
   function readPageCache() {
@@ -283,6 +594,60 @@
     }
   }
 
+  function clearCustomThemeVariables(root) {
+    const el = root || document.documentElement;
+    if (!el || !el.style) {
+      return;
+    }
+    for (const name of SCX_DERIVED_VAR_NAMES) {
+      el.style.removeProperty(name);
+    }
+  }
+
+  /**
+   * Apply resolved custom palette variables on a document root.
+   * @param {Element} root
+   * @param {{ customPalette?: object, colorScheme?: string }} settings
+   */
+  function applyCustomThemeVariables(root, settings) {
+    const el = root || document.documentElement;
+    if (!el || !el.style) {
+      return;
+    }
+    const palette = derivePalette(settings && settings.customPalette);
+    for (const name of SCX_DERIVED_VAR_NAMES) {
+      if (palette[name] != null) {
+        el.style.setProperty(name, palette[name]);
+      }
+    }
+  }
+
+  /**
+   * Read four source colors from computed preset tokens (popup preview).
+   * @param {string} presetId
+   * @param {Element} [root]
+   * @param {{ nativeScheme?: string }} [options]
+   */
+  function readPresetSourcePalette(presetId, root, options) {
+    const el = root || document.documentElement;
+    if (!el) {
+      return { ...DEFAULT_CUSTOM_PALETTE };
+    }
+    const nativeScheme = options && options.nativeScheme;
+    applyDocumentTheme(presetId, {
+      root: el,
+      includeDefault: true,
+      nativeScheme,
+    });
+    const style = global.getComputedStyle(el);
+    return sanitizeCustomPalette({
+      background: style.getPropertyValue("--scx-background"),
+      surface: style.getPropertyValue("--scx-surface"),
+      text: style.getPropertyValue("--scx-text"),
+      accent: style.getPropertyValue("--scx-accent"),
+    });
+  }
+
   /**
    * Apply radius classes on a document root.
    * @param {string} radius
@@ -315,25 +680,6 @@
     }
   }
 
-  function copyScxClasses(fromRoot, toRoot) {
-    if (!fromRoot || !toRoot || fromRoot === toRoot || !fromRoot.classList) {
-      return false;
-    }
-    let copied = false;
-    const classes = fromRoot.classList;
-    const items =
-      typeof classes.forEach === "function"
-        ? classes
-        : Array.from(classes);
-    items.forEach((cls) => {
-      if (typeof cls === "string" && cls.startsWith("scx-")) {
-        toRoot.classList.add(cls);
-        copied = true;
-      }
-    });
-    return copied;
-  }
-
   global.ScxSettings = {
     STORAGE_KEY,
     NATIVE_SCHEME_KEY,
@@ -345,6 +691,8 @@
     NATIVE_DARK_CLASS,
     THEME_GROUPS,
     THEMES,
+    CUSTOM_PALETTE_KEYS,
+    DEFAULT_CUSTOM_PALETTE,
     RADII,
     DEFAULTS,
     themeClass,
@@ -352,14 +700,23 @@
     THEME_ALIASES,
     sanitizeTheme,
     sanitizeRadius,
+    normalizeHexColor,
+    contrastRatio,
+    customPalettesEqual,
+    isCompleteCustomPaletteInput,
+    sanitizeCustomPalette,
+    derivePalette,
     mergeWithDefaults,
+    persistableSettings,
     getSettings,
     setSettings,
     readPageCache,
     writePageCache,
     onSettingsChanged,
     applyDocumentTheme,
+    applyCustomThemeVariables,
+    clearCustomThemeVariables,
+    readPresetSourcePalette,
     applyDocumentRadius,
-    copyScxClasses,
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);

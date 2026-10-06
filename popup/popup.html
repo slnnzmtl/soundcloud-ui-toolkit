@@ -79,11 +79,66 @@
         </div>
 
         <div
+          class="theme-mode"
+          role="radiogroup"
+          aria-labelledby="theme-mode-label"
+        >
+          <span id="theme-mode-label" class="theme-mode__label">Colors</span>
+          <div class="theme-mode__options">
+            <label class="theme-mode__option">
+              <input
+                class="theme-mode__input"
+                type="radio"
+                name="theme-mode"
+                value="presets"
+                checked
+              />
+              <span class="theme-mode__chip">Presets</span>
+            </label>
+            <label class="theme-mode__option">
+              <input
+                class="theme-mode__input"
+                type="radio"
+                name="theme-mode"
+                value="custom"
+              />
+              <span class="theme-mode__chip">Custom</span>
+            </label>
+          </div>
+        </div>
+
+        <div
           id="theme-list"
           class="theme-list"
           role="radiogroup"
           aria-labelledby="appearance-heading"
         ></div>
+
+        <div id="custom-theme-panel" class="custom-theme" hidden>
+          <div
+            class="custom-theme__preview"
+            id="custom-theme-preview"
+            aria-hidden="true"
+          >
+            <span class="custom-theme__preview-surface"></span>
+            <span class="custom-theme__preview-accent"></span>
+            <span class="custom-theme__preview-text">Aa</span>
+          </div>
+
+          <div class="custom-theme__fields" id="custom-theme-fields"></div>
+
+          <p
+            id="custom-theme-contrast"
+            class="custom-theme__contrast"
+            role="status"
+          ></p>
+
+          <div class="custom-theme__actions">
+            <button type="button" class="custom-theme__btn" id="custom-reset">
+              Reset colors
+            </button>
+          </div>
+        </div>
       </section>
       </div>
     </main>

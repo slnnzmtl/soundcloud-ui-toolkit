@@ -59,10 +59,18 @@ function loadScxSettings(options = {}) {
   const store = options.store ?? {};
   const pageCache = options.pageCache ?? { value: null };
 
+  const computedVars = options.computedVars ?? {};
   const context = {
     globalThis: undefined,
     self: undefined,
     document: { documentElement },
+    getComputedStyle() {
+      return {
+        getPropertyValue(name) {
+          return computedVars[name] || "";
+        },
+      };
+    },
     localStorage: {
       getItem(key) {
         if (key !== "scxSettingsCache") {
@@ -177,8 +185,175 @@ test("sanitizeTheme maps aliases and rejects unknown ids", () => {
   assert.equal(ScxSettings.sanitizeTheme("spotify"), "grove");
   assert.equal(ScxSettings.sanitizeTheme("mimi"), "blush");
   assert.equal(ScxSettings.sanitizeTheme("midnight"), "midnight");
+  assert.equal(ScxSettings.sanitizeTheme("custom"), "custom");
   assert.equal(ScxSettings.sanitizeTheme("not-a-theme"), "default");
   assert.equal(ScxSettings.sanitizeTheme(undefined), "default");
+});
+
+test("normalizeHexColor accepts common forms and rejects invalid input", () => {
+  const { ScxSettings } = loadScxSettings();
+  assert.equal(ScxSettings.normalizeHexColor("#abc"), "#aabbcc");
+  assert.equal(ScxSettings.normalizeHexColor("ABC"), "#aabbcc");
+  assert.equal(ScxSettings.normalizeHexColor("#0b0d12"), "#0b0d12");
+  assert.equal(ScxSettings.normalizeHexColor("#0b0d12ff"), "#0b0d12");
+  assert.equal(ScxSettings.normalizeHexColor("not-a-color"), null);
+  assert.equal(ScxSettings.normalizeHexColor(""), null);
+});
+
+test("derivePalette builds deterministic supporting tokens", () => {
+  const { ScxSettings } = loadScxSettings();
+  const palette = ScxSettings.derivePalette({
+    background: "#0b0d12",
+    surface: "#141821",
+    text: "#f5f7fb",
+    accent: "#ff5500",
+  });
+  assert.equal(palette["--scx-background"], "#0b0d12");
+  assert.equal(palette["--scx-accent"], "#ff5500");
+  assert.equal(palette["--scx-color-scheme"], "dark");
+  assert.match(palette["--scx-surface-rgb"], /^\d+, \d+, \d+$/);
+  assert.match(palette["--scx-overlay"], /^rgb\(/);
+  assert.match(palette["--scx-scrollbar"], /^rgb\(/);
+});
+
+test("derivePalette sets light color-scheme for bright backgrounds", () => {
+  const { ScxSettings } = loadScxSettings();
+  const light = ScxSettings.derivePalette({
+    background: "#f2f2f2",
+    surface: "#ffffff",
+    text: "#121212",
+    accent: "#ff5500",
+  });
+  assert.equal(light["--scx-color-scheme"], "light");
+  const dark = ScxSettings.derivePalette({
+    background: "#0b0d12",
+    surface: "#141821",
+    text: "#f5f7fb",
+    accent: "#ff5500",
+  });
+  assert.equal(dark["--scx-color-scheme"], "dark");
+});
+
+test("persistableSettings keeps customPalette only for custom theme", () => {
+  const { ScxSettings } = loadScxSettings();
+  const preset = ScxSettings.persistableSettings({
+    enabled: true,
+    fullWidth: true,
+    enlargedQueue: true,
+    theme: "midnight",
+    radius: "md",
+    customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
+  });
+  assert.equal(preset.customPalette, undefined);
+
+  const custom = ScxSettings.persistableSettings({
+    enabled: true,
+    fullWidth: true,
+    enlargedQueue: true,
+    theme: "custom",
+    radius: "md",
+    customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
+  });
+  assert.equal(custom.customPalette.background, "#111111");
+  assert.equal(custom.customPalette.accent, "#ff5500");
+});
+
+test("getSettings does not persist default customPalette for preset-only storage", async () => {
+  const canonical = {
+    enabled: true,
+    fullWidth: true,
+    enlargedQueue: true,
+    theme: "midnight",
+    radius: "md",
+  };
+  const { ScxSettings, store } = loadScxSettings({
+    store: { scxSettings: { ...canonical } },
+  });
+  const before = store.scxSettings;
+  const settings = await ScxSettings.getSettings();
+  assert.equal(settings.theme, "midnight");
+  assert.equal(store.scxSettings, before);
+  assert.deepEqual(settings.customPalette, ScxSettings.DEFAULT_CUSTOM_PALETTE);
+});
+
+test("applyCustomThemeVariables sets and clearCustomThemeVariables removes inline vars", () => {
+  const { ScxSettings, documentElement } = loadScxSettings();
+  documentElement.style = {
+    props: {},
+    setProperty(name, value) {
+      this.props[name] = value;
+    },
+    removeProperty(name) {
+      delete this.props[name];
+    },
+  };
+
+  ScxSettings.applyCustomThemeVariables(documentElement, {
+    customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
+  });
+  assert.equal(
+    documentElement.style.props["--scx-background"],
+    "#111111"
+  );
+  assert.ok(documentElement.style.props["--scx-border"]);
+
+  ScxSettings.clearCustomThemeVariables(documentElement);
+  assert.equal(documentElement.style.props["--scx-background"], undefined);
+  assert.equal(documentElement.style.props["--scx-border"], undefined);
+});
+
+test("applyDocumentTheme applies custom class like other non-default themes", () => {
+  const { ScxSettings, classList } = loadScxSettings();
+  ScxSettings.applyDocumentTheme("custom");
+  assert.deepEqual(classList.toArray(), ["scx-theme", "scx-theme-custom"]);
+  ScxSettings.applyDocumentTheme("default");
+  assert.deepEqual(classList.toArray(), []);
+});
+
+test("switching from custom to preset leaves no inline custom variables", () => {
+  const { ScxSettings, documentElement, classList } = loadScxSettings();
+  documentElement.style = {
+    props: {},
+    setProperty(name, value) {
+      this.props[name] = value;
+    },
+    removeProperty(name) {
+      delete this.props[name];
+    },
+  };
+  ScxSettings.applyDocumentTheme("custom");
+  ScxSettings.applyCustomThemeVariables(documentElement, {
+    customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
+  });
+  ScxSettings.applyDocumentTheme("midnight");
+  ScxSettings.clearCustomThemeVariables(documentElement);
+  assert.deepEqual(classList.toArray(), ["scx-theme", "scx-theme-midnight"]);
+  assert.equal(Object.keys(documentElement.style.props).length, 0);
+});
+
+test("readPresetSourcePalette applies scx-native-dark for default + dark scheme", () => {
+  const { ScxSettings, documentElement, classList } = loadScxSettings();
+  ScxSettings.readPresetSourcePalette("default", documentElement, {
+    nativeScheme: "dark",
+  });
+  assert.ok(classList.contains("scx-theme-default"));
+  assert.ok(classList.contains("scx-native-dark"));
+});
+
+test("readPresetSourcePalette maps computed preset tokens to source colors", () => {
+  const { ScxSettings, documentElement } = loadScxSettings({
+    computedVars: {
+      "--scx-background": "#0b0d12",
+      "--scx-surface": "#141821",
+      "--scx-text": "#f5f7fb",
+      "--scx-accent": "#ff5a1f",
+    },
+  });
+  const palette = ScxSettings.readPresetSourcePalette("midnight", documentElement);
+  assert.equal(palette.background, "#0b0d12");
+  assert.equal(palette.surface, "#141821");
+  assert.equal(palette.text, "#f5f7fb");
+  assert.equal(palette.accent, "#ff5a1f");
 });
 
 test("sanitizeRadius accepts catalog values and falls back", () => {
@@ -232,20 +407,6 @@ test("applyDocumentTheme omits default on SoundCloud; includeDefault keeps it", 
   assert.deepEqual(other.toArray(), ["scx-theme", "scx-theme-purple"]);
 });
 
-test("copyScxClasses copies scx-* tokens onto the iframe root", () => {
-  const { ScxSettings } = loadScxSettings();
-  const from = { classList: createClassList(["scx-theme", "scx-theme-purple", "header"]) };
-  const to = { classList: createClassList(["other"]) };
-
-  assert.equal(ScxSettings.copyScxClasses(from, to), true);
-  assert.deepEqual(to.classList.toArray(), [
-    "other",
-    "scx-theme",
-    "scx-theme-purple",
-  ]);
-  assert.equal(ScxSettings.copyScxClasses(from, from), false);
-});
-
 test("applyDocumentRadius clears when inactive", () => {
   const { ScxSettings, classList } = loadScxSettings();
 
@@ -296,7 +457,9 @@ test("ScxSettings export matches content + popup usage", () => {
   assert.deepEqual(
     Object.keys(ScxSettings).sort(),
     [
+      "CUSTOM_PALETTE_KEYS",
       "DEFAULTS",
+      "DEFAULT_CUSTOM_PALETTE",
       "ENABLED_CLASS",
       "ENLARGED_QUEUE_CLASS",
       "FULL_WIDTH_CLASS",
@@ -309,14 +472,23 @@ test("ScxSettings export matches content + popup usage", () => {
       "THEME_CLASS",
       "THEME_GROUPS",
       "THEMES",
+      "applyCustomThemeVariables",
       "applyDocumentRadius",
       "applyDocumentTheme",
-      "copyScxClasses",
+      "clearCustomThemeVariables",
+      "contrastRatio",
+      "customPalettesEqual",
+      "derivePalette",
       "getSettings",
+      "isCompleteCustomPaletteInput",
       "mergeWithDefaults",
+      "normalizeHexColor",
       "onSettingsChanged",
+      "persistableSettings",
       "radiusClass",
       "readPageCache",
+      "readPresetSourcePalette",
+      "sanitizeCustomPalette",
       "sanitizeRadius",
       "sanitizeTheme",
       "setSettings",
@@ -538,8 +710,29 @@ test("scrollbar color is themed once; styles.css keeps size only on *", () => {
   );
   assert.match(
     themes,
-    /html\.scx-enabled\.scx-theme,\s*\nhtml\.scx-enabled\.scx-theme \*\s*\{[\s\S]*?scrollbar-color:\s*rgb\(255 255 255 \/ 28%\)/
+    /html\.scx-enabled\.scx-theme,\s*\nhtml\.scx-enabled\.scx-theme \*\s*\{[\s\S]*?scrollbar-color:\s*var\(--scx-scrollbar/
   );
+  assert.match(
+    themes,
+    /color-scheme:\s*var\(--scx-color-scheme,\s*dark\)/
+  );
+});
+
+test("popup uses shared custom theme helpers for chrome preview", () => {
+  const popupJs = fs.readFileSync(path.join(ROOT, "popup/popup.js"), "utf8");
+  const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
+  assert.match(popupJs, /applyCustomThemeVariables/);
+  assert.match(popupJs, /clearCustomThemeVariables/);
+  assert.match(popupJs, /commitCustomPalette/);
+  assert.match(popupJs, /readPresetSourcePalette/);
+  assert.match(html, /id="custom-theme-panel"/);
+  assert.match(html, /name="theme-mode"/);
+});
+
+test("content paintRoot applies and clears custom variables", () => {
+  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  assert.match(content, /applyCustomThemeVariables\(root, settings\)/);
+  assert.match(content, /clearCustomThemeVariables\(root\)/);
 });
 
 test("isOpaqueChildUrl and isSoundCloudUrl classify inject targets", () => {

@@ -16,7 +16,7 @@ html[class*="scx-radius-"] {
 /* Shared overrides — active whenever any custom theme is selected */
 html.scx-theme body.theme-light,
 html.scx-theme body.theme-dark {
-  color-scheme: dark !important;
+  color-scheme: var(--scx-color-scheme, dark) !important;
 
   --surface-rgb: var(--scx-surface-rgb) !important;
   --highlight-rgb: var(--scx-highlight-rgb) !important;
@@ -44,9 +44,9 @@ html.scx-theme body.theme-dark {
   --link-primary-color: var(--scx-text) !important;
   --link-secondary-color: var(--scx-text-muted) !important;
 
-  --imageBorder-color: rgb(255 255 255 / 12%) !important;
-  --overlay-color: rgb(0 0 0 / 62%) !important;
-  --overlay-default-color: rgb(0 0 0 / 62%) !important;
+  --imageBorder-color: var(--scx-image-border, rgb(255 255 255 / 12%)) !important;
+  --overlay-color: var(--scx-overlay, rgb(0 0 0 / 62%)) !important;
+  --overlay-default-color: var(--scx-overlay-default, rgb(0 0 0 / 62%)) !important;
 
   --button-primary-background-color: var(--scx-text) !important;
   --button-primary-font-color: var(--scx-background) !important;
@@ -82,15 +82,15 @@ html.scx-theme #app {
 
 html.scx-enabled.scx-theme,
 html.scx-enabled.scx-theme * {
-  scrollbar-color: rgb(255 255 255 / 28%) transparent;
+  scrollbar-color: var(--scx-scrollbar, rgb(255 255 255 / 28%)) transparent;
 }
 
 html.scx-enabled.scx-theme ::-webkit-scrollbar-thumb {
-  background-color: rgb(255 255 255 / 28%);
+  background-color: var(--scx-scrollbar, rgb(255 255 255 / 28%));
 }
 
 html.scx-enabled.scx-theme ::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(255 255 255 / 45%);
+  background-color: var(--scx-scrollbar-hover, rgb(255 255 255 / 45%));
 }
 
 html.scx-theme body {
@@ -241,9 +241,11 @@ html.scx-theme .playControls__inner {
 }
 
 html.scx-theme .playControls__inner {
-  box-shadow:
+  box-shadow: var(
+    --scx-player-shadow,
     0 -1px 0 var(--scx-border),
-    0 -12px 32px rgb(0 0 0 / 22%) !important;
+    0 -12px 32px rgb(0 0 0 / 22%)
+  ) !important;
 }
 
 html.scx-theme .queue {

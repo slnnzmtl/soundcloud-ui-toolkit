@@ -7,13 +7,17 @@
     NATIVE_SCHEME_KEY,
     applyDocumentTheme,
     applyDocumentRadius,
+    applyCustomThemeVariables,
+    clearCustomThemeVariables,
     getSettings,
+    mergeWithDefaults,
     readPageCache,
     writePageCache,
     onSettingsChanged,
   } = ScxSettings;
 
   const SETTINGS_MESSAGE = "scx-settings";
+  const LIVE_SETTINGS_MESSAGE = "scx-settings-live";
   const STYLE_ID = "scx-extension-css";
   const STYLE_FILES = [
     "styles.css",
@@ -128,7 +132,13 @@
       ENLARGED_QUEUE_CLASS,
       active && Boolean(settings.enlargedQueue)
     );
-    applyDocumentTheme(active ? settings.theme : "default", { root });
+    const theme = active ? settings.theme : "default";
+    applyDocumentTheme(theme, { root });
+    if (active && theme === "custom") {
+      applyCustomThemeVariables(root, settings);
+    } else {
+      clearCustomThemeVariables(root);
+    }
     applyDocumentRadius(settings.radius, { active, root });
   }
 
@@ -335,6 +345,15 @@
   globalThis.__scxContentLoaded = true;
 
   onSettingsChanged((settings) => {
+    writePageCache(settings);
+    applySettings(settings);
+  });
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (!message || message.type !== LIVE_SETTINGS_MESSAGE || !message.settings) {
+      return;
+    }
+    const settings = mergeWithDefaults(message.settings);
     writePageCache(settings);
     applySettings(settings);
   });
