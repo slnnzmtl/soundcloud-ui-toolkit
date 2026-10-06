@@ -286,7 +286,21 @@ test("sanitizeCustomPresets keeps valid unique presets and drops junk", () => {
   assert.equal(cleaned[1].label, "Custom 1");
 });
 
-test("persistableSettings keeps customPalette for saved custom theme ids", () => {
+test("sanitizeCustomPresets caps at MAX_CUSTOM_PRESETS", () => {
+  const { ScxSettings } = loadScxSettings();
+  assert.equal(ScxSettings.MAX_CUSTOM_PRESETS, 6);
+  const palette = { ...ScxSettings.DEFAULT_CUSTOM_PALETTE };
+  const tooMany = Array.from({ length: 8 }, (_item, index) => ({
+    id: `c_abc${index.toString().padStart(3, "0")}`,
+    label: `Custom ${index + 1}`,
+    palette,
+  }));
+  const cleaned = ScxSettings.sanitizeCustomPresets(tooMany);
+  assert.equal(cleaned.length, 6);
+  assert.equal(cleaned[5].id, "c_abc005");
+});
+
+test("persistableSettings omits customPalette for saved custom theme ids", () => {
   const { ScxSettings } = loadScxSettings();
   const out = ScxSettings.persistableSettings({
     enabled: true,
@@ -308,7 +322,7 @@ test("persistableSettings keeps customPalette for saved custom theme ids", () =>
       },
     ],
   });
-  assert.equal(out.customPalette.background, "#0b0d12");
+  assert.equal(out.customPalette, undefined);
   assert.equal(out.customPresets.length, 1);
 });
 
@@ -615,6 +629,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "DEFAULTS",
       "DEFAULT_CUSTOM_PALETTE",
       "MAX_CUSTOM_PRESETS",
+      "CUSTOM_PRESET_LABEL_MAX_LENGTH",
       "createCustomPreset",
       "findCustomPreset",
       "isCustomThemeId",
@@ -638,7 +653,6 @@ test("ScxSettings export matches content + popup usage", () => {
       "applyDocumentRadius",
       "applyDocumentTheme",
       "clearCustomThemeVariables",
-      "contrastRatio",
       "customPalettesEqual",
       "derivePalette",
       "getSettings",
@@ -898,8 +912,15 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
   assert.match(popupJs, /lastPresetTheme = preset\.id/);
   assert.match(popupJs, /themeList\.addEventListener\("change"/);
   assert.match(popupJs, /broadcastLiveSettings\(\)/);
-  assert.match(popupCss, /custom-theme__presets/);
-  assert.match(html, /id="custom-preset-list"/);
+  assert.match(popupJs, /addEventListener\("dblclick"/);
+  assert.match(popupJs, /renameCustomPreset/);
+  assert.match(popupJs, /theme-row__name--editing/);
+  assert.match(popupJs, /resolveCustomPalette/);
+  assert.match(popupCss, /grid-template-columns:\s*minmax\(0, 1fr\) minmax\(0, 1fr\)/);
+  assert.doesNotMatch(
+    popupCss,
+    /\.custom-theme__presets \.theme-group__rows \{[\s\S]*?max-height/
+  );
 });
 
 test("content paintRoot applies and clears custom variables", () => {

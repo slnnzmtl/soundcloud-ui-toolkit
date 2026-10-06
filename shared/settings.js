@@ -116,7 +116,8 @@
   );
 
   const THEMES = Object.freeze([...PRESET_THEMES, "custom"]);
-  const MAX_CUSTOM_PRESETS = 12;
+  const MAX_CUSTOM_PRESETS = 6;
+  const CUSTOM_PRESET_LABEL_MAX_LENGTH = 32;
   const CUSTOM_PRESET_ID_RE = /^c_[a-z0-9]+$/;
 
   const CUSTOM_PALETTE_KEYS = Object.freeze([
@@ -218,8 +219,9 @@
 
   function generateCustomPresetId() {
     const bytes = new Uint8Array(6);
-    if (global.crypto && global.crypto.getRandomValues) {
-      global.crypto.getRandomValues(bytes);
+    const crypto = global.crypto || globalThis.crypto;
+    if (crypto && crypto.getRandomValues) {
+      crypto.getRandomValues(bytes);
     } else {
       for (let i = 0; i < bytes.length; i += 1) {
         bytes[i] = Math.floor(Math.random() * 256);
@@ -243,8 +245,8 @@
       return null;
     }
     let label = typeof value.label === "string" ? value.label.trim() : "";
-    if (label.length > 32) {
-      label = label.slice(0, 32).trim();
+    if (label.length > CUSTOM_PRESET_LABEL_MAX_LENGTH) {
+      label = label.slice(0, CUSTOM_PRESET_LABEL_MAX_LENGTH).trim();
     }
     if (!label) {
       label = nextCustomPresetLabel(usedLabels);
@@ -299,12 +301,8 @@
 
   function createCustomPreset(palette, existingPresets) {
     const presets = sanitizeCustomPresets(existingPresets);
-    const usedIds = new Set(presets.map((preset) => preset.id));
     const usedLabels = new Set(presets.map((preset) => preset.label));
-    let id = generateCustomPresetId();
-    while (usedIds.has(id)) {
-      id = generateCustomPresetId();
-    }
+    const id = generateCustomPresetId();
     return {
       id,
       label: nextCustomPresetLabel(usedLabels),
@@ -399,19 +397,6 @@
       return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
     };
     return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
-  }
-
-  function contrastRatio(foreground, background) {
-    const fg = parseHexColor(foreground);
-    const bg = parseHexColor(background);
-    if (!fg || !bg) {
-      return null;
-    }
-    const l1 = relativeLuminance(fg);
-    const l2 = relativeLuminance(bg);
-    const lighter = Math.max(l1, l2);
-    const darker = Math.min(l1, l2);
-    return (lighter + 0.05) / (darker + 0.05);
   }
 
   function detectColorScheme(backgroundHex, override) {
@@ -590,8 +575,6 @@
     }
     if (settings.theme === "custom") {
       out.customPalette = sanitizeCustomPalette(settings.customPalette);
-    } else if (isSavedCustomThemeId(settings.theme)) {
-      out.customPalette = sanitizeCustomPalette(resolveCustomPalette(settings));
     }
     return out;
   }
@@ -647,11 +630,7 @@
       next.enabled = Boolean(next.enabled);
       next.fullWidth = Boolean(next.fullWidth);
       next.enlargedQueue = Boolean(next.enlargedQueue);
-      if (partial && Object.prototype.hasOwnProperty.call(partial, "customPresets")) {
-        next.customPresets = sanitizeCustomPresets(partial.customPresets);
-      } else {
-        next.customPresets = sanitizeCustomPresets(next.customPresets);
-      }
+      next.customPresets = sanitizeCustomPresets(next.customPresets);
       next.theme = sanitizeTheme(next.theme, next.customPresets);
       next.radius = sanitizeRadius(next.radius);
       if (partial && partial.customPalette) {
@@ -732,13 +711,7 @@
 
     const includeDefault = Boolean(options && options.includeDefault);
     const nativeScheme = options && options.nativeScheme;
-    let requested = theme;
-    if (THEME_ALIASES[requested]) {
-      requested = THEME_ALIASES[requested];
-    }
-    const next = isCustomThemeId(requested)
-      ? "custom"
-      : sanitizeTheme(requested);
+    const next = isCustomThemeId(theme) ? "custom" : sanitizeTheme(theme);
 
     root.classList.remove(THEME_CLASS);
     root.classList.remove(NATIVE_DARK_CLASS);
@@ -784,7 +757,8 @@
 
   function clearCustomThemeVariables(root) {
     const el = root || document.documentElement;
-    const styleEl = customThemeStyleHost(el);
+    const doc = el && (el.ownerDocument || document);
+    const styleEl = doc && doc.getElementById(CUSTOM_THEME_STYLE_ID);
     if (styleEl) {
       styleEl.textContent = "";
     }
@@ -897,6 +871,7 @@
     CUSTOM_PALETTE_KEYS,
     DEFAULT_CUSTOM_PALETTE,
     MAX_CUSTOM_PRESETS,
+    CUSTOM_PRESET_LABEL_MAX_LENGTH,
     RADII,
     DEFAULTS,
     themeClass,
@@ -911,7 +886,6 @@
     resolveCustomPalette,
     sanitizeRadius,
     normalizeHexColor,
-    contrastRatio,
     customPalettesEqual,
     isCompleteCustomPaletteInput,
     sanitizeCustomPalette,

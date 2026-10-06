@@ -5,13 +5,14 @@
     CUSTOM_PALETTE_KEYS,
     DEFAULT_CUSTOM_PALETTE,
     MAX_CUSTOM_PRESETS,
+    CUSTOM_PRESET_LABEL_MAX_LENGTH,
+    resolveCustomPalette,
     NATIVE_SCHEME_KEY,
     getSettings,
     setSettings,
     sanitizeTheme,
     sanitizeRadius,
     normalizeHexColor,
-    contrastRatio,
     customPalettesEqual,
     isCompleteCustomPaletteInput,
     sanitizeCustomPalette,
@@ -44,7 +45,6 @@
   const themeList = document.getElementById("theme-list");
   const customPanel = document.getElementById("custom-theme-panel");
   const customPreview = document.getElementById("custom-theme-preview");
-  const customContrast = document.getElementById("custom-theme-contrast");
   const customReset = document.getElementById("custom-reset");
   const customSave = document.getElementById("custom-save");
   const customFieldsMount = document.getElementById("custom-theme-fields");
@@ -56,6 +56,8 @@
   let nativeScheme = "light";
   let currentSettings = null;
   let lastPresetTheme = "midnight";
+  /** @type {"presets" | "custom" | null} */
+  let colorsPanelOverride = null;
   let customPaletteDraft = null;
   let customPalettePersistTimer = null;
   let customPaletteSaveInFlight = false;
@@ -87,7 +89,7 @@
       clearCustomThemeVariables(document.documentElement);
     }
     applyDocumentRadius(next.radius, { active: true });
-    updateCustomPreview(next.customPalette);
+    updateCustomPreview(resolveCustomPalette(next));
   }
 
   function setBodyActive(active) {
@@ -96,22 +98,12 @@
     body.querySelectorAll("input, button, select").forEach((el) => {
       el.disabled = !active;
     });
+    syncSavePresetButton(currentSettings);
   }
 
   function syncSwitch(input, enabled) {
     input.checked = enabled;
     input.setAttribute("aria-checked", enabled ? "true" : "false");
-  }
-
-  function isCustomMode(settings) {
-    return settings && settings.theme === "custom";
-  }
-
-  function usesCustomTab(settings) {
-    if (!settings) {
-      return false;
-    }
-    return settings.theme === "custom" || isSavedCustomThemeId(settings.theme);
   }
 
   function rememberCatalogTheme(themeId) {
@@ -222,7 +214,10 @@
   }
 
   function syncThemeModeUi(settings) {
-    const customTab = usesCustomTab(settings);
+    const derived =
+      settings && isCustomThemeId(settings.theme) ? "custom" : "presets";
+    const mode = colorsPanelOverride ?? derived;
+    const customTab = mode === "custom";
     document.querySelectorAll('input[name="theme-mode"]').forEach((input) => {
       input.checked = customTab
         ? input.value === "custom"
@@ -233,41 +228,6 @@
     rememberCatalogTheme(settings.theme);
   }
 
-  function paletteForCustomFields(settings) {
-    if (!settings) {
-      return { ...DEFAULT_CUSTOM_PALETTE };
-    }
-    if (settings.theme === "custom") {
-      return settings.customPalette;
-    }
-    const preset = findCustomPreset(settings.customPresets, settings.theme);
-    if (preset) {
-      return preset.palette;
-    }
-    return settings.customPalette;
-  }
-
-  function updateContrastStatus(palette) {
-    const textRatio = contrastRatio(palette.text, palette.background);
-    const accentRatio = contrastRatio(palette.accent, palette.background);
-    const parts = [];
-    if (textRatio != null) {
-      parts.push(
-        `Text contrast ${textRatio.toFixed(2)}:1${
-          textRatio >= 4.5 ? " (OK)" : " (low)"
-        }`
-      );
-    }
-    if (accentRatio != null) {
-      parts.push(
-        `Accent contrast ${accentRatio.toFixed(2)}:1${
-          accentRatio >= 3 ? " (OK)" : " (low)"
-        }`
-      );
-    }
-    customContrast.textContent = parts.join(" · ");
-  }
-
   function updateCustomPreview(palette) {
     if (!customPreview || !palette) {
       return;
@@ -276,7 +236,6 @@
     customPreview.style.setProperty("--preview-surface", palette.surface);
     customPreview.style.setProperty("--preview-text", palette.text);
     customPreview.style.setProperty("--preview-accent", palette.accent);
-    updateContrastStatus(palette);
   }
 
   function readCustomFieldsFromDom() {
@@ -408,9 +367,38 @@
       swatches.appendChild(createSwatch(color));
     });
 
-    const name = document.createElement("span");
-    name.className = "theme-row__label";
-    name.textContent = theme.label;
+    const name = deletable
+      ? document.createElement("input")
+      : document.createElement("span");
+    name.className = deletable
+      ? "theme-row__label theme-row__name"
+      : "theme-row__label";
+    if (deletable) {
+      name.type = "text";
+      name.value = theme.label;
+      name.readOnly = true;
+      name.size = Math.min(
+        Math.max(theme.label.length, 1),
+        CUSTOM_PRESET_LABEL_MAX_LENGTH
+      );
+      name.maxLength = CUSTOM_PRESET_LABEL_MAX_LENGTH;
+      name.setAttribute("aria-label", `Rename ${theme.label}`);
+      name.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const radioInput = document.getElementById(inputId);
+        if (radioInput && !radioInput.checked) {
+          radioInput.checked = true;
+          radioInput.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+      name.addEventListener("dblclick", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        beginPresetRename(name, theme);
+      });
+    } else {
+      name.textContent = theme.label;
+    }
 
     const input = document.createElement("input");
     input.id = inputId;
@@ -440,6 +428,84 @@
     }
     label.append(input, radio);
     return label;
+  }
+
+  function isPresetNameEditing() {
+    const el = document.activeElement;
+    return Boolean(
+      el &&
+        el.classList &&
+        el.classList.contains("theme-row__name") &&
+        !el.readOnly
+    );
+  }
+
+  function finishPresetRename(nameField, theme, cancelled) {
+    const original = theme.label;
+    nameField.readOnly = true;
+    nameField.classList.remove("theme-row__name--editing");
+    if (cancelled) {
+      nameField.value = original;
+      return;
+    }
+    const next = String(nameField.value || "").trim();
+    if (!next || next === original) {
+      nameField.value = original;
+      return;
+    }
+    renameCustomPreset(theme.id, next);
+  }
+
+  function beginPresetRename(nameField, theme) {
+    if (!nameField || nameField.readOnly === false) {
+      return;
+    }
+    const original = theme.label;
+    let cancelled = false;
+
+    nameField.readOnly = false;
+    nameField.classList.add("theme-row__name--editing");
+    nameField.focus();
+    nameField.select();
+
+    const onKeydown = (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        nameField.blur();
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        cancelled = true;
+        nameField.value = original;
+        nameField.blur();
+      }
+    };
+
+    const onBlur = () => {
+      nameField.removeEventListener("keydown", onKeydown);
+      nameField.removeEventListener("blur", onBlur);
+      finishPresetRename(nameField, theme, cancelled);
+    };
+
+    nameField.addEventListener("keydown", onKeydown);
+    nameField.addEventListener("blur", onBlur);
+  }
+
+  function renameCustomPreset(id, label) {
+    const nextLabel = String(label || "")
+      .trim()
+      .slice(0, CUSTOM_PRESET_LABEL_MAX_LENGTH);
+    const presets = currentPresets().map((preset) => {
+      if (preset.id !== id) {
+        return preset;
+      }
+      return {
+        ...preset,
+        label: nextLabel || preset.label,
+      };
+    });
+    return setSettings({ customPresets: presets }).then(syncAllControls);
   }
 
   function createRadiusOption(id) {
@@ -515,7 +581,7 @@
             label: preset.label,
             swatches: [
               preset.palette.background,
-              preset.palette.surface,
+              preset.palette.text,
               preset.palette.accent,
             ],
           },
@@ -536,8 +602,12 @@
       ? settings.customPresets
       : []
     ).length;
+    const atCap = count >= MAX_CUSTOM_PRESETS;
     customSave.disabled =
-      !settings || !settings.enabled || count >= MAX_CUSTOM_PRESETS;
+      !settings || !settings.enabled || atCap;
+    customSave.title = atCap
+      ? `Maximum of ${MAX_CUSTOM_PRESETS} saved presets`
+      : "";
   }
 
   function deleteCustomPreset(id) {
@@ -592,7 +662,9 @@
 
     const theme = sanitizeTheme(settings.theme, settings.customPresets);
     renderThemeList();
-    renderSavedPresetList(settings.customPresets);
+    if (!isPresetNameEditing()) {
+      renderSavedPresetList(settings.customPresets);
+    }
     const activeTheme = settings.theme === "custom" ? null : theme;
     document.querySelectorAll('input[name="theme"]').forEach((input) => {
       input.checked = activeTheme !== null && input.value === activeTheme;
@@ -604,7 +676,7 @@
     });
 
     syncThemeModeUi(settings);
-    syncCustomFields(paletteForCustomFields(settings));
+    syncCustomFields(resolveCustomPalette(settings));
     syncSavePresetButton(settings);
     applyPopupChrome(settings);
     broadcastLiveSettings();
@@ -633,14 +705,12 @@
           return;
         }
         if (input.value === "custom") {
+          colorsPanelOverride = "custom";
           activateCustomFromPreset();
           return;
         }
-        syncThemeModeUi({
-          ...(currentSettings || {}),
-          theme: lastPresetTheme,
-        });
-        setSettings({ theme: lastPresetTheme }).then(syncAllControls);
+        colorsPanelOverride = "presets";
+        syncThemeModeUi(currentSettings || {});
       });
     });
 
@@ -652,6 +722,11 @@
       const next = sanitizeTheme(input.value, currentPresets());
       if (!isSavedCustomThemeId(next)) {
         rememberCatalogTheme(next);
+      }
+      if (themeList.contains(input)) {
+        colorsPanelOverride = "presets";
+      } else if (customPresetList.contains(input)) {
+        colorsPanelOverride = "custom";
       }
       setSettings({ theme: next }).then(syncAllControls);
     }
@@ -719,6 +794,7 @@
     if (isCustomPaletteSyncStale(settings)) {
       return;
     }
+    colorsPanelOverride = null;
     syncAllControls(settings);
   });
 
