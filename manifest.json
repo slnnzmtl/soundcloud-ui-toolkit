@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "SoundCloud UI Toolkit",
-  "version": "1.2.0",
-  "description": "Customize SoundCloud layout, queue, themes, and rounding. Toggle everything from the toolbar popup.",
+  "name": "SoundCloud UI Toolkit: Dark Mode, Fullscreen, Custom Themes, and More",
+  "version": "1.3.0",
+  "description": "Widen SoundCloud, read long track names, customize with palette presets, and create custom themes.",
   "homepage_url": "https://github.com/slnnzmtl/soundcloud-ui-toolkit",
   "minimum_chrome_version": "121",
   "permissions": [
