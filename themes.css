@@ -2,20 +2,20 @@
  * SoundCloud UI Toolkit — map shared tokens onto SoundCloud CSS variables.
  *
  * Palettes and --scx-radius-* live in shared/tokens.css.
- * Color: gated by html.scx-theme (+ html.scx-theme-{id}).
- * Rounding: gated by html.scx-radius-{none,sm,md,lg,xl} (omit for native).
+ * Color: gated by html.scx-enabled.scx-theme (palettes via scx-theme-{id}).
+ * Rounding: gated by html.scx-enabled[class*="scx-radius-"] (omit for native).
  */
 
 /* SoundCloud border-radius tokens — alias shared --scx-radius-* (tokens.css). */
-html[class*="scx-radius-"] {
+html.scx-enabled[class*="scx-radius-"] {
   --borderRadiuses-4: var(--scx-radius-small);
   --borderRadiuses-8: var(--scx-radius-medium);
   --borderRadiuses-10: var(--scx-radius-medium);
 }
 
 /* Shared overrides — active whenever any custom theme is selected */
-html.scx-theme body.theme-light,
-html.scx-theme body.theme-dark {
+html.scx-enabled.scx-theme body.theme-light,
+html.scx-enabled.scx-theme body.theme-dark {
   color-scheme: var(--scx-color-scheme, dark) !important;
 
   --surface-rgb: var(--scx-surface-rgb) !important;
@@ -74,9 +74,9 @@ html.scx-theme body.theme-dark {
   --tag-default-font-color: var(--scx-text) !important;
 }
 
-html.scx-theme,
-html.scx-theme body,
-html.scx-theme #app {
+html.scx-enabled.scx-theme,
+html.scx-enabled.scx-theme body,
+html.scx-enabled.scx-theme #app {
   background: var(--scx-background) !important;
 }
 
@@ -93,17 +93,22 @@ html.scx-enabled.scx-theme ::-webkit-scrollbar-thumb:hover {
   background-color: var(--scx-scrollbar-hover, rgb(255 255 255 / 45%));
 }
 
-html.scx-theme body {
+html.scx-enabled.scx-theme body {
   color: var(--scx-text) !important;
+}
+
+/* Contrast text when enabled (including stock Default without scx-theme). */
+html.scx-enabled {
+  --mui-palette-contrast-contrastText: var(--scx-accent) !important;
 }
 
 /* Layout containers stay clear so the page background shows through.
  * MUI tokens are set here (and on .mui-theme-*) so Artist Studio iframes
  * pick up the preset — those frames do not use body.theme-dark. */
-html.scx-theme,
-html.scx-theme .mui-theme-dark,
-html.scx-theme .mui-theme-light,
-html.scx-theme [class*="mui-theme-"] {
+html.scx-enabled.scx-theme,
+html.scx-enabled.scx-theme .mui-theme-dark,
+html.scx-enabled.scx-theme .mui-theme-light,
+html.scx-enabled.scx-theme [class*="mui-theme-"] {
   /* Idle glyphs mix toward the page so they stay distinct when accent ≈ muted */
   --scx-icon-idle: color-mix(in srgb, var(--scx-text) 38%, var(--scx-background));
   --mui-palette-background-tonal: var(--scx-surface-raised) !important;
@@ -123,12 +128,12 @@ html.scx-theme [class*="mui-theme-"] {
   --tag-default-font-color: var(--scx-text) !important;
 }
 
-html.scx-theme .MuiBox-root {
+html.scx-enabled.scx-theme .MuiBox-root {
   --mui-palette-background-default: transparent !important;
 }
 
 /* Toasts use --highlight-color (kept transparent globally so lists stay clear) */
-html.scx-theme #gritter-notice-wrapper {
+html.scx-enabled.scx-theme #gritter-notice-wrapper {
   --highlight-color: var(--scx-surface-raised) !important;
   --background-highlight-color: var(--scx-surface-raised) !important;
   --surface-color: var(--scx-surface-raised) !important;
@@ -136,67 +141,67 @@ html.scx-theme #gritter-notice-wrapper {
   width: auto !important;
 }
 
-html.scx-theme .gritter-item-wrapper,
-html.scx-theme #gritter-notice-wrapper > .gritter-item {
+html.scx-enabled.scx-theme .gritter-item-wrapper,
+html.scx-enabled.scx-theme #gritter-notice-wrapper > .gritter-item {
   width: max-content !important;
   max-width: 100% !important;
   flex: 1 !important;
 }
 
-html.scx-theme #gritter-notice-wrapper .gritter-with-image {
+html.scx-enabled.scx-theme #gritter-notice-wrapper .gritter-with-image {
   max-width: 100% !important;
 }
 
 /* "View all" tile overlay uses background-color: var(--surface-color) */
-html.scx-theme .readMoreTile__countWrapper {
+html.scx-enabled.scx-theme .readMoreTile__countWrapper {
   --surface-color: var(--scx-background) !important;
 }
 
-html.scx-theme .header {
+html.scx-enabled.scx-theme .header {
   box-shadow: 0 1px 0 var(--scx-border) !important;
   backdrop-filter: blur(14px);
 }
 
-html.scx-theme .profileHeader .featuredProfiles {
+html.scx-enabled.scx-theme .profileHeader .featuredProfiles {
   background-color: var(--scx-background) !important;
 }
 
 
 /* Artist header text colors */
-html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-large-primary,
-html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-primary,
-html.scx-theme .g-type-shrinkwrap-large-primary,
-html.scx-theme .g-type-shrinkwrap-primary {
+html.scx-enabled.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-large-primary,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-primary,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-large-primary,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-primary {
   color: var(--scx-text) !important;
 }
 
-html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-large-secondary,
-html.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-secondary,
-html.scx-theme .g-type-shrinkwrap-large-secondary,
-html.scx-theme .g-type-shrinkwrap-large-secondary:visited,
-html.scx-theme .g-type-shrinkwrap-secondary,
-html.scx-theme .g-type-shrinkwrap-secondary:visited {
+html.scx-enabled.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-large-secondary,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-block.g-type-shrinkwrap-secondary,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-large-secondary,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-large-secondary:visited,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-secondary,
+html.scx-enabled.scx-theme .g-type-shrinkwrap-secondary:visited {
   color: var(--scx-text-muted) !important;
 }
 
-html.scx-theme .MuiButton-outlined:not(.Mui-selected),
-html.scx-theme .MuiButton-text:not(.Mui-selected) {
+html.scx-enabled.scx-theme .MuiButton-outlined:not(.Mui-selected),
+html.scx-enabled.scx-theme .MuiButton-text:not(.Mui-selected) {
   color: var(--scx-text) !important;
   border-color: var(--scx-border) !important;
 }
 
 /* Track stats cards: remount primary-main onto text-primary so the
  * repost (and liked) counts match plays, like default SoundCloud. */
-html.scx-theme .MuiPaper-root {
+html.scx-enabled.scx-theme .MuiPaper-root {
   --mui-palette-background-paper: var(--scx-surface) !important;
   background-image: none !important;
 }
 
-.createPlaylistSuggestion .createPlaylistSuggestion__addContainer {
+html.scx-enabled.scx-theme .createPlaylistSuggestion .createPlaylistSuggestion__addContainer {
   --surface-color: var(--scx-background) !important;
 }
 
-html.scx-theme a[href*="/you/insights?"] {
+html.scx-enabled.scx-theme a[href*="/you/insights?"] {
   background: var(--scx-surface-raised) !important;
   background-color: var(--scx-surface-raised) !important;
   color: var(--scx-text) !important;
@@ -204,14 +209,14 @@ html.scx-theme a[href*="/you/insights?"] {
   box-shadow: none !important;
 }
 
-html.scx-theme a[href*="/you/insights?"]:hover {
+html.scx-enabled.scx-theme a[href*="/you/insights?"]:hover {
   border-color: var(--scx-accent) !important;
 }
 
 /* Tags: classic .sc-tag reads --tag-default-*. Player iframe chips
  * (MuiChip-colorSecondary) ignore that and often have no body.theme-dark. */
-html.scx-theme .sc-tag,
-html.scx-theme .MuiChip-root {
+html.scx-enabled.scx-theme .sc-tag,
+html.scx-enabled.scx-theme .MuiChip-root {
   --mui-palette-secondary-main: var(--scx-surface-raised);
   --mui-palette-secondary-contrastText: var(--scx-text);
   background-color: var(--scx-surface-raised) !important;
@@ -219,28 +224,28 @@ html.scx-theme .MuiChip-root {
   border-color: var(--scx-border) !important;
 }
 
-html.scx-theme .sc-tag:hover,
-html.scx-theme .MuiChip-root:hover,
-html.scx-theme .MuiChip-clickable:hover {
+html.scx-enabled.scx-theme .sc-tag:hover,
+html.scx-enabled.scx-theme .MuiChip-root:hover,
+html.scx-enabled.scx-theme .MuiChip-clickable:hover {
   background-color: var(--scx-surface) !important;
   border-color: var(--scx-accent) !important;
   color: var(--scx-text) !important;
 }
 
-html.scx-theme .MuiChip-label {
+html.scx-enabled.scx-theme .MuiChip-label {
   color: inherit !important;
 }
 
 /* Player and queue panel */
-html.scx-theme .playControls,
-html.scx-theme .playControls__bg,
-html.scx-theme .playControls__wrapper,
-html.scx-theme .playControls__inner {
+html.scx-enabled.scx-theme .playControls,
+html.scx-enabled.scx-theme .playControls__bg,
+html.scx-enabled.scx-theme .playControls__wrapper,
+html.scx-enabled.scx-theme .playControls__inner {
   background-color: var(--scx-surface) !important;
   border-top-color: var(--scx-border) !important;
 }
 
-html.scx-theme .playControls__inner {
+html.scx-enabled.scx-theme .playControls__inner {
   box-shadow: var(
     --scx-player-shadow,
     0 -1px 0 var(--scx-border),
@@ -248,47 +253,47 @@ html.scx-theme .playControls__inner {
   ) !important;
 }
 
-html.scx-theme .queue {
+html.scx-enabled.scx-theme .queue {
   border: 1px solid var(--scx-border) !important;
   overflow: hidden !important;
   box-shadow: var(--scx-shadow) !important;
 }
 
-html[class*="scx-radius-"] .queue__panel,
-html[class*="scx-radius-"] .playControlsPanel__inner {
+html.scx-enabled[class*="scx-radius-"] .queue__panel,
+html.scx-enabled[class*="scx-radius-"] .playControlsPanel__inner {
   border-radius: 0 !important;
 }
 
-html.scx-theme .quotaMeter__link,
-html.scx-theme .quotaMeter__link:link,
-html.scx-theme .quotaMeter__link:visited,
-html.scx-theme .quotaMeter__upsellText .quotaMeter__link,
-html.scx-theme .g-dark .quotaMeter__link {
+html.scx-enabled.scx-theme .quotaMeter__link,
+html.scx-enabled.scx-theme .quotaMeter__link:link,
+html.scx-enabled.scx-theme .quotaMeter__link:visited,
+html.scx-enabled.scx-theme .quotaMeter__upsellText .quotaMeter__link,
+html.scx-enabled.scx-theme .g-dark .quotaMeter__link {
   color: var(--scx-accent) !important;
 }
 
 
 /* Apply rounding tokens whenever a scale class is active (incl. Default theme) */
-html[class*="scx-radius-"] .headerSearch__input,
-html[class*="scx-radius-"] .sc-button,
-html[class*="scx-radius-"] button,
-html[class*="scx-radius-"] input,
-html[class*="scx-radius-"] textarea,
-html[class*="scx-radius-"] select,
-html[class*="scx-radius-"] .sc-tag,
-html[class*="scx-radius-"] .MuiChip-root {
+html.scx-enabled[class*="scx-radius-"] .headerSearch__input,
+html.scx-enabled[class*="scx-radius-"] .sc-button,
+html.scx-enabled[class*="scx-radius-"] button,
+html.scx-enabled[class*="scx-radius-"] input,
+html.scx-enabled[class*="scx-radius-"] textarea,
+html.scx-enabled[class*="scx-radius-"] select,
+html.scx-enabled[class*="scx-radius-"] .sc-tag,
+html.scx-enabled[class*="scx-radius-"] .MuiChip-root {
   border-radius: var(--scx-radius-small) !important;
 }
 
-html[class*="scx-radius-"] .sc-artwork,
-html[class*="scx-radius-"] .playableTile__image,
-html[class*="scx-radius-"] .soundBadge__artwork,
-html[class*="scx-radius-"] .queueItemView__artworkImage,
-html[class*="scx-radius-"] a[href*="/you/insights?"] {
+html.scx-enabled[class*="scx-radius-"] .sc-artwork,
+html.scx-enabled[class*="scx-radius-"] .playableTile__image,
+html.scx-enabled[class*="scx-radius-"] .soundBadge__artwork,
+html.scx-enabled[class*="scx-radius-"] .queueItemView__artworkImage,
+html.scx-enabled[class*="scx-radius-"] a[href*="/you/insights?"] {
   border-radius: var(--scx-radius-medium) !important;
 }
 
-html[class*="scx-radius-"] .queue {
+html.scx-enabled[class*="scx-radius-"] .queue {
   border-radius: var(--scx-radius-large) !important;
 }
 

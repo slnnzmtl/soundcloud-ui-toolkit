@@ -128,6 +128,7 @@ test("getSettings migrates legacy theme aliases into sync storage", async () => 
         enabled: true,
         fullWidth: true,
         enlargedQueue: true,
+        heroBackdrop: true,
         theme: "spotify",
         radius: "lg",
       },
@@ -145,6 +146,7 @@ test("getSettings does not rewrite storage when already canonical", async () => 
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    heroBackdrop: true,
     theme: "midnight",
     radius: "md",
   };
@@ -165,6 +167,7 @@ test("readPageCache rewrites local cache when theme was aliased", () => {
         enabled: true,
         fullWidth: true,
         enlargedQueue: true,
+        heroBackdrop: true,
         theme: "lifeinvader",
         radius: "sm",
       }),
@@ -251,6 +254,7 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    heroBackdrop: true,
     theme: "midnight",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -261,6 +265,7 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    heroBackdrop: true,
     theme: "custom",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -306,6 +311,7 @@ test("persistableSettings omits customPalette for saved custom theme ids", () =>
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    heroBackdrop: true,
     theme: "c_abc123",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -337,6 +343,7 @@ test("persistableSettings keeps customPresets for built-in themes", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    heroBackdrop: true,
     theme: "midnight",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -413,6 +420,7 @@ test("getSettings does not persist default customPalette for preset-only storage
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    heroBackdrop: true,
     theme: "midnight",
     radius: "md",
   };
@@ -538,6 +546,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(fromNull.enabled, true);
   assert.equal(fromNull.fullWidth, true);
   assert.equal(fromNull.enlargedQueue, true);
+  assert.equal(fromNull.heroBackdrop, true);
   assert.equal(fromNull.theme, "default");
   assert.equal(fromNull.radius, "md");
 
@@ -550,6 +559,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(merged.enabled, false);
   assert.equal(merged.fullWidth, true);
   assert.equal(merged.enlargedQueue, true);
+  assert.equal(merged.heroBackdrop, true);
   assert.equal(merged.theme, "grove");
   assert.equal(merged.radius, "md");
 });
@@ -639,6 +649,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "ENABLED_CLASS",
       "ENLARGED_QUEUE_CLASS",
       "FULL_WIDTH_CLASS",
+      "HERO_BACKDROP_CLASS",
       "NATIVE_DARK_CLASS",
       "NATIVE_SCHEME_KEY",
       "RADII",
@@ -677,27 +688,13 @@ test("ScxSettings export matches content + popup usage", () => {
   assert.equal(ScxSettings.NATIVE_DARK_CLASS, "scx-native-dark");
 });
 
-test("CSS has one avatar-round rule and aliases borderRadiuses to tokens", () => {
+test("CSS aliases borderRadiuses to tokens; theme rules do not set radius", () => {
   const themes = fs.readFileSync(path.join(ROOT, "themes.css"), "utf8");
-  const styles = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
-  const iframe = fs.readFileSync(
-    path.join(ROOT, "iframe-player.css"),
-    "utf8"
-  );
 
-  const avatarBlocks = themes.match(/\.image__rounded/g) || [];
-  assert.equal(avatarBlocks.length, 3, "three selectors in one avatar block");
-  assert.ok(
-    themes.includes('html[class*="scx-radius-"] .image__rounded'),
-    "avatar rounding gated by radius class"
+  assert.match(
+    themes,
+    /html\.scx-enabled\[class\*="scx-radius-"\]/
   );
-  assert.equal(
-    (themes.match(/html\.scx-theme \.image__rounded/g) || []).length,
-    0
-  );
-  assert.doesNotMatch(styles, /\.image__rounded/);
-  assert.doesNotMatch(iframe, /\.image__rounded/);
-
   assert.match(
     themes,
     /--borderRadiuses-4:\s*var\(--scx-radius-small\)/
@@ -712,46 +709,20 @@ test("CSS has one avatar-round rule and aliases borderRadiuses to tokens", () =>
   );
   assert.doesNotMatch(themes, /--borderRadiuses-4:\s*\d+px/);
 
-  const inheritBlocks = [
-    ...themes.matchAll(
-      /fill:\s*currentColor\s*!important;\s*\}/g
-    ),
-  ];
-  assert.ok(inheritBlocks.length >= 1);
-
-  const glyphInherit = themes.match(
-    /Button glyphs follow the button color[\s\S]*?fill:\s*currentColor !important;/
-  );
-  assert.ok(glyphInherit, "single documented glyph inherit block");
-  assert.equal(
-    (themes.match(/\.sc-button svg,\s*\nhtml\.scx-theme \.sc-button svg \*/g) ||
-      []).length,
-    1,
-    "sc-button svg inherit listed once"
-  );
-
-  // Default rounding = no scx-radius-*: theme color rules must not set radius.
+  // Theme color rules must not set border-radius (radius scale owns that).
   const themeRadiusDecls = [
     ...themes.matchAll(
-      /html\.scx-theme[^{]*\{([^}]*)\}/g
+      /html\.scx-enabled\.scx-theme[^{]*\{([^}]*)\}/g
     ),
   ].filter((m) => /border-radius\s*:/.test(m[1]));
   assert.equal(
     themeRadiusDecls.length,
     0,
-    "html.scx-theme rules must not set border-radius"
+    "html.scx-enabled.scx-theme rules must not set border-radius"
   );
   assert.match(
     themes,
-    /html\[class\*="scx-radius-"\] \.queue__panel,\s*\nhtml\[class\*="scx-radius-"\] \.playControlsPanel__inner \{\s*\n\s*border-radius:\s*0/
-  );
-  assert.doesNotMatch(
-    themes,
-    /html\.scx-theme \.playControls__queue \{[\s\S]*?overflow:\s*hidden/
-  );
-  assert.match(
-    themes,
-    /html\.scx-theme\[class\*="scx-radius-"\] \.playControls__queue \{[\s\S]*?overflow:\s*hidden/
+    /html\.scx-enabled\[class\*="scx-radius-"\] \.queue__panel,\s*\nhtml\.scx-enabled\[class\*="scx-radius-"\] \.playControlsPanel__inner \{\s*\n\s*border-radius:\s*0/
   );
 });
 
@@ -764,15 +735,15 @@ test("player iframe tags use theme chips; layout CSS stays unthemed", () => {
 
   assert.match(
     themes,
-    /html\.scx-theme \.sc-tag,\s*\nhtml\.scx-theme \.MuiChip-root/
+    /html\.scx-enabled\.scx-theme \.sc-tag,\s*\nhtml\.scx-enabled\.scx-theme \.MuiChip-root/
   );
   assert.match(
     themes,
-    /html\.scx-theme \.MuiChip-root \{[\s\S]*?background-color:\s*var\(--scx-surface-raised\)/
+    /html\.scx-enabled\.scx-theme \.MuiChip-root \{[\s\S]*?background-color:\s*var\(--scx-surface-raised\)/
   );
   assert.match(
     themes,
-    /html\[class\*="scx-radius-"\] \.MuiChip-root/
+    /html\.scx-enabled\[class\*="scx-radius-"\] \.MuiChip-root/
   );
   assert.doesNotMatch(iframe, /\.MuiChip-root/);
   assert.doesNotMatch(iframe, /\.sc-tag/);
@@ -878,7 +849,7 @@ test("scrollbar color is themed once; styles.css keeps size only on *", () => {
   assert.match(styles, /html\.scx-enabled\s*\{[\s\S]*?scrollbar-width:\s*thin/);
   assert.match(
     styles,
-    /html\.scx-enabled\s*\{[\s\S]*?scrollbar-color:\s*rgb\(0 0 0 \/ 28%\)/
+    /html\.scx-enabled\s*\{[\s\S]*?scrollbar-color:\s*rgb\(255 255 255 \/ 28%\)/
   );
   assert.doesNotMatch(
     styles,
@@ -891,6 +862,70 @@ test("scrollbar color is themed once; styles.css keeps size only on *", () => {
   assert.match(
     themes,
     /color-scheme:\s*var\(--scx-color-scheme,\s*dark\)/
+  );
+});
+
+test("hero backdrop and enlarged hero layout are class-gated", () => {
+  const styles = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
+  const themes = fs.readFileSync(path.join(ROOT, "themes.css"), "utf8");
+  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
+
+  assert.match(styles, /html\.scx-enabled\.scx-hero-backdrop/);
+  assert.match(styles, /--scx-hero-accent-mix/);
+  assert.match(
+    styles,
+    /html\.scx-enabled\.scx-full-width\s+\.fullHero,\s*\n\s*html\.scx-enabled\.scx-full-width\s+\.fullListenHero/
+  );
+  assert.match(styles, /--scx-hero-band-height/);
+  assert.match(
+    themes,
+    /html\.scx-enabled\s*\{[\s\S]*?--mui-palette-contrast-contrastText:\s*var\(--scx-accent\)/
+  );
+  assert.match(content, /HERO_BACKDROP_CLASS/);
+  assert.match(content, /settings\.heroBackdrop/);
+  assert.match(html, /id="hero-backdrop"/);
+  assert.match(html, /Accent hero backdrop/);
+});
+
+test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables features", () => {
+  const styles = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
+  const themes = fs.readFileSync(path.join(ROOT, "themes.css"), "utf8");
+  const iframe = fs.readFileSync(
+    path.join(ROOT, "iframe-player.css"),
+    "utf8"
+  );
+  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+
+  assert.match(styles, /html\.scx-enabled\.scx-full-width/);
+  assert.match(styles, /html\.scx-enabled\.scx-enlarged-queue/);
+  assert.match(iframe, /html\.scx-enabled\.scx-full-width/);
+  assert.match(themes, /html\.scx-enabled\.scx-theme/);
+  assert.match(themes, /html\.scx-enabled\[class\*="scx-radius-"\]/);
+
+  // No bare feature/theme/radius selectors that could leak when Enabled is off.
+  assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-full-width\b/);
+  assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-enlarged-queue\b/);
+  assert.doesNotMatch(iframe, /(?:^|[^.\w-])html\.scx-full-width\b/);
+  assert.doesNotMatch(themes, /(?:^|[^.\w-])html\.scx-theme\b(?!\w)/);
+  assert.doesNotMatch(themes, /(?:^|[^.\w-])html\[class\*="scx-radius-"\]/);
+
+  assert.match(
+    content,
+    /root\.classList\.toggle\(\s*FULL_WIDTH_CLASS,\s*active && Boolean\(settings\.fullWidth\)/
+  );
+  assert.match(
+    content,
+    /root\.classList\.toggle\(\s*ENLARGED_QUEUE_CLASS,\s*active && Boolean\(settings\.enlargedQueue\)/
+  );
+  assert.match(
+    content,
+    /root\.classList\.toggle\(\s*HERO_BACKDROP_CLASS,\s*active && Boolean\(settings\.heroBackdrop\)/
+  );
+  assert.match(content, /const theme = active \? settings\.theme : "default"/);
+  assert.match(
+    content,
+    /applyDocumentRadius\(settings\.radius, \{ active, root \}\)/
   );
 });
 

@@ -3,8 +3,8 @@
  *
  * Applied once per document from content.js as #scx-extension-css.
  */
-html.scx-full-width main#main,
-html.scx-full-width main.MuiBox-root {
+html.scx-enabled.scx-full-width main#main,
+html.scx-enabled.scx-full-width main.MuiBox-root {
   width: 100% !important;
   max-width: 1800px !important;
   min-width: 0 !important;
@@ -15,9 +15,11 @@ html.scx-full-width main.MuiBox-root {
  * Two-column grid on the track *body* parent (the MuiStack after the two
  * Track header sections — e.g. .mui-xh7knn), matching .l-fluid-fixed.
  * Do not key this off the aside; the sidebar is only a grid item.
+ * Breakpoint stays 1200px here; classic listen hero band in styles.css
+ * uses 1800px until intentionally aligned.
  */
 @media (min-width: 1200px) {
-  html.scx-full-width
+  html.scx-enabled.scx-full-width
     main#main
     > .MuiStack-root
     > section[aria-label="Track header"]
@@ -32,7 +34,7 @@ html.scx-full-width main.MuiBox-root {
     box-sizing: border-box !important;
   }
 
-  html.scx-full-width
+  html.scx-enabled.scx-full-width
     main#main
     > .MuiStack-root
     > section[aria-label="Track header"]
@@ -42,7 +44,7 @@ html.scx-full-width main.MuiBox-root {
     min-width: 0 !important;
   }
 
-  html.scx-full-width
+  html.scx-enabled.scx-full-width
     main#main
     > .MuiStack-root
     > section[aria-label="Track header"]
@@ -52,7 +54,7 @@ html.scx-full-width main.MuiBox-root {
     grid-column: 1 !important;
   }
 
-  html.scx-full-width
+  html.scx-enabled.scx-full-width
     main#main
     > .MuiStack-root
     > section[aria-label="Track header"]
@@ -65,7 +67,7 @@ html.scx-full-width main.MuiBox-root {
     box-sizing: border-box !important;
   }
 
-  html.scx-full-width aside[aria-label="Track sidebar"] {
+  html.scx-enabled.scx-full-width aside[aria-label="Track sidebar"] {
     width: 420px !important;
     max-width: 420px !important;
     box-sizing: border-box !important;

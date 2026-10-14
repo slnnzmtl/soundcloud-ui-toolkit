@@ -9,6 +9,7 @@
   const ENABLED_CLASS = "scx-enabled";
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
+  const HERO_BACKDROP_CLASS = "scx-hero-backdrop";
   const THEME_CLASS = "scx-theme";
   const RADIUS_CLASS = "scx-radius";
   const NATIVE_DARK_CLASS = "scx-native-dark";
@@ -165,6 +166,7 @@
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    heroBackdrop: true,
     theme: "default",
     radius: "md",
     customPalette: DEFAULT_CUSTOM_PALETTE,
@@ -541,6 +543,7 @@
     merged.enabled = Boolean(merged.enabled);
     merged.fullWidth = Boolean(merged.fullWidth);
     merged.enlargedQueue = Boolean(merged.enlargedQueue);
+    merged.heroBackdrop = Boolean(merged.heroBackdrop);
     merged.customPresets = sanitizeCustomPresets(
       stored && typeof stored === "object" ? stored.customPresets : []
     );
@@ -566,6 +569,7 @@
       enabled: settings.enabled,
       fullWidth: settings.fullWidth,
       enlargedQueue: settings.enlargedQueue,
+      heroBackdrop: settings.heroBackdrop,
       theme: settings.theme,
       radius: settings.radius,
     };
@@ -598,6 +602,7 @@
       raw.enabled !== merged.enabled ||
       raw.fullWidth !== merged.fullWidth ||
       raw.enlargedQueue !== merged.enlargedQueue ||
+      raw.heroBackdrop !== merged.heroBackdrop ||
       raw.theme !== merged.theme ||
       raw.radius !== merged.radius ||
       paletteChanged ||
@@ -630,6 +635,7 @@
       next.enabled = Boolean(next.enabled);
       next.fullWidth = Boolean(next.fullWidth);
       next.enlargedQueue = Boolean(next.enlargedQueue);
+      next.heroBackdrop = Boolean(next.heroBackdrop);
       next.customPresets = sanitizeCustomPresets(next.customPresets);
       next.theme = sanitizeTheme(next.theme, next.customPresets);
       next.radius = sanitizeRadius(next.radius);
@@ -863,6 +869,7 @@
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
+    HERO_BACKDROP_CLASS,
     THEME_CLASS,
     RADIUS_CLASS,
     NATIVE_DARK_CLASS,

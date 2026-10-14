@@ -31,6 +31,7 @@
   const switches = [
     { id: "full-width", key: "fullWidth" },
     { id: "enlarged-queue", key: "enlargedQueue" },
+    { id: "hero-backdrop", key: "heroBackdrop" },
   ];
 
   const COLOR_FIELD_LABELS = {

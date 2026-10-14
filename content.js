@@ -3,6 +3,7 @@
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
+    HERO_BACKDROP_CLASS,
     DEFAULTS,
     NATIVE_SCHEME_KEY,
     applyDocumentTheme,
@@ -133,6 +134,10 @@
     root.classList.toggle(
       ENLARGED_QUEUE_CLASS,
       active && Boolean(settings.enlargedQueue)
+    );
+    root.classList.toggle(
+      HERO_BACKDROP_CLASS,
+      active && Boolean(settings.heroBackdrop)
     );
     const theme = active ? settings.theme : "default";
     applyDocumentTheme(theme, { root });

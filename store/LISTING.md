@@ -59,7 +59,7 @@ Use these answers in the dashboard Privacy tab.
 
 | Permission / host | Justification |
 | ----------------- | ------------- |
-| `storage` | Stores the master enable toggle, layout toggles (enlarged layout, enlarged queue), and an appearance preset id so preferences persist and sync with Chrome sync. |
+| `storage` | Stores the master enable toggle, layout toggles (enlarged layout, enlarged queue, accent hero backdrop), and an appearance preset id so preferences persist and sync with Chrome sync. |
 | `scripting` | Injects layout/theme CSS/JS into SoundCloud’s same-origin player iframe (`/n/*`) when that frame is created after the parent page loads (SPA navigation). |
 | `webNavigation` | Detects committed/completed navigations and history updates for SoundCloud frames so the player iframe can receive layout and theme styles. |
 | Host: `https://soundcloud.com/*` | Content scripts and injection run only on SoundCloud. |
@@ -101,7 +101,7 @@ Screenshots may show enlarged layout/queue; optional color presets are controlle
 Load unpacked from this repo (or from the unzipped store package):
 
 - [ ] Enabled off restores stock SoundCloud UI
-- [ ] Enlarged layout and enlarged queue toggles work
+- [ ] Enlarged layout, enlarged queue, and accent hero backdrop toggles work
 - [ ] Default appearance leaves native colors
 - [ ] At least one Classic, Accent (including Blood), and Homage preset apply
 - [ ] Player iframe (`/n/*`) still gets wide layout / theme after in-app navigation
@@ -110,7 +110,7 @@ Load unpacked from this repo (or from the unzipped store package):
 
 - [ ] `./scripts/pack.sh` succeeds and zip opens cleanly
 - [ ] Icons appear on `chrome://extensions` after Load unpacked
-- [ ] Enlarged layout and enlarged queue work on main SoundCloud UI
+- [ ] Enlarged layout, enlarged queue, and accent hero backdrop work on main SoundCloud UI
 - [ ] Appearance presets apply (and Default leaves native colors)
 - [ ] Player iframe (`/n/*`) still gets wide layout / theme after in-app navigation
 - [ ] `PRIVACY.md` is public on GitHub `main`

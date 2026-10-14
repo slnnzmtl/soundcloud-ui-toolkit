@@ -1,10 +1,10 @@
 /*
  * SoundCloud UI Toolkit
  *
- * Active layout tweaks only. Master switch is html.scx-enabled (tiny
- * scrollbars). Layout and container rules are gated by html.scx-full-width
- * (Enlarged layout). Queue size/hover is gated by html.scx-enlarged-queue
- * independently. Button chrome lives in themes.css.
+ * Active layout tweaks only. Master switch is html.scx-enabled — every
+ * override also requires it so Enabled off restores stock SoundCloud.
+ * Features: scx-full-width, scx-enlarged-queue, scx-hero-backdrop.
+ * Button chrome lives in themes.css.
  */
 
 /* Tiny scrollbars — size always; dark color when enabled without a theme.
@@ -16,6 +16,37 @@ html.scx-enabled {
 
 html.scx-enabled * {
   scrollbar-width: thin;
+}
+
+/* Accent hero backdrop — html.scx-hero-backdrop */
+html.scx-enabled.scx-hero-backdrop {
+  --scx-hero-accent-mix: color-mix(in srgb, var(--scx-accent) 50%, transparent);
+  --scx-hero-backdrop-blur: 14px;
+}
+
+html.scx-enabled.scx-hero-backdrop section[aria-label="Track header"] {
+  margin-top: 2rem;
+  background: linear-gradient(
+    to top,
+    transparent,
+    transparent,
+    var(--scx-hero-accent-mix)
+  ) !important;
+  backdrop-filter: blur(var(--scx-hero-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--scx-hero-backdrop-blur));
+}
+
+/* Extra accent stop so the listen-hero buffer reads denser than the header. */
+html.scx-enabled.scx-hero-backdrop .backgroundGradient__buffer {
+  background: linear-gradient(
+    to top,
+    transparent,
+    transparent,
+    var(--scx-hero-accent-mix),
+    var(--scx-hero-accent-mix)
+  ) !important;
+  backdrop-filter: blur(var(--scx-hero-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--scx-hero-backdrop-blur));
 }
 
 html.scx-enabled ::-webkit-scrollbar {
@@ -41,173 +72,209 @@ html.scx-enabled ::-webkit-scrollbar-thumb:hover {
   background-color: rgb(0 0 0 / 45%);
 }
 
-/* Full width — html.scx-full-width */
-html.scx-full-width .l-container,
-html.scx-full-width main#main {
+/* Full width — html.scx-enabled.scx-full-width
+ * Sidebar/hero band tokens; classic listen hero sizing uses 1800px below
+ * while iframe-player.css grid stays at 1200px until intentionally aligned. */
+html.scx-enabled.scx-full-width {
+  --scx-sidebar-width: 420px;
+  --scx-hero-band-height: 484px;
+}
+
+html.scx-enabled.scx-full-width .l-container,
+html.scx-enabled.scx-full-width main#main {
   width: 100% !important;
   max-width: 1800px !important;
 }
 
-html.scx-full-width .l-fixed-top-one-column > .l-top {
+html.scx-enabled.scx-full-width .l-fixed-top-one-column > .l-top {
   width: 100% !important;
   max-width: 1800px !important;
 }
 
-html.scx-full-width .profileHeader {
+html.scx-enabled.scx-full-width .profileHeader {
   height: 300px !important;
 }
 
-html.scx-full-width .profileHeaderBackground__visual {
+html.scx-enabled.scx-full-width .profileHeaderBackground__visual {
   background-size: cover !important;
 }
 
-html.scx-full-width .dropbar {
+html.scx-enabled.scx-full-width .dropbar {
   width: 100% !important;
   max-width: 1800px !important;
 }
 
-html.scx-full-width .spotlightUpsellBanner__background {
+html.scx-enabled.scx-full-width .spotlightUpsellBanner__background {
   width: 100% !important;
 }
 
-html.scx-full-width .spotlightUpsellBanner__background .g-flex-row-centered {
+html.scx-enabled.scx-full-width .spotlightUpsellBanner__background .g-flex-row-centered {
   justify-content: space-between !important;
 }
 
-@media (min-width: 1200px) {
-  html.scx-full-width .l-fluid-fixed {
+@media (min-width: 1800px) {
+  html.scx-enabled.scx-full-width .l-fluid-fixed {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 420px !important;
+    grid-template-columns: minmax(0, 1fr) var(--scx-sidebar-width) !important;
     gap: 20px !important;
   }
 
-  html.scx-full-width .l-fluid-fixed .l-main {
+  html.scx-enabled.scx-full-width .fullHero,
+  html.scx-enabled.scx-full-width .fullListenHero {
+    height: var(--scx-hero-band-height) !important;
+    --artwork-40x-size: var(--scx-hero-band-height) !important;
+  }
+
+  html.scx-enabled.scx-full-width .l-hero-fluid-fixed .l-hero-content {
+    padding-right: var(--scx-hero-band-height) !important;
+  }
+
+  html.scx-enabled.scx-full-width .l-hero-fluid-fixed .l-sidebar-right {
+    width: var(--scx-hero-band-height) !important;
+  }
+
+  html.scx-enabled.scx-full-width .l-listen-wrapper .l-about-main {
+    margin-right: var(--scx-hero-band-height) !important;
+  }
+
+  html.scx-enabled.scx-full-width .l-listen-wrapper .l-sidebar-right {
+    width: var(--scx-hero-band-height) !important;
+  }
+
+  html.scx-enabled.scx-full-width .fullHero__foreground .image {
+    --artwork-40x-size: var(--scx-sidebar-width) !important;
+  }
+
+  html.scx-enabled.scx-full-width .fullListenHero .editImage.alwaysShowEditButton {
+    width: var(--scx-sidebar-width) !important;
+    height: var(--scx-sidebar-width) !important;
+    --artwork-40x-size: var(--scx-sidebar-width) !important;
+  }
+
+  html.scx-enabled.scx-full-width .l-fluid-fixed .l-main {
     min-width: 0 !important;
     margin-right: 0 !important;
   }
 
-  html.scx-full-width .l-fluid-fixed .l-sidebar-right {
-    width: 420px !important;
+  html.scx-enabled.scx-full-width .l-fluid-fixed .l-sidebar-right {
+    width: var(--scx-sidebar-width) !important;
   }
 
-  html.scx-full-width .l-fluid-fixed .l-sidebar-right .l-fixed {
-    width: 420px !important;
+  html.scx-enabled.scx-full-width .l-fluid-fixed .l-sidebar-right .l-fixed {
+    width: var(--scx-sidebar-width) !important;
   }
-}
 
-@media (min-width: 2000px) {
-  html.scx-full-width .profileHeader {
-    height: 370px !important;
-  }
-}
-
-/* Player bar: timeline/title 70/30 */
-html.scx-full-width .playControls__soundBadge,
-html.scx-full-width .playbackSoundBadge {
-  display: contents !important;
-}
-
-html.scx-full-width .playControls__timeline {
-  flex: 7 1 0% !important;
-  max-width: none !important;
-  min-width: 0 !important;
-}
-
-html.scx-full-width .playbackSoundBadge__titleContextContainer {
-  flex: 3 1 0% !important;
-  min-width: 0 !important;
-  max-width: none !important;
-}
-
-html.scx-full-width .playbackSoundBadge__avatar,
-html.scx-full-width .playbackSoundBadge__actions {
-  flex: 0 0 auto !important;
-  margin-left: 10px !important;
-}
-
-/* Stream / history track rows */
-@media (min-width: 1800px) {
-  html.scx-full-width .sound__coverArt {
+  html.scx-enabled.scx-full-width .sound__coverArt {
     width: 220px !important;
     height: 220px !important;
     --artwork-20x-size: 220px;
   }
 }
 
-html.scx-full-width .sound__coverArt .sc-artwork-20x {
+@media (min-width: 2000px) {
+  html.scx-enabled.scx-full-width .profileHeader {
+    height: 370px !important;
+  }
+}
+
+/* Player bar: timeline/title 70/30 */
+html.scx-enabled.scx-full-width .playControls__soundBadge,
+html.scx-enabled.scx-full-width .playbackSoundBadge {
+  display: contents !important;
+}
+
+html.scx-enabled.scx-full-width .playControls__timeline {
+  flex: 7 1 0% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html.scx-enabled.scx-full-width .playbackSoundBadge__titleContextContainer {
+  flex: 3 1 0% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html.scx-enabled.scx-full-width .playbackSoundBadge__avatar,
+html.scx-enabled.scx-full-width .playbackSoundBadge__actions {
+  flex: 0 0 auto !important;
+  margin-left: 10px !important;
+}
+
+html.scx-enabled.scx-full-width .sound__coverArt .sc-artwork-20x {
   width: var(--artwork-20x-size) !important;
   height: var(--artwork-20x-size) !important;
 }
 
-html.scx-full-width .sound__body {
+html.scx-enabled.scx-full-width .sound__body {
   display: flex !important;
   align-items: flex-start !important;
 }
 
-html.scx-full-width .sound__artwork {
+html.scx-enabled.scx-full-width .sound__artwork {
   flex: 0 0 auto !important;
 }
 
-html.scx-full-width .sound__content {
+html.scx-enabled.scx-full-width .sound__content {
   flex: 1 1 auto !important;
   min-width: 0 !important;
 }
 
-html.scx-full-width .collection.m-overview .badgeList__item,
-html.scx-full-width .playHistory .badgeList__item {
+html.scx-enabled.scx-full-width .collection.m-overview .badgeList__item,
+html.scx-enabled.scx-full-width .playHistory .badgeList__item {
   width: calc(100% / 6 - 16px) !important;
 }
 
 
 @media screen and (min-width: 1400px) {
-  html.scx-full-width .tileGallery__sliderPanel:not(:has(.artistConnectItem)) {
+  html.scx-enabled.scx-full-width .tileGallery__sliderPanel:not(:has(.artistConnectItem)) {
     max-height: 270px !important;
   }
 }
 
-html.scx-full-width
+html.scx-enabled.scx-full-width
   .tileGallery__sliderPanel:not(:has(.artistConnectItem))
   .tileGallery__sliderPanelInner {
   /* max-width: 100% !important; */
 }
 
 /* "View all" overlay — SC uses top: -10px sized for default tiles */
-html.scx-full-width .readMoreTile__countWrapper {
+html.scx-enabled.scx-full-width .readMoreTile__countWrapper {
   top: 0 !important;
 }
 
-html.scx-full-width .readMoreTile__count {
+html.scx-enabled.scx-full-width .readMoreTile__count {
   position: relative !important;
   top: 140px !important;
 }
 
-/* Enlarged queue — html.scx-enlarged-queue */
-html.scx-enlarged-queue .playControls__queue {
+/* Enlarged queue — html.scx-enabled.scx-enlarged-queue */
+html.scx-enabled.scx-enlarged-queue .playControls__queue {
   width: 50vw !important;
   height: 80vh !important;
   padding: 0 !important;
 }
 
-html.scx-enlarged-queue .queue__itemsHeight {
+html.scx-enabled.scx-enlarged-queue .queue__itemsHeight {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
-html.scx-enlarged-queue .queueItemView__title.sc-truncate:hover {
+html.scx-enabled.scx-enlarged-queue .queueItemView__title.sc-truncate:hover {
   overflow: visible !important;
   white-space: normal !important;
   border-radius: 4px !important;
 }
 
 @media (min-height: 1200px) {
-  html.scx-enlarged-queue .playControls__queue {
+  html.scx-enabled.scx-enlarged-queue .playControls__queue {
     height: 800px !important;
     width: 720px !important;
   }
 }
 
 @media (max-width: 1200px) {
-  html.scx-enlarged-queue .playControls__queue {
+  html.scx-enabled.scx-enlarged-queue .playControls__queue {
     width: calc(100% - 16px) !important;
   }
 }

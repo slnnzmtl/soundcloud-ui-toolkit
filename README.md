@@ -27,11 +27,12 @@ unchanged.
 
 Click the extension icon in the toolbar to open the **Control center**.
 
-| Setting          | Default | Effect                                              |
-| ---------------- | ------- | --------------------------------------------------- |
-| Enabled          | On      | Master switch — turn off to restore stock SoundCloud |
-| Enlarged layout  | On      | Widens the main layout (`.l-container`, player UI)  |
-| Enlarged queue   | On      | Makes the play-queue panel larger                   |
+| Setting               | Default | Effect                                              |
+| --------------------- | ------- | --------------------------------------------------- |
+| Enabled               | On      | Master switch — clears all toolkit classes to restore stock SoundCloud (extension stays installed for instant re-enable) |
+| Enlarged layout       | On      | Widens the main layout (`.l-container`, player UI) and enlarges listen-page hero at wide viewports |
+| Enlarged queue        | On      | Makes the play-queue panel larger                   |
+| Accent hero backdrop  | On      | Accent gradient and blur on track / listen hero     |
 | Rounding         | md      | Corner radius for artwork, buttons, and play (`default` = native; `none` / `sm` / `md` / `lg` / `xl`; play is circular at `xl`) |
 | Appearance       | Default | Classic (Default follows SoundCloud light/dark in the popup; Midnight, OLED, Slate), Accent (Matrix, Fallout, Cyberpunk, Purple, Tide, Blood), Style (Minimal, Frost), or Homage (Grove, Blush) |
 
