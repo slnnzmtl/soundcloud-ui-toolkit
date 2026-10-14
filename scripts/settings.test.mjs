@@ -540,6 +540,27 @@ test("sanitizeRadius accepts catalog values and falls back", () => {
   assert.equal(ScxSettings.sanitizeRadius(null), "md");
 });
 
+test("DEFAULTS enable all feature toggles after install", () => {
+  const { ScxSettings } = loadScxSettings();
+  assert.equal(ScxSettings.DEFAULTS.enabled, true);
+  assert.equal(ScxSettings.DEFAULTS.fullWidth, true);
+  assert.equal(ScxSettings.DEFAULTS.enlargedQueue, true);
+  assert.equal(ScxSettings.DEFAULTS.heroBackdrop, true);
+  const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
+  for (const id of [
+    "extension-enabled",
+    "full-width",
+    "enlarged-queue",
+    "hero-backdrop",
+  ]) {
+    assert.match(
+      html,
+      new RegExp(`id="${id}"[\\s\\S]*?checked`),
+      `${id} checked by default in popup`
+    );
+  }
+});
+
 test("mergeWithDefaults fills missing keys and sanitizes", () => {
   const { ScxSettings } = loadScxSettings();
   const fromNull = ScxSettings.mergeWithDefaults(null);
