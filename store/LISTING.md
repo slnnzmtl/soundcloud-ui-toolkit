@@ -13,21 +13,29 @@ here remains Chrome Web Store only.
 ./scripts/pack.sh
 ```
 
-Upload: `dist/soundcloud-wide-1.2.0.zip`
+Upload: `dist/soundcloud-ui-toolkit-1.4.0.zip` (or the zip name printed by `pack.sh`)
 
 Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 
-## What’s new in 1.2.0
+## What’s new in 1.4.0
 
-- Master enable switch — turn all styles off without clearing other preferences
-- Appearance presets — Classic, Accent, Style, and Homage groups in the toolbar popup
+- Accent hero backdrop — accent gradient and blur on track / listen heroes (toggle, default on)
+- Enlarged listen hero — taller artwork band at wide viewports with Enlarged layout
+- Master switch restores stock SoundCloud by clearing toolkit classes; all styles also require Enabled
+- Feature toggles default on after install
+
+## What’s new in 1.3.0
+
+- Custom themes — four source colors in the control center; derived tokens apply live on SoundCloud
+- Saved custom presets — store and rename up to six custom palettes alongside catalog themes
+- Live preview in the popup chrome while editing
 
 ## Store listing
 
 | Field | Value |
 | ----- | ----- |
 | **Name** | SoundCloud UI Toolkit |
-| **Short description** (manifest / store summary, ≤132 chars) | Customize SoundCloud layout, queue, themes, and rounding. Toggle everything from the toolbar popup. |
+| **Short description** (manifest / store summary, ≤132 chars) | Widen SoundCloud, enlarge the queue, accent hero glass, themes and rounding. Toolbar toggles; master switch restores stock UI. |
 | **Category** | Productivity |
 | **Language** | English |
 
@@ -37,21 +45,22 @@ Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 SoundCloud UI Toolkit customizes soundcloud.com for larger screens and personal taste.
 
 Features
-• Master enable switch — turn all styles off to restore stock SoundCloud without changing your other settings
-• Enlarged layout — widen the main content area and related player UI
+• Master enable switch — turn all styles off to restore stock SoundCloud without clearing your other settings
+• Enlarged layout — widen the main content area, player UI, and listen-page hero at wide viewports
 • Enlarged queue — make the play queue panel larger and easier to browse
-• Appearance presets — Classic, Accent, Style, and Homage color groups (Default keeps native SoundCloud colors)
+• Accent hero backdrop — optional accent gradient and blur on track / listen heroes
+• Appearance presets — Classic, Accent, Style, and Homage color groups (Default keeps native SoundCloud colors); save custom presets
 • Rounding scale — adjust corner radius for artwork, buttons, and the play control
 • Toolbar control center — turn each feature on or off; preferences sync via Chrome sync
 
-The extension only runs on https://soundcloud.com/. It is not affiliated with SoundCloud. It does not change audio playback, does not inject ads, and does not collect personal data.
+All feature toggles default on after install. The extension only runs on https://soundcloud.com/. It is not affiliated with SoundCloud. It does not change audio playback, does not inject ads, and does not collect personal data.
 
 Open the extension icon while on SoundCloud to adjust settings.
 ```
 
 ### Single purpose
 
-Customize SoundCloud’s web UI with layout, queue, appearance, and rounding controls.
+Customize SoundCloud’s web UI with layout, queue, hero, appearance, and rounding controls.
 
 ## Permission justifications (Privacy practices)
 
