@@ -1,6 +1,6 @@
 # Privacy Policy — SoundCloud UI Toolkit
 
-**Last updated:** 2026-09-22
+**Last updated:** 2026-10-15
 
 SoundCloud UI Toolkit (“the extension”) is a Chrome browser extension that
 customizes SoundCloud’s layout, queue, appearance, and rounding on
@@ -25,8 +25,11 @@ sync; the extension authors do not operate a backend that receives this data.
 
 Separately, `chrome.storage.local` may hold a short-lived native light/dark flag
 (`scxNativeScheme`) so the toolbar popup’s Default chrome can match SoundCloud’s
-current `body.theme-light` / `body.theme-dark`. That value does not sync and is
-not personal data.
+current `body.theme-light` / `body.theme-dark`. It may also hold review-prompt
+state (`scxReviewPrompt`: open count for the current version, last prompted
+version, whether the user rated, and the chosen star count) used only to decide
+when to show an optional Chrome Web Store review dialog in the toolbar popup.
+These values do not sync and are not personal data.
 
 ## Data we do not collect
 
@@ -39,7 +42,7 @@ not personal data.
 
 | Permission / host          | Purpose |
 | -------------------------- | ------- |
-| `storage`                  | Persist the master enable toggle, layout toggles, rounding scale, and the appearance preset id; also a local native light/dark flag for Default popup chrome |
+| `storage`                  | Persist the master enable toggle, layout toggles, rounding scale, and the appearance preset id; also a local native light/dark flag for Default popup chrome and local review-prompt state |
 | `scripting`                | Inject layout and theme styles into SoundCloud’s same-origin player iframe |
 | `webNavigation`            | Detect when that iframe is created or navigated |
 | `https://soundcloud.com/*` | Apply CSS only on SoundCloud |

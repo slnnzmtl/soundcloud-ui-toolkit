@@ -643,3 +643,109 @@ body {
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+.review-prompt[hidden] {
+  display: none !important;
+}
+
+.review-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.review-prompt__backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--scx-text) 35%, transparent);
+}
+
+.review-prompt__card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 280px;
+  padding: 14px 16px;
+  background: var(--scx-surface);
+  border: 1px solid var(--scx-border);
+  border-radius: var(--scx-radius-medium);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--scx-text) 18%, transparent);
+}
+
+.review-prompt__title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--scx-text);
+}
+
+.review-prompt__body {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--scx-text-muted);
+}
+
+.review-prompt__stars {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin: 0 0 12px;
+}
+
+.review-prompt__star {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--scx-radius-small);
+  background: transparent;
+  color: color-mix(in srgb, var(--scx-text) 28%, transparent);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.12s ease, transform 0.12s ease;
+}
+
+.review-prompt__star:hover {
+  transform: scale(1.08);
+}
+
+.review-prompt__star.is-active {
+  color: var(--scx-accent);
+}
+
+.review-prompt__star:focus,
+.review-prompt__star:focus-visible {
+  outline: none;
+}
+
+.review-prompt__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.review-prompt__btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--scx-text);
+  background: var(--scx-surface);
+  border: 1px solid var(--scx-border);
+  border-radius: var(--scx-radius-small);
+  cursor: pointer;
+}
+
+.review-prompt__btn:hover {
+  border-color: var(--scx-accent);
+}
+
+.review-prompt__btn:focus-visible {
+  outline: 2px solid var(--scx-focus);
+  outline-offset: 2px;
+}
