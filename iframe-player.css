@@ -67,7 +67,7 @@ html.scx-enabled.scx-full-width main.MuiBox-root {
     box-sizing: border-box !important;
   }
   
-  html.scx-enabled.scx-full-width section[aria-label="Track header"] > div > div > div:last-child {
+  html.scx-enabled.scx-full-width section[aria-label="Track header"] > div > div > div:nth-child(2) {
     width: var(--scx-sidebar-width) !important;
     height: var(--scx-sidebar-width) !important;
   }
