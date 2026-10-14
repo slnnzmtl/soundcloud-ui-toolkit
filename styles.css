@@ -22,6 +22,7 @@ html.scx-enabled * {
 html.scx-enabled.scx-hero-backdrop {
   --scx-hero-accent-mix: color-mix(in srgb, var(--scx-accent) 50%, transparent);
   --scx-hero-backdrop-blur: 14px;
+  --mui-palette-contrast-contrastText: var(--scx-accent) !important;
 }
 
 html.scx-enabled.scx-hero-backdrop section[aria-label="Track header"] {

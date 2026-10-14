@@ -888,7 +888,6 @@ test("scrollbar color is themed once; styles.css keeps size only on *", () => {
 
 test("hero backdrop and enlarged hero layout are class-gated", () => {
   const styles = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
-  const themes = fs.readFileSync(path.join(ROOT, "themes.css"), "utf8");
   const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
 
@@ -900,8 +899,8 @@ test("hero backdrop and enlarged hero layout are class-gated", () => {
   );
   assert.match(styles, /--scx-hero-band-height/);
   assert.match(
-    themes,
-    /html\.scx-enabled\s*\{[\s\S]*?--mui-palette-contrast-contrastText:\s*var\(--scx-accent\)/
+    styles,
+    /html\.scx-enabled\.scx-hero-backdrop\s*\{[\s\S]*?--mui-palette-contrast-contrastText:\s*var\(--scx-accent\)/
   );
   assert.match(content, /HERO_BACKDROP_CLASS/);
   assert.match(content, /settings\.heroBackdrop/);

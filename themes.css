@@ -97,11 +97,6 @@ html.scx-enabled.scx-theme body {
   color: var(--scx-text) !important;
 }
 
-/* Contrast text when enabled (including stock Default without scx-theme). */
-html.scx-enabled {
-  --mui-palette-contrast-contrastText: var(--scx-accent) !important;
-}
-
 /* Layout containers stay clear so the page background shows through.
  * MUI tokens are set here (and on .mui-theme-*) so Artist Studio iframes
  * pick up the preset — those frames do not use body.theme-dark. */

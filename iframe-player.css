@@ -18,7 +18,7 @@ html.scx-enabled.scx-full-width main.MuiBox-root {
  * Breakpoint stays 1200px here; classic listen hero band in styles.css
  * uses 1800px until intentionally aligned.
  */
-@media (min-width: 1200px) {
+@media (min-width: 1800px) {
   html.scx-enabled.scx-full-width
     main#main
     > .MuiStack-root
@@ -65,6 +65,11 @@ html.scx-enabled.scx-full-width main.MuiBox-root {
     width: 420px !important;
     max-width: 420px !important;
     box-sizing: border-box !important;
+  }
+  
+  html.scx-enabled.scx-full-width section[aria-label="Track header"] > div > div > div:last-child {
+    width: var(--scx-sidebar-width) !important;
+    height: var(--scx-sidebar-width) !important;
   }
 
   html.scx-enabled.scx-full-width aside[aria-label="Track sidebar"] {
