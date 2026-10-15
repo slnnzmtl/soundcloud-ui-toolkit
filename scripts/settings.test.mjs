@@ -903,7 +903,7 @@ test("hero backdrop and enlarged hero layout are class-gated", () => {
     /html\.scx-enabled\.scx-hero-backdrop\s*\{[\s\S]*?--mui-palette-contrast-contrastText:\s*var\(--scx-accent\)/
   );
   assert.match(content, /HERO_BACKDROP_CLASS/);
-  assert.match(content, /settings\.heroBackdrop/);
+  assert.match(content, /s\.heroBackdrop/);
   assert.match(html, /id="hero-backdrop"/);
   assert.match(html, /Accent hero backdrop/);
 });
@@ -930,17 +930,19 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\.scx-theme\b(?!\w)/);
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\[class\*="scx-radius-"\]/);
 
+  assert.match(content, /const FEATURE_CLASS_TOGGLES = \[/);
+  assert.match(content, /FULL_WIDTH_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.fullWidth\)/);
   assert.match(
     content,
-    /root\.classList\.toggle\(\s*FULL_WIDTH_CLASS,\s*active && Boolean\(settings\.fullWidth\)/
+    /ENLARGED_QUEUE_CLASS,\s*\n\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.enlargedQueue\)/
   );
   assert.match(
     content,
-    /root\.classList\.toggle\(\s*ENLARGED_QUEUE_CLASS,\s*active && Boolean\(settings\.enlargedQueue\)/
+    /HERO_BACKDROP_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.heroBackdrop\)/
   );
   assert.match(
     content,
-    /root\.classList\.toggle\(\s*HERO_BACKDROP_CLASS,\s*active && Boolean\(settings\.heroBackdrop\)/
+    /for \(const \[className, want\] of FEATURE_CLASS_TOGGLES\)/
   );
   assert.match(content, /const theme = active \? settings\.theme : "default"/);
   assert.match(
@@ -983,7 +985,25 @@ test("content paintRoot applies and clears custom variables", () => {
   assert.match(content, /applyCustomThemeVariables\(root, settings\)/);
   assert.match(content, /clearCustomThemeVariables\(root\)/);
   assert.match(content, /isCustomThemeId\(theme\)/);
-  assert.match(content, /CUSTOM_THEME_STYLE_ID/);
+});
+
+test("watchOwnRoot restores layout classes for default theme", () => {
+  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  assert.match(content, /function rootNeedsPaint/);
+  assert.match(content, /const FEATURE_CLASS_TOGGLES = \[/);
+  assert.doesNotMatch(content, /function wantsFeatureClasses/);
+  assert.doesNotMatch(
+    content,
+    /if \(!latestSettings\.enabled \|\| !theme \|\| theme === "default"\)/
+  );
+  assert.match(
+    content,
+    /if \(!rootNeedsPaint\(root, latestSettings\)\)/
+  );
+  assert.match(
+    content,
+    /FEATURE_CLASS_TOGGLES\.some\(\s*\n\s*\(\[className, want\]\) =>/
+  );
 });
 
 test("isOpaqueChildUrl and isSoundCloudUrl classify inject targets", () => {

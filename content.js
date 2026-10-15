@@ -11,7 +11,6 @@
     applyCustomThemeVariables,
     clearCustomThemeVariables,
     isCustomThemeId,
-    CUSTOM_THEME_STYLE_ID,
     getSettings,
     mergeWithDefaults,
     readPageCache,
@@ -120,25 +119,29 @@
     return globalThis.__scxStylesLoading;
   }
 
+  // Layout classes gated on enabled; theme/radius stay in ScxSettings helpers.
+  const FEATURE_CLASS_TOGGLES = [
+    [ENABLED_CLASS, (s) => Boolean(s.enabled)],
+    [FULL_WIDTH_CLASS, (s) => Boolean(s.enabled) && Boolean(s.fullWidth)],
+    [ENLARGED_QUEUE_CLASS, (s) => Boolean(s.enabled) && Boolean(s.enlargedQueue)],
+    [HERO_BACKDROP_CLASS, (s) => Boolean(s.enabled) && Boolean(s.heroBackdrop)],
+  ];
+
+  function rootNeedsPaint(root, settings) {
+    return FEATURE_CLASS_TOGGLES.some(
+      ([className, want]) => root.classList.contains(className) !== want(settings)
+    );
+  }
+
   function paintRoot(root, settings) {
     if (!root) {
       return;
     }
 
+    for (const [className, want] of FEATURE_CLASS_TOGGLES) {
+      root.classList.toggle(className, want(settings));
+    }
     const active = Boolean(settings.enabled);
-    root.classList.toggle(ENABLED_CLASS, active);
-    root.classList.toggle(
-      FULL_WIDTH_CLASS,
-      active && Boolean(settings.fullWidth)
-    );
-    root.classList.toggle(
-      ENLARGED_QUEUE_CLASS,
-      active && Boolean(settings.enlargedQueue)
-    );
-    root.classList.toggle(
-      HERO_BACKDROP_CLASS,
-      active && Boolean(settings.heroBackdrop)
-    );
     const theme = active ? settings.theme : "default";
     applyDocumentTheme(theme, { root });
     if (active && isCustomThemeId(theme)) {
@@ -315,15 +318,7 @@
       if (paintingRoot || !latestSettings) {
         return;
       }
-      const theme = latestSettings.theme;
-      if (!latestSettings.enabled || !theme || theme === "default") {
-        return;
-      }
-      const missingThemeClasses = !root.classList.contains("scx-theme");
-      const missingCustomVars =
-        isCustomThemeId(theme) &&
-        !document.getElementById(CUSTOM_THEME_STYLE_ID)?.textContent;
-      if (!missingThemeClasses && !missingCustomVars) {
+      if (!rootNeedsPaint(root, latestSettings)) {
         return;
       }
       paintingRoot = true;
