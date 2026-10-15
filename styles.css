@@ -18,6 +18,10 @@ html.scx-enabled * {
   scrollbar-width: thin;
 }
 
+html.scx-enabled div.MuiCardContent-root .MuiListItem-gutters > div {
+  backdrop-filter: blur(0px) !important;
+}
+
 /* Accent hero backdrop — html.scx-hero-backdrop */
 html.scx-enabled.scx-hero-backdrop {
   --scx-hero-accent-mix: color-mix(in srgb, var(--scx-accent) 50%, transparent);

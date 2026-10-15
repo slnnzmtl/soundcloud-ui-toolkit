@@ -726,7 +726,7 @@ body {
 
 .review-prompt__actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 6px;
 }
 
@@ -734,15 +734,14 @@ body {
   padding: 5px 10px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--scx-text);
-  background: var(--scx-surface);
-  border: 1px solid var(--scx-border);
-  border-radius: var(--scx-radius-small);
+  color: var(--scx-text-muted);
+  background: transparent;
+  border: none;
   cursor: pointer;
 }
 
 .review-prompt__btn:hover {
-  border-color: var(--scx-accent);
+  color: var(--scx-text);
 }
 
 .review-prompt__btn:focus-visible {
