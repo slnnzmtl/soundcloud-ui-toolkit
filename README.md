@@ -6,6 +6,11 @@ toolbar popup control center; every feature defaults on after install. Supported
 browsers: Chrome, Edge, Opera, and Brave (Chrome 121+ or equivalent). Firefox
 and Safari are not supported.
 
+### What’s new in 1.4.1
+
+- **Player iframe after SPA** — restore layout classes when SoundCloud rewrites `html` on in-app navigation (including Default theme, which has no `scx-theme` class)
+- **Statistics unblur** — clears the backdrop blur on track stats cards so plays / likes / reposts stay readable when Enabled is on
+
 ### What’s new in 1.4.0
 
 - **Accent hero backdrop** — optional accent gradient and blur on track / listen heroes

@@ -13,9 +13,14 @@ here remains Chrome Web Store only.
 ./scripts/pack.sh
 ```
 
-Upload: `dist/soundcloud-ui-toolkit-1.4.0.zip` (or the zip name printed by `pack.sh`)
+Upload: `dist/soundcloud-ui-toolkit-1.4.1.zip` (or the zip name printed by `pack.sh`)
 
 Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
+
+## What’s new in 1.4.1
+
+- Fix layout/theme styles missing on the player iframe after in-app navigation when Default theme is selected
+- **Statistics unblur** — clears the backdrop blur on track stats cards so plays / likes / reposts stay readable when Enabled is on
 
 ## What’s new in 1.4.0
 
