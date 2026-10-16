@@ -11,12 +11,20 @@
   const ENABLED_CLASS = "scx-enabled";
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
-  const HERO_BACKDROP_CLASS = "scx-hero-backdrop";
+  const HERO_BG_CLASS = "scx-hero-bg";
+  const HERO_WAVEFORM_CLASS = "scx-hero-waveform";
   const THEME_CLASS = "scx-theme";
   const RADIUS_CLASS = "scx-radius";
   const NATIVE_DARK_CLASS = "scx-native-dark";
   const NATIVE_SCHEME_KEY = "scxNativeScheme";
   const RADII = Object.freeze(["default", "none", "sm", "md", "lg", "xl"]);
+  const HERO_BACKGROUND_STYLES = Object.freeze([
+    "default",
+    "accent",
+    "text",
+    "transparent",
+  ]);
+  const HERO_WAVEFORM_STYLES = Object.freeze(["default", "accent", "text"]);
   const THEME_GROUPS = Object.freeze([
     {
       id: "classic",
@@ -163,13 +171,15 @@
     "--scx-scrollbar-hover",
     "--scx-player-shadow",
     "--scx-waveform-filter",
+    "--scx-waveform-filter-text",
   ]);
 
   const DEFAULTS = Object.freeze({
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
-    heroBackdrop: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
     theme: "default",
     radius: "md",
     customPalette: DEFAULT_CUSTOM_PALETTE,
@@ -182,6 +192,47 @@
 
   function radiusClass(id) {
     return `${RADIUS_CLASS}-${id}`;
+  }
+
+  function heroBackgroundClass(id) {
+    return `${HERO_BG_CLASS}-${id}`;
+  }
+
+  function heroWaveformClass(id) {
+    return `${HERO_WAVEFORM_CLASS}-${id}`;
+  }
+
+  function sanitizeHeroBackgroundStyle(value) {
+    return HERO_BACKGROUND_STYLES.includes(value)
+      ? value
+      : DEFAULTS.heroBackgroundStyle;
+  }
+
+  function sanitizeHeroWaveformStyle(value) {
+    return HERO_WAVEFORM_STYLES.includes(value)
+      ? value
+      : DEFAULTS.heroWaveformStyle;
+  }
+
+  /**
+   * Hero class names to apply when extension is enabled (excludes "default" styles).
+   * @param {{ enabled?: boolean, heroBackgroundStyle?: string, heroWaveformStyle?: string }} settings
+   * @returns {string[]}
+   */
+  function desiredHeroClasses(settings) {
+    const classes = [];
+    if (!settings || !settings.enabled) {
+      return classes;
+    }
+    const bg = sanitizeHeroBackgroundStyle(settings.heroBackgroundStyle);
+    const wf = sanitizeHeroWaveformStyle(settings.heroWaveformStyle);
+    if (bg !== "default") {
+      classes.push(heroBackgroundClass(bg));
+    }
+    if (wf !== "default") {
+      classes.push(heroWaveformClass(wf));
+    }
+    return classes;
   }
 
   const THEME_ALIASES = Object.freeze({
@@ -411,12 +462,12 @@
   }
 
   /**
-   * CSS filter that maps stock SoundCloud orange waveform bars to accent.
+   * CSS filter that maps stock SoundCloud orange waveform bars to a color.
    * Gray unplayed bars have no hue and stay mostly unchanged.
    * @param {string} hex
    * @returns {string}
    */
-  function waveformFilterFromAccent(hex) {
+  function waveformFilterFromColor(hex) {
     const rgb = parseHexColor(hex);
     if (!rgb) {
       return "none";
@@ -590,33 +641,40 @@
       "--scx-scrollbar": scrollbar,
       "--scx-scrollbar-hover": scrollbarHover,
       "--scx-player-shadow": playerShadow,
-      "--scx-waveform-filter": waveformFilterFromAccent(base.accent),
+      "--scx-waveform-filter": waveformFilterFromColor(base.accent),
+      "--scx-waveform-filter-text": waveformFilterFromColor(base.text),
     };
   }
 
   function mergeWithDefaults(stored) {
+    const raw = stored && typeof stored === "object" ? stored : {};
     const merged = {
       ...DEFAULTS,
-      ...(stored && typeof stored === "object" ? stored : {}),
+      ...raw,
     };
     merged.enabled = Boolean(merged.enabled);
     merged.fullWidth = Boolean(merged.fullWidth);
     merged.enlargedQueue = Boolean(merged.enlargedQueue);
-    merged.heroBackdrop = Boolean(merged.heroBackdrop);
-    merged.customPresets = sanitizeCustomPresets(
-      stored && typeof stored === "object" ? stored.customPresets : []
+    delete merged.heroBackdrop;
+    if (
+      raw.heroBackgroundStyle == null &&
+      Object.prototype.hasOwnProperty.call(raw, "heroBackdrop")
+    ) {
+      merged.heroBackgroundStyle = raw.heroBackdrop ? "accent" : "default";
+    }
+    merged.heroBackgroundStyle = sanitizeHeroBackgroundStyle(
+      merged.heroBackgroundStyle
     );
+    merged.heroWaveformStyle = sanitizeHeroWaveformStyle(
+      merged.heroWaveformStyle
+    );
+    merged.customPresets = sanitizeCustomPresets(raw.customPresets);
     merged.theme = sanitizeTheme(merged.theme, merged.customPresets);
     merged.radius = sanitizeRadius(merged.radius);
-    if (
-      stored &&
-      typeof stored === "object" &&
-      stored.customPalette &&
-      typeof stored.customPalette === "object"
-    ) {
-      merged.customPalette = sanitizeCustomPalette(stored.customPalette);
+    if (raw.customPalette && typeof raw.customPalette === "object") {
+      merged.customPalette = sanitizeCustomPalette(raw.customPalette);
     } else if (merged.theme === "custom") {
-      merged.customPalette = sanitizeCustomPalette(stored && stored.customPalette);
+      merged.customPalette = sanitizeCustomPalette(raw.customPalette);
     } else {
       merged.customPalette = { ...DEFAULT_CUSTOM_PALETTE };
     }
@@ -628,7 +686,10 @@
       enabled: settings.enabled,
       fullWidth: settings.fullWidth,
       enlargedQueue: settings.enlargedQueue,
-      heroBackdrop: settings.heroBackdrop,
+      heroBackgroundStyle: sanitizeHeroBackgroundStyle(
+        settings.heroBackgroundStyle
+      ),
+      heroWaveformStyle: sanitizeHeroWaveformStyle(settings.heroWaveformStyle),
       theme: settings.theme,
       radius: settings.radius,
     };
@@ -661,7 +722,9 @@
       raw.enabled !== merged.enabled ||
       raw.fullWidth !== merged.fullWidth ||
       raw.enlargedQueue !== merged.enlargedQueue ||
-      raw.heroBackdrop !== merged.heroBackdrop ||
+      Object.prototype.hasOwnProperty.call(raw, "heroBackdrop") ||
+      raw.heroBackgroundStyle !== merged.heroBackgroundStyle ||
+      raw.heroWaveformStyle !== merged.heroWaveformStyle ||
       raw.theme !== merged.theme ||
       raw.radius !== merged.radius ||
       paletteChanged ||
@@ -694,7 +757,13 @@
       next.enabled = Boolean(next.enabled);
       next.fullWidth = Boolean(next.fullWidth);
       next.enlargedQueue = Boolean(next.enlargedQueue);
-      next.heroBackdrop = Boolean(next.heroBackdrop);
+      delete next.heroBackdrop;
+      next.heroBackgroundStyle = sanitizeHeroBackgroundStyle(
+        next.heroBackgroundStyle
+      );
+      next.heroWaveformStyle = sanitizeHeroWaveformStyle(
+        next.heroWaveformStyle
+      );
       next.customPresets = sanitizeCustomPresets(next.customPresets);
       next.theme = sanitizeTheme(next.theme, next.customPresets);
       next.radius = sanitizeRadius(next.radius);
@@ -890,6 +959,35 @@
   }
 
   /**
+   * Apply hero background + waveform style classes on a document root.
+   * @param {Element} root
+   * @param {{ enabled?: boolean, heroBackgroundStyle?: string, heroWaveformStyle?: string }} settings
+   */
+  function applyDocumentHero(root, settings) {
+    const el = root || document.documentElement;
+    if (!el) {
+      return;
+    }
+    // Drop pre-Hero-section class so SPA tabs don't keep the old toggle.
+    el.classList.remove("scx-hero-backdrop");
+    for (const id of HERO_BACKGROUND_STYLES) {
+      if (id === "default") {
+        continue;
+      }
+      el.classList.remove(heroBackgroundClass(id));
+    }
+    for (const id of HERO_WAVEFORM_STYLES) {
+      if (id === "default") {
+        continue;
+      }
+      el.classList.remove(heroWaveformClass(id));
+    }
+    for (const name of desiredHeroClasses(settings)) {
+      el.classList.add(name);
+    }
+  }
+
+  /**
    * Apply radius classes on a document root.
    * @param {string} radius
    * @param {{ active?: boolean, root?: Element }} [options]
@@ -928,7 +1026,10 @@
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
-    HERO_BACKDROP_CLASS,
+    HERO_BG_CLASS,
+    HERO_WAVEFORM_CLASS,
+    HERO_BACKGROUND_STYLES,
+    HERO_WAVEFORM_STYLES,
     THEME_CLASS,
     RADIUS_CLASS,
     NATIVE_DARK_CLASS,
@@ -942,8 +1043,13 @@
     DEFAULTS,
     themeClass,
     radiusClass,
+    heroBackgroundClass,
+    heroWaveformClass,
     THEME_ALIASES,
     sanitizeTheme,
+    sanitizeHeroBackgroundStyle,
+    sanitizeHeroWaveformStyle,
+    desiredHeroClasses,
     sanitizeCustomPresets,
     findCustomPreset,
     isCustomThemeId,
@@ -967,6 +1073,7 @@
     applyCustomThemeVariables,
     clearCustomThemeVariables,
     readPresetSourcePalette,
+    applyDocumentHero,
     applyDocumentRadius,
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);

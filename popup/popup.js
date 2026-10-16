@@ -25,13 +25,27 @@
     applyCustomThemeVariables,
     clearCustomThemeVariables,
     readPresetSourcePalette,
+    sanitizeHeroBackgroundStyle,
+    sanitizeHeroWaveformStyle,
     onSettingsChanged,
   } = ScxSettings;
 
   const switches = [
     { id: "full-width", key: "fullWidth" },
     { id: "enlarged-queue", key: "enlargedQueue" },
-    { id: "hero-backdrop", key: "heroBackdrop" },
+  ];
+
+  const heroSelects = [
+    {
+      id: "hero-background-style",
+      key: "heroBackgroundStyle",
+      sanitize: sanitizeHeroBackgroundStyle,
+    },
+    {
+      id: "hero-waveform-style",
+      key: "heroWaveformStyle",
+      sanitize: sanitizeHeroWaveformStyle,
+    },
   ];
 
   const COLOR_FIELD_LABELS = {
@@ -661,6 +675,13 @@
       syncSwitch(document.getElementById(id), Boolean(settings[key]));
     });
 
+    heroSelects.forEach(({ id, key, sanitize }) => {
+      const select = document.getElementById(id);
+      if (select) {
+        select.value = sanitize(settings[key]);
+      }
+    });
+
     const theme = sanitizeTheme(settings.theme, settings.customPresets);
     renderThemeList();
     if (!isPresetNameEditing()) {
@@ -697,6 +718,17 @@
         const enabled = input.checked;
         syncSwitch(input, enabled);
         setSettings({ [key]: enabled });
+      });
+    });
+
+    heroSelects.forEach(({ id, key, sanitize }) => {
+      const select = document.getElementById(id);
+      select.addEventListener("change", () => {
+        const value = sanitize(select.value);
+        select.value = value;
+        setSettings({ [key]: value }).then(() => {
+          broadcastLiveSettings();
+        });
       });
     });
 

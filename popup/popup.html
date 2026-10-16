@@ -27,9 +27,9 @@
       </header>
 
       <div id="control-center-body" class="control-center__body">
-      <section class="control-center__group" aria-labelledby="features-heading">
-        <h2 id="features-heading" class="control-center__group-title">
-          Features
+      <section class="control-center__group" aria-labelledby="layout-heading">
+        <h2 id="layout-heading" class="control-center__group-title">
+          Layout
         </h2>
 
         <div class="feature-list">
@@ -60,19 +60,39 @@
               <span class="switch-row__thumb"></span>
             </span>
           </label>
+        </div>
+      </section>
 
-          <label class="switch-row" for="hero-backdrop">
-            <span class="switch-row__label">Accent hero backdrop</span>
-            <input
-              id="hero-backdrop"
-              class="switch-row__input"
-              type="checkbox"
-              role="switch"
-              checked
-            />
-            <span class="switch-row__track" aria-hidden="true">
-              <span class="switch-row__thumb"></span>
-            </span>
+      <section class="control-center__group" aria-labelledby="hero-heading">
+        <h2 id="hero-heading" class="control-center__group-title">Hero</h2>
+
+        <div class="hero-fields">
+          <label class="hero-field" for="hero-background-style">
+            <span class="hero-field__label">Background style</span>
+            <select
+              id="hero-background-style"
+              class="hero-field__select"
+              aria-label="Hero background style"
+            >
+              <option value="default">Default</option>
+              <option value="accent" selected>Accent</option>
+              <option value="text">Text</option>
+              <option value="transparent">Transparent</option>
+            </select>
+          </label>
+
+          <label class="hero-field" for="hero-waveform-style">
+            <span class="hero-field__label">Elements style</span>
+            <span class="hero-field__hint">Waveforms, title, play icon</span>
+            <select
+              id="hero-waveform-style"
+              class="hero-field__select"
+              aria-label="Elements style"
+            >
+              <option value="default">Default</option>
+              <option value="accent" selected>Accent</option>
+              <option value="text">Text</option>
+            </select>
           </label>
         </div>
       </section>

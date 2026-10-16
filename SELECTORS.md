@@ -37,7 +37,8 @@ redeclaring every component rule.
 | Tiles        | `.playableTile__artwork`, `.playableTile__image`, `.playableTile__descriptionContainer`                        |
 | Track page   | `.sound__content`, `.sound__waveform`, `.sound__footer`, `.listenContent__inner`                               |
 | Lists        | `.trackList__item`, `.searchList__item`, `.userSuggestionList__item`                                           |
-| Waveform     | `.waveformWrapper__waveform`, `.waveform__layer`, `.fullHero__waveform`; canvas bars tinted via `--scx-waveform-filter` on `.sceneLayer:not(.waveformCommentsNode)` |
+| Waveform     | `.fullHero__waveform` / `.sound__waveform`: canvas tint via `--scx-waveform-filter` on `.sceneLayer:not(.waveformCommentsNode)` when `scx-hero-waveform-*` |
+| Progress bar | `.playbackTimeline__progressBar`, `.playbackTimeline__progressHandle` — always `--scx-accent` when Enabled |
 | Player       | `.playControls__wrapper`, `.playControls__inner`, `.playControls__play`, `.playControls__timeline`             |
 | Timeline     | `.playbackTimeline__progressBackground`, `.playbackTimeline__progressBar`, `.playbackTimeline__progressHandle` |
 | Volume       | `.volume__sliderBackground`, `.volume__sliderProgress`, `.volume__sliderHandle`                                |

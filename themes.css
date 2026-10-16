@@ -97,9 +97,55 @@ html.scx-enabled.scx-theme body {
   color: var(--scx-text) !important;
 }
 
-/* Waveform bars are canvas-painted (stock orange #f50); tint via filter. */
-html.scx-enabled.scx-theme .waveform .sceneLayer:not(.waveformCommentsNode) {
-  filter: var(--scx-waveform-filter, none);
+/* Waveform style — one paint token for hero UI + canvas filter mapping. */
+html.scx-enabled.scx-hero-waveform-accent {
+  --scx-waveform-paint: var(--scx-accent);
+  --scx-waveform-canvas-filter: var(--scx-waveform-filter, none);
+}
+
+html.scx-enabled.scx-hero-waveform-text {
+  --scx-waveform-paint: var(--scx-text);
+  --scx-waveform-canvas-filter: var(--scx-waveform-filter-text, none);
+}
+
+/* Listen-hero canvases read --mui-palette-contrast-contrastText (not CSS color). */
+html.scx-enabled.scx-hero-waveform-accent,
+html.scx-enabled.scx-hero-waveform-text {
+  --mui-palette-contrast-contrastText: var(--scx-waveform-paint) !important;
+}
+
+/* Canvas waveforms (listen hero + list cards). Stock paint is orange #f50. */
+html.scx-enabled.scx-hero-waveform-accent .waveform .sceneLayer:not(.waveformCommentsNode),
+html.scx-enabled.scx-hero-waveform-text .waveform .sceneLayer:not(.waveformCommentsNode) {
+  filter: var(--scx-waveform-canvas-filter);
+}
+
+/* Bottom player progress — always theme accent (not Waveform style). */
+html.scx-enabled .playbackTimeline__progressBar,
+html.scx-enabled .playbackTimeline__progressHandle {
+  background-color: var(--scx-accent, #f50) !important;
+}
+
+html.scx-enabled.scx-hero-waveform-accent .fullHero .soundTitle__title,
+html.scx-enabled.scx-hero-waveform-accent .fullHero .soundTitle__title .g-type-shrinkwrap-primary,
+html.scx-enabled.scx-hero-waveform-accent .fullHero .soundTitle__title .g-type-shrinkwrap-inline,
+html.scx-enabled.scx-hero-waveform-text .fullHero .soundTitle__title,
+html.scx-enabled.scx-hero-waveform-text .fullHero .soundTitle__title .g-type-shrinkwrap-primary,
+html.scx-enabled.scx-hero-waveform-text .fullHero .soundTitle__title .g-type-shrinkwrap-inline {
+  color: var(--scx-waveform-paint) !important;
+  --font-primary-color: var(--scx-waveform-paint) !important;
+}
+
+html.scx-enabled.scx-hero-waveform-accent .MuiButton-colorContrast,
+html.scx-enabled.scx-hero-waveform-text .MuiButton-colorContrast {
+  color: var(--scx-waveform-paint) !important;
+}
+
+html.scx-enabled.scx-hero-waveform-accent .MuiButton-colorContrast > svg,
+html.scx-enabled.scx-hero-waveform-accent .MuiButton-colorContrast > svg *,
+html.scx-enabled.scx-hero-waveform-text .MuiButton-colorContrast > svg,
+html.scx-enabled.scx-hero-waveform-text .MuiButton-colorContrast > svg * {
+  fill: var(--scx-waveform-paint) !important;
 }
 
 /* Layout containers stay clear so the page background shows through.
@@ -184,8 +230,8 @@ html.scx-enabled.scx-theme .g-type-shrinkwrap-secondary:visited {
   color: var(--scx-text-muted) !important;
 }
 
-html.scx-enabled.scx-theme .MuiButton-outlined:not(.Mui-selected),
-html.scx-enabled.scx-theme .MuiButton-text:not(.Mui-selected) {
+html.scx-enabled.scx-theme .MuiButton-outlined:not(.Mui-selected):not(.MuiButton-colorContrast),
+html.scx-enabled.scx-theme .MuiButton-text:not(.Mui-selected):not(.MuiButton-colorContrast) {
   color: var(--scx-text) !important;
   border-color: var(--scx-border) !important;
 }

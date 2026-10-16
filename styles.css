@@ -3,7 +3,7 @@
  *
  * Active layout tweaks only. Master switch is html.scx-enabled — every
  * override also requires it so Enabled off restores stock SoundCloud.
- * Features: scx-full-width, scx-enlarged-queue, scx-hero-backdrop.
+ * Features: scx-full-width, scx-enlarged-queue, scx-hero-bg-*.
  * Button chrome lives in themes.css.
  */
 
@@ -22,36 +22,49 @@ html.scx-enabled div.MuiCardContent-root .MuiListItem-gutters > div {
   backdrop-filter: blur(0px) !important;
 }
 
-/* Accent hero backdrop — html.scx-hero-backdrop */
-html.scx-enabled.scx-hero-backdrop {
-  --scx-hero-accent-mix: color-mix(in srgb, var(--scx-accent) 50%, transparent);
+/* Hero background styles — html.scx-hero-bg-{accent|text|transparent} */
+html.scx-enabled.scx-hero-bg-accent,
+html.scx-enabled.scx-hero-bg-text {
   --scx-hero-backdrop-blur: 14px;
-  --mui-palette-contrast-contrastText: var(--scx-accent) !important;
 }
 
-html.scx-enabled.scx-hero-backdrop section[aria-label="Track header"] {
+html.scx-enabled.scx-hero-bg-accent {
+  --scx-hero-mix: color-mix(in srgb, var(--scx-accent) 50%, transparent);
+}
+
+html.scx-enabled.scx-hero-bg-text {
+  --scx-hero-mix: color-mix(in srgb, var(--scx-text) 50%, transparent);
+}
+
+html.scx-enabled.scx-hero-bg-accent section[aria-label="Track header"],
+html.scx-enabled.scx-hero-bg-text section[aria-label="Track header"] {
   margin-top: 2rem;
   background: linear-gradient(
     to top,
     transparent,
     transparent,
-    var(--scx-hero-accent-mix)
+    var(--scx-hero-mix)
+  ) !important;
+}
+
+html.scx-enabled.scx-hero-bg-accent .backgroundGradient__buffer,
+html.scx-enabled.scx-hero-bg-text .backgroundGradient__buffer {
+  background: linear-gradient(
+    to top,
+    transparent,
+    transparent,
+    var(--scx-hero-mix),
+    var(--scx-hero-mix)
   ) !important;
   backdrop-filter: blur(var(--scx-hero-backdrop-blur));
   -webkit-backdrop-filter: blur(var(--scx-hero-backdrop-blur));
 }
 
-/* Extra accent stop so the listen-hero buffer reads denser than the header. */
-html.scx-enabled.scx-hero-backdrop .backgroundGradient__buffer {
-  background: linear-gradient(
-    to top,
-    transparent,
-    transparent,
-    var(--scx-hero-accent-mix),
-    var(--scx-hero-accent-mix)
-  ) !important;
-  backdrop-filter: blur(var(--scx-hero-backdrop-blur));
-  -webkit-backdrop-filter: blur(var(--scx-hero-backdrop-blur));
+html.scx-enabled.scx-hero-bg-transparent section[aria-label="Track header"],
+html.scx-enabled.scx-hero-bg-transparent .backgroundGradient__buffer {
+  background: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 html.scx-enabled ::-webkit-scrollbar {

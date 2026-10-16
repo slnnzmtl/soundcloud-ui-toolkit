@@ -128,7 +128,8 @@ test("getSettings migrates legacy theme aliases into sync storage", async () => 
         enabled: true,
         fullWidth: true,
         enlargedQueue: true,
-        heroBackdrop: true,
+        heroBackgroundStyle: "accent",
+        heroWaveformStyle: "accent",
         theme: "spotify",
         radius: "lg",
       },
@@ -146,7 +147,8 @@ test("getSettings does not rewrite storage when already canonical", async () => 
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
-    heroBackdrop: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
     theme: "midnight",
     radius: "md",
   };
@@ -167,7 +169,8 @@ test("readPageCache rewrites local cache when theme was aliased", () => {
         enabled: true,
         fullWidth: true,
         enlargedQueue: true,
-        heroBackdrop: true,
+        heroBackgroundStyle: "accent",
+        heroWaveformStyle: "accent",
         theme: "lifeinvader",
         radius: "sm",
       }),
@@ -229,6 +232,7 @@ test("derivePalette builds deterministic supporting tokens", () => {
   assert.match(palette["--scx-overlay"], /^rgb\(/);
   assert.match(palette["--scx-scrollbar"], /^rgb\(/);
   assert.equal(palette["--scx-waveform-filter"], "none");
+  assert.match(palette["--scx-waveform-filter-text"], /hue-rotate/);
 });
 
 test("derivePalette sets waveform filter from accent", () => {
@@ -240,6 +244,7 @@ test("derivePalette sets waveform filter from accent", () => {
     accent: "#ff5500",
   });
   assert.equal(stock["--scx-waveform-filter"], "none");
+  assert.match(stock["--scx-waveform-filter-text"], /hue-rotate/);
 
   const matrix = ScxSettings.derivePalette({
     background: "#000000",
@@ -251,6 +256,10 @@ test("derivePalette sets waveform filter from accent", () => {
     matrix["--scx-waveform-filter"],
     "hue-rotate(115deg) saturate(1) brightness(1)"
   );
+  assert.equal(
+    matrix["--scx-waveform-filter-text"],
+    "hue-rotate(115deg) saturate(1) brightness(0.73)"
+  );
 
   const cyber = ScxSettings.derivePalette({
     background: "#050505",
@@ -259,6 +268,7 @@ test("derivePalette sets waveform filter from accent", () => {
     accent: "#bc13fe",
   });
   assert.match(cyber["--scx-waveform-filter"], /hue-rotate\(263deg\)/);
+  assert.match(cyber["--scx-waveform-filter-text"], /hue-rotate\(137deg\)/);
 });
 
 test("derivePalette sets light color-scheme for bright backgrounds", () => {
@@ -285,7 +295,8 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
-    heroBackdrop: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
     theme: "midnight",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -296,7 +307,8 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
-    heroBackdrop: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
     theme: "custom",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -342,7 +354,8 @@ test("persistableSettings omits customPalette for saved custom theme ids", () =>
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
-    heroBackdrop: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
     theme: "c_abc123",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -374,7 +387,8 @@ test("persistableSettings keeps customPresets for built-in themes", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
-    heroBackdrop: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
     theme: "midnight",
     radius: "md",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
@@ -451,7 +465,8 @@ test("getSettings does not persist default customPalette for preset-only storage
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
-    heroBackdrop: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
     theme: "midnight",
     radius: "md",
   };
@@ -576,20 +591,22 @@ test("DEFAULTS enable all feature toggles after install", () => {
   assert.equal(ScxSettings.DEFAULTS.enabled, true);
   assert.equal(ScxSettings.DEFAULTS.fullWidth, true);
   assert.equal(ScxSettings.DEFAULTS.enlargedQueue, true);
-  assert.equal(ScxSettings.DEFAULTS.heroBackdrop, true);
+  assert.equal(ScxSettings.DEFAULTS.heroBackgroundStyle, "accent");
+  assert.equal(ScxSettings.DEFAULTS.heroWaveformStyle, "accent");
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
-  for (const id of [
-    "extension-enabled",
-    "full-width",
-    "enlarged-queue",
-    "hero-backdrop",
-  ]) {
+  for (const id of ["extension-enabled", "full-width", "enlarged-queue"]) {
     assert.match(
       html,
       new RegExp(`id="${id}"[\\s\\S]*?checked`),
       `${id} checked by default in popup`
     );
   }
+  assert.match(html, /id="hero-background-style"/);
+  assert.match(html, /id="hero-waveform-style"/);
+  assert.match(
+    html,
+    /id="hero-background-style"[\s\S]*?<option value="accent" selected>/
+  );
 });
 
 test("mergeWithDefaults fills missing keys and sanitizes", () => {
@@ -598,7 +615,8 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(fromNull.enabled, true);
   assert.equal(fromNull.fullWidth, true);
   assert.equal(fromNull.enlargedQueue, true);
-  assert.equal(fromNull.heroBackdrop, true);
+  assert.equal(fromNull.heroBackgroundStyle, "accent");
+  assert.equal(fromNull.heroWaveformStyle, "accent");
   assert.equal(fromNull.theme, "default");
   assert.equal(fromNull.radius, "md");
 
@@ -611,9 +629,33 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(merged.enabled, false);
   assert.equal(merged.fullWidth, true);
   assert.equal(merged.enlargedQueue, true);
-  assert.equal(merged.heroBackdrop, true);
+  assert.equal(merged.heroBackgroundStyle, "accent");
+  assert.equal(merged.heroWaveformStyle, "accent");
   assert.equal(merged.theme, "grove");
   assert.equal(merged.radius, "md");
+});
+
+test("mergeWithDefaults migrates legacy heroBackdrop boolean", () => {
+  const { ScxSettings } = loadScxSettings();
+  const off = ScxSettings.mergeWithDefaults({
+    enabled: true,
+    heroBackdrop: false,
+  });
+  assert.equal(off.heroBackgroundStyle, "default");
+  assert.equal(off.heroBackdrop, undefined);
+
+  const on = ScxSettings.mergeWithDefaults({
+    enabled: true,
+    heroBackdrop: true,
+  });
+  assert.equal(on.heroBackgroundStyle, "accent");
+  assert.equal(on.heroBackdrop, undefined);
+
+  const keep = ScxSettings.mergeWithDefaults({
+    heroBackdrop: false,
+    heroBackgroundStyle: "text",
+  });
+  assert.equal(keep.heroBackgroundStyle, "text");
 });
 
 test("applyDocumentTheme omits default on SoundCloud; includeDefault keeps it", () => {
@@ -701,7 +743,10 @@ test("ScxSettings export matches content + popup usage", () => {
       "ENABLED_CLASS",
       "ENLARGED_QUEUE_CLASS",
       "FULL_WIDTH_CLASS",
-      "HERO_BACKDROP_CLASS",
+      "HERO_BACKGROUND_STYLES",
+      "HERO_BG_CLASS",
+      "HERO_WAVEFORM_CLASS",
+      "HERO_WAVEFORM_STYLES",
       "NATIVE_DARK_CLASS",
       "NATIVE_SCHEME_KEY",
       "RADII",
@@ -713,12 +758,16 @@ test("ScxSettings export matches content + popup usage", () => {
       "THEME_GROUPS",
       "THEMES",
       "applyCustomThemeVariables",
+      "applyDocumentHero",
       "applyDocumentRadius",
       "applyDocumentTheme",
       "clearCustomThemeVariables",
       "customPalettesEqual",
       "derivePalette",
+      "desiredHeroClasses",
       "getSettings",
+      "heroBackgroundClass",
+      "heroWaveformClass",
       "isCompleteCustomPaletteInput",
       "mergeWithDefaults",
       "normalizeHexColor",
@@ -728,6 +777,8 @@ test("ScxSettings export matches content + popup usage", () => {
       "readPageCache",
       "readPresetSourcePalette",
       "sanitizeCustomPalette",
+      "sanitizeHeroBackgroundStyle",
+      "sanitizeHeroWaveformStyle",
       "sanitizeRadius",
       "sanitizeTheme",
       "setSettings",
@@ -917,26 +968,29 @@ test("scrollbar color is themed once; styles.css keeps size only on *", () => {
   );
 });
 
-test("hero backdrop and enlarged hero layout are class-gated", () => {
+test("hero background styles and enlarged hero layout are class-gated", () => {
   const styles = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
   const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
 
-  assert.match(styles, /html\.scx-enabled\.scx-hero-backdrop/);
-  assert.match(styles, /--scx-hero-accent-mix/);
+  assert.match(styles, /html\.scx-enabled\.scx-hero-bg-accent/);
+  assert.match(styles, /html\.scx-enabled\.scx-hero-bg-text/);
+  assert.match(styles, /html\.scx-enabled\.scx-hero-bg-transparent/);
+  assert.match(styles, /--scx-hero-mix/);
   assert.match(
     styles,
     /html\.scx-enabled\.scx-full-width\s+\.fullHero,\s*\n\s*html\.scx-enabled\.scx-full-width\s+\.fullListenHero/
   );
   assert.match(styles, /--scx-hero-band-height/);
-  assert.match(
+  assert.doesNotMatch(
     styles,
-    /html\.scx-enabled\.scx-hero-backdrop\s*\{[\s\S]*?--mui-palette-contrast-contrastText:\s*var\(--scx-accent\)/
+    /scx-hero-bg-accent[\s\S]{0,200}--mui-palette-contrast-contrastText/
   );
-  assert.match(content, /HERO_BACKDROP_CLASS/);
-  assert.match(content, /s\.heroBackdrop/);
-  assert.match(html, /id="hero-backdrop"/);
-  assert.match(html, /Accent hero backdrop/);
+  assert.match(content, /applyDocumentHero\(root, settings\)/);
+  assert.match(content, /desiredHeroClasses/);
+  assert.match(html, /id="hero-background-style"/);
+  assert.match(html, /id="hero-waveform-style"/);
+  assert.match(html, />Hero</);
 });
 
 test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables features", () => {
@@ -967,10 +1021,7 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
     content,
     /ENLARGED_QUEUE_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.enlargedQueue\)/
   );
-  assert.match(
-    content,
-    /HERO_BACKDROP_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.heroBackdrop\)/
-  );
+  assert.match(content, /applyDocumentHero\(root, settings\)/);
   assert.match(
     content,
     /for \(const \[className, want\] of FEATURE_CLASS_TOGGLES\)/
@@ -1005,6 +1056,11 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
   assert.match(popupJs, /theme-row__name--editing/);
   assert.match(popupJs, /resolveCustomPalette/);
   assert.match(popupCss, /grid-template-columns:\s*minmax\(0, 1fr\) minmax\(0, 1fr\)/);
+  assert.match(popupCss, /html \{\s*max-height:\s*600px;\s*overflow-x:\s*hidden;\s*overflow-y:\s*auto;/);
+  assert.match(
+    popupCss,
+    /grid-template-areas:\s*"classic accent"\s*"style accent"\s*"homage accent"/
+  );
   assert.doesNotMatch(
     popupCss,
     /\.custom-theme__presets \.theme-group__rows \{[\s\S]*?max-height/
@@ -1015,6 +1071,7 @@ test("content paintRoot applies and clears custom variables", () => {
   const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
   assert.match(content, /applyCustomThemeVariables\(root, settings\)/);
   assert.match(content, /clearCustomThemeVariables\(root\)/);
+  assert.match(content, /applyDocumentHero\(root, settings\)/);
   assert.match(content, /isCustomThemeId\(theme\)/);
 });
 
@@ -1023,15 +1080,75 @@ test("tokens.css declares catalog --scx-waveform-filter", () => {
   assert.match(tokens, /html\.scx-theme-matrix[\s\S]*--scx-waveform-filter:\s*hue-rotate\(115deg\)/);
   assert.match(tokens, /html\.scx-theme-cyberpunk[\s\S]*--scx-waveform-filter:\s*hue-rotate\(263deg\)/);
   assert.match(tokens, /html\.scx-theme-midnight[\s\S]*--scx-waveform-filter:\s*none/);
+  assert.match(
+    tokens,
+    /html\.scx-theme-matrix[\s\S]*--scx-waveform-filter-text:\s*hue-rotate\(115deg\)/
+  );
 });
 
-test("themes.css tints waveform sceneLayer via --scx-waveform-filter", () => {
+test("themes.css tints waveform and progress bar via hero waveform classes", () => {
   const css = fs.readFileSync(path.join(ROOT, "themes.css"), "utf8");
   assert.match(
     css,
-    /html\.scx-enabled\.scx-theme \.waveform \.sceneLayer:not\(\.waveformCommentsNode\)/
+    /html\.scx-enabled\.scx-hero-waveform-accent \{\s*--scx-waveform-paint:\s*var\(--scx-accent\)/
   );
-  assert.match(css, /filter:\s*var\(--scx-waveform-filter,\s*none\)/);
+  assert.match(
+    css,
+    /html\.scx-enabled\.scx-hero-waveform-text \{\s*--scx-waveform-paint:\s*var\(--scx-text\)/
+  );
+  assert.match(
+    css,
+    /--mui-palette-contrast-contrastText:\s*var\(--scx-waveform-paint\)/
+  );
+  assert.match(
+    css,
+    /html\.scx-enabled\.scx-hero-waveform-accent \.waveform \.sceneLayer:not\(\.waveformCommentsNode\),\s*\nhtml\.scx-enabled\.scx-hero-waveform-text/
+  );
+  assert.match(css, /filter:\s*var\(--scx-waveform-canvas-filter\)/);
+  assert.match(
+    css,
+    /html\.scx-enabled \.playbackTimeline__progressBar[\s\S]*background-color:\s*var\(--scx-accent,\s*#f50\)/
+  );
+  assert.doesNotMatch(
+    css,
+    /scx-hero-waveform-(?:accent|text)[\s\S]{0,120}\.playbackTimeline__progressBar/
+  );
+  assert.match(css, /\.fullHero \.soundTitle__title[\s\S]*color:\s*var\(--scx-waveform-paint\)/);
+  assert.match(
+    css,
+    /\.MuiButton-colorContrast > svg[\s\S]*fill:\s*var\(--scx-waveform-paint\)/
+  );
+  assert.match(
+    css,
+    /MuiButton-text:not\(\.Mui-selected\):not\(\.MuiButton-colorContrast\)/
+  );
+});
+
+test("applyDocumentHero toggles background and waveform classes", () => {
+  const { ScxSettings, classList, documentElement } = loadScxSettings();
+  ScxSettings.applyDocumentHero(documentElement, {
+    enabled: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "text",
+  });
+  assert.deepEqual(classList.toArray(), [
+    "scx-hero-bg-accent",
+    "scx-hero-waveform-text",
+  ]);
+
+  ScxSettings.applyDocumentHero(documentElement, {
+    enabled: true,
+    heroBackgroundStyle: "default",
+    heroWaveformStyle: "default",
+  });
+  assert.deepEqual(classList.toArray(), []);
+
+  ScxSettings.applyDocumentHero(documentElement, {
+    enabled: false,
+    heroBackgroundStyle: "transparent",
+    heroWaveformStyle: "accent",
+  });
+  assert.deepEqual(classList.toArray(), []);
 });
 
 test("watchOwnRoot restores layout classes for default theme", () => {

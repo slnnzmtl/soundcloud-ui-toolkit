@@ -3,13 +3,18 @@
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
-    HERO_BACKDROP_CLASS,
+    HERO_BACKGROUND_STYLES,
+    HERO_WAVEFORM_STYLES,
     DEFAULTS,
     NATIVE_SCHEME_KEY,
     applyDocumentTheme,
     applyDocumentRadius,
+    applyDocumentHero,
     applyCustomThemeVariables,
     clearCustomThemeVariables,
+    desiredHeroClasses,
+    heroBackgroundClass,
+    heroWaveformClass,
     isCustomThemeId,
     getSettings,
     mergeWithDefaults,
@@ -119,18 +124,42 @@
     return globalThis.__scxStylesLoading;
   }
 
-  // Layout classes gated on enabled; theme/radius stay in ScxSettings helpers.
+  // Layout classes gated on enabled; theme/radius/hero stay in ScxSettings helpers.
   const FEATURE_CLASS_TOGGLES = [
     [ENABLED_CLASS, (s) => Boolean(s.enabled)],
     [FULL_WIDTH_CLASS, (s) => Boolean(s.enabled) && Boolean(s.fullWidth)],
     [ENLARGED_QUEUE_CLASS, (s) => Boolean(s.enabled) && Boolean(s.enlargedQueue)],
-    [HERO_BACKDROP_CLASS, (s) => Boolean(s.enabled) && Boolean(s.heroBackdrop)],
   ];
 
   function rootNeedsPaint(root, settings) {
-    return FEATURE_CLASS_TOGGLES.some(
-      ([className, want]) => root.classList.contains(className) !== want(settings)
-    );
+    if (
+      FEATURE_CLASS_TOGGLES.some(
+        ([className, want]) =>
+          root.classList.contains(className) !== want(settings)
+      )
+    ) {
+      return true;
+    }
+    const wantHero = new Set(desiredHeroClasses(settings));
+    for (const id of HERO_BACKGROUND_STYLES) {
+      if (id === "default") {
+        continue;
+      }
+      const name = heroBackgroundClass(id);
+      if (root.classList.contains(name) !== wantHero.has(name)) {
+        return true;
+      }
+    }
+    for (const id of HERO_WAVEFORM_STYLES) {
+      if (id === "default") {
+        continue;
+      }
+      const name = heroWaveformClass(id);
+      if (root.classList.contains(name) !== wantHero.has(name)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function paintRoot(root, settings) {
@@ -149,6 +178,7 @@
     } else {
       clearCustomThemeVariables(root);
     }
+    applyDocumentHero(root, settings);
     applyDocumentRadius(settings.radius, { active, root });
   }
 

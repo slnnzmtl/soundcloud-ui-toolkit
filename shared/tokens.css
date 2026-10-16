@@ -5,7 +5,8 @@
  * Color: gated by html.scx-theme-{id}. Rounding: html.scx-radius-{id}.
  * Default is popup-only chrome; SoundCloud leaves Default as no override.
  * With scx-native-dark, Default chrome follows SoundCloud body.theme-dark.
- * --scx-waveform-filter tints canvas waveforms (stock orange → accent).
+ * --scx-waveform-filter / --scx-waveform-filter-text tint canvas waveforms
+ * (stock orange → accent / text) when hero waveform style is set.
  */
 
 :root,
@@ -27,6 +28,7 @@ html.scx-theme-default {
   --scx-special-rgb: 255, 85, 0;
   --scx-link-rgb: 255, 85, 0;
   --scx-waveform-filter: none;
+  --scx-waveform-filter-text: none;
   --scx-radius-small: 6px;
   --scx-radius-medium: 10px;
   --scx-radius-large: 14px;
@@ -51,6 +53,8 @@ html.scx-theme-default.scx-native-dark {
   --scx-secondary-rgb: 153, 153, 153;
   --scx-special-rgb: 255, 85, 0;
   --scx-link-rgb: 255, 85, 0;
+  --scx-waveform-filter: none;
+  --scx-waveform-filter-text: none;
 }
 
 /* Midnight — THEME.md palette */
@@ -72,6 +76,7 @@ html.scx-theme-midnight {
   --scx-special-rgb: 255, 90, 31;
   --scx-link-rgb: 138, 180, 255;
   --scx-waveform-filter: none;
+  --scx-waveform-filter-text: hue-rotate(200deg) saturate(0.43) brightness(1.95);
 }
 
 /* OLED — near-black surfaces */
@@ -93,6 +98,7 @@ html.scx-theme-oled {
   --scx-special-rgb: 255, 90, 31;
   --scx-link-rgb: 138, 180, 255;
   --scx-waveform-filter: none;
+  --scx-waveform-filter-text: hue-rotate(200deg) saturate(0.43) brightness(1.95);
 }
 
 /* Matrix — tweakcn Terminal (cmll14cgf000204ky5ms2fdgj) */
@@ -114,6 +120,7 @@ html.scx-theme-matrix {
   --scx-special-rgb: 0, 255, 65;
   --scx-link-rgb: 0, 255, 65;
   --scx-waveform-filter: hue-rotate(115deg) saturate(1) brightness(1);
+  --scx-waveform-filter-text: hue-rotate(115deg) saturate(1) brightness(0.73);
 }
 
 /* Fallout — tweakcn Fallout (cmoqms5x8000504lbhwlu5snm) */
@@ -135,6 +142,7 @@ html.scx-theme-fallout {
   --scx-special-rgb: 255, 204, 0;
   --scx-link-rgb: 255, 204, 0;
   --scx-waveform-filter: hue-rotate(19deg) saturate(1) brightness(1.31);
+  --scx-waveform-filter-text: hue-rotate(33deg) saturate(1) brightness(1);
 }
 
 /* Cyberpunk — tweakcn community 赛博朋克 (tags=cyberpunk) */
@@ -156,6 +164,7 @@ html.scx-theme-cyberpunk {
   --scx-special-rgb: 188, 19, 254;
   --scx-link-rgb: 0, 184, 255;
   --scx-waveform-filter: hue-rotate(263deg) saturate(0.99) brightness(1.07);
+  --scx-waveform-filter-text: hue-rotate(137deg) saturate(1) brightness(1);
 }
 
 /* Purple — tweakcn Dramatic Purple (community tags=midnight) */
@@ -177,6 +186,7 @@ html.scx-theme-purple {
   --scx-special-rgb: 167, 139, 250;
   --scx-link-rgb: 196, 181, 253;
   --scx-waveform-filter: hue-rotate(235deg) saturate(1) brightness(1.65);
+  --scx-waveform-filter-text: hue-rotate(250deg) saturate(1) brightness(1.96);
 }
 
 /* Slate — cooler blue-gray surfaces */
@@ -198,6 +208,7 @@ html.scx-theme-slate {
   --scx-special-rgb: 255, 90, 31;
   --scx-link-rgb: 138, 180, 255;
   --scx-waveform-filter: none;
+  --scx-waveform-filter-text: hue-rotate(194deg) saturate(0.44) brightness(1.87);
 }
 
 /* Minimal — tweakcn Minimal Neutral (cmho4nr9l000h04l1gu419ckw) */
@@ -219,6 +230,7 @@ html.scx-theme-minimal {
   --scx-special-rgb: 229, 229, 229;
   --scx-link-rgb: 229, 229, 229;
   --scx-waveform-filter: none;
+  --scx-waveform-filter-text: none;
 }
 
 /* Frost — tweakcn Apple Liquid Glass (cmr2flrsp000304ih46yj4y1b) */
@@ -240,6 +252,7 @@ html.scx-theme-frost {
   --scx-special-rgb: 58, 140, 255;
   --scx-link-rgb: 165, 208, 255;
   --scx-waveform-filter: hue-rotate(195deg) saturate(1) brightness(1.23);
+  --scx-waveform-filter-text: hue-rotate(190deg) saturate(0.15) brightness(1.9);
 }
 
 /* Tide — tweakcn Teal Hue (cmm5996cv000004l266hbf4mr) */
@@ -261,6 +274,7 @@ html.scx-theme-tide {
   --scx-special-rgb: 13, 242, 208;
   --scx-link-rgb: 48, 201, 232;
   --scx-waveform-filter: hue-rotate(151deg) saturate(0.9) brightness(1);
+  --scx-waveform-filter-text: hue-rotate(145deg) saturate(0.2) brightness(1.92);
 }
 
 /* Grove — tweakcn Spotify (cmta2ef4d000004jpd7fed7le) */
@@ -282,6 +296,7 @@ html.scx-theme-grove {
   --scx-special-rgb: 29, 185, 84;
   --scx-link-rgb: 30, 215, 96;
   --scx-waveform-filter: hue-rotate(121deg) saturate(0.73) brightness(0.84);
+  --scx-waveform-filter-text: none;
 }
 
 /* Blush — tweakcn Mimi (cmp5lo2aw000304l5fdvdgwa5) */
@@ -303,6 +318,7 @@ html.scx-theme-blush {
   --scx-special-rgb: 251, 226, 167;
   --scx-link-rgb: 228, 162, 177;
   --scx-waveform-filter: hue-rotate(22deg) saturate(0.91) brightness(1.64);
+  --scx-waveform-filter-text: hue-rotate(314deg) saturate(0.4) brightness(1.84);
 }
 
 /* Blood — red-on-black (from tweakcn Life-Invader cmsq8hzn6000004jw7c68go2f) */
@@ -324,6 +340,7 @@ html.scx-theme-blood {
   --scx-special-rgb: 219, 0, 0;
   --scx-link-rgb: 255, 43, 43;
   --scx-waveform-filter: hue-rotate(-20deg) saturate(1) brightness(0.96);
+  --scx-waveform-filter-text: hue-rotate(-20deg) saturate(1) brightness(1.17);
 }
 
 /* Rounding scale — independent of color themes. Artwork uses medium
