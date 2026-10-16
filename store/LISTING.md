@@ -21,7 +21,6 @@ Runtime-only zip (no README, THEME.md, SELECTORS.md, store docs, or LICENSE).
 
 - Hero section — Background style (Default / Accent / Text / Transparent) replaces the accent-backdrop toggle
 - Elements style — tint waveforms, hero title, and play icon (Default / Accent / Text); progress bar stays accent
-- Soft title halo on Accent / Text hero bands; tighter control-center layout for Chrome’s popup height cap
 
 ## What’s new in 1.4.1
 
