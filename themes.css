@@ -97,6 +97,11 @@ html.scx-enabled.scx-theme body {
   color: var(--scx-text) !important;
 }
 
+/* Waveform bars are canvas-painted (stock orange #f50); tint via filter. */
+html.scx-enabled.scx-theme .waveform .sceneLayer:not(.waveformCommentsNode) {
+  filter: var(--scx-waveform-filter, none);
+}
+
 /* Layout containers stay clear so the page background shows through.
  * MUI tokens are set here (and on .mui-theme-*) so Artist Studio iframes
  * pick up the preset — those frames do not use body.theme-dark. */

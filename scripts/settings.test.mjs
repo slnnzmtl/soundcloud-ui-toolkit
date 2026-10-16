@@ -228,6 +228,37 @@ test("derivePalette builds deterministic supporting tokens", () => {
   assert.match(palette["--scx-surface-rgb"], /^\d+, \d+, \d+$/);
   assert.match(palette["--scx-overlay"], /^rgb\(/);
   assert.match(palette["--scx-scrollbar"], /^rgb\(/);
+  assert.equal(palette["--scx-waveform-filter"], "none");
+});
+
+test("derivePalette sets waveform filter from accent", () => {
+  const { ScxSettings } = loadScxSettings();
+  const stock = ScxSettings.derivePalette({
+    background: "#0b0d12",
+    surface: "#141821",
+    text: "#f5f7fb",
+    accent: "#ff5500",
+  });
+  assert.equal(stock["--scx-waveform-filter"], "none");
+
+  const matrix = ScxSettings.derivePalette({
+    background: "#000000",
+    surface: "#050505",
+    text: "#00bb2f",
+    accent: "#00ff41",
+  });
+  assert.equal(
+    matrix["--scx-waveform-filter"],
+    "hue-rotate(115deg) saturate(1) brightness(1)"
+  );
+
+  const cyber = ScxSettings.derivePalette({
+    background: "#050505",
+    surface: "#0d0d0d",
+    text: "#00ff9f",
+    accent: "#bc13fe",
+  });
+  assert.match(cyber["--scx-waveform-filter"], /hue-rotate\(263deg\)/);
 });
 
 test("derivePalette sets light color-scheme for bright backgrounds", () => {
@@ -934,7 +965,7 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   assert.match(content, /FULL_WIDTH_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.fullWidth\)/);
   assert.match(
     content,
-    /ENLARGED_QUEUE_CLASS,\s*\n\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.enlargedQueue\)/
+    /ENLARGED_QUEUE_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.enlargedQueue\)/
   );
   assert.match(
     content,
@@ -985,6 +1016,22 @@ test("content paintRoot applies and clears custom variables", () => {
   assert.match(content, /applyCustomThemeVariables\(root, settings\)/);
   assert.match(content, /clearCustomThemeVariables\(root\)/);
   assert.match(content, /isCustomThemeId\(theme\)/);
+});
+
+test("tokens.css declares catalog --scx-waveform-filter", () => {
+  const tokens = fs.readFileSync(path.join(ROOT, "shared/tokens.css"), "utf8");
+  assert.match(tokens, /html\.scx-theme-matrix[\s\S]*--scx-waveform-filter:\s*hue-rotate\(115deg\)/);
+  assert.match(tokens, /html\.scx-theme-cyberpunk[\s\S]*--scx-waveform-filter:\s*hue-rotate\(263deg\)/);
+  assert.match(tokens, /html\.scx-theme-midnight[\s\S]*--scx-waveform-filter:\s*none/);
+});
+
+test("themes.css tints waveform sceneLayer via --scx-waveform-filter", () => {
+  const css = fs.readFileSync(path.join(ROOT, "themes.css"), "utf8");
+  assert.match(
+    css,
+    /html\.scx-enabled\.scx-theme \.waveform \.sceneLayer:not\(\.waveformCommentsNode\)/
+  );
+  assert.match(css, /filter:\s*var\(--scx-waveform-filter,\s*none\)/);
 });
 
 test("watchOwnRoot restores layout classes for default theme", () => {

@@ -6,6 +6,8 @@
   const STORAGE_KEY = "scxSettings";
   const PAGE_CACHE_KEY = "scxSettingsCache";
   const CUSTOM_THEME_STYLE_ID = "scx-custom-theme-vars";
+  /** Stock SoundCloud played-waveform orange (#ff5500 / #f50). */
+  const STOCK_WAVEFORM_ORANGE_HSL = Object.freeze({ h: 20, s: 100, l: 50 });
   const ENABLED_CLASS = "scx-enabled";
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
@@ -160,6 +162,7 @@
     "--scx-scrollbar",
     "--scx-scrollbar-hover",
     "--scx-player-shadow",
+    "--scx-waveform-filter",
   ]);
 
   const DEFAULTS = Object.freeze({
@@ -384,6 +387,61 @@
     return `#${toPart(r)}${toPart(g)}${toPart(b)}`;
   }
 
+  function rgbToHsl({ r, g, b }) {
+    const rn = r / 255;
+    const gn = g / 255;
+    const bn = b / 255;
+    const max = Math.max(rn, gn, bn);
+    const min = Math.min(rn, gn, bn);
+    const l = (max + min) / 2;
+    if (max === min) {
+      return { h: 0, s: 0, l: l * 100 };
+    }
+    const d = max - min;
+    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    let h;
+    if (max === rn) {
+      h = ((gn - bn) / d + (gn < bn ? 6 : 0)) / 6;
+    } else if (max === gn) {
+      h = ((bn - rn) / d + 2) / 6;
+    } else {
+      h = ((rn - gn) / d + 4) / 6;
+    }
+    return { h: h * 360, s: s * 100, l: l * 100 };
+  }
+
+  /**
+   * CSS filter that maps stock SoundCloud orange waveform bars to accent.
+   * Gray unplayed bars have no hue and stay mostly unchanged.
+   * @param {string} hex
+   * @returns {string}
+   */
+  function waveformFilterFromAccent(hex) {
+    const rgb = parseHexColor(hex);
+    if (!rgb) {
+      return "none";
+    }
+    const hsl = rgbToHsl(rgb);
+    if (hsl.s < 5) {
+      return "none";
+    }
+    const hue = Math.round(hsl.h - STOCK_WAVEFORM_ORANGE_HSL.h);
+    const sat =
+      Math.round((hsl.s / STOCK_WAVEFORM_ORANGE_HSL.s) * 100) / 100;
+    const bright =
+      Math.round(
+        (Math.max(1, hsl.l) / STOCK_WAVEFORM_ORANGE_HSL.l) * 100
+      ) / 100;
+    if (
+      Math.abs(hue) < 6 &&
+      Math.abs(sat - 1) < 0.08 &&
+      Math.abs(bright - 1) < 0.15
+    ) {
+      return "none";
+    }
+    return `hue-rotate(${hue}deg) saturate(${sat}) brightness(${bright})`;
+  }
+
   function mixRgb(a, b, weightB) {
     const w = Math.max(0, Math.min(1, weightB));
     return {
@@ -532,6 +590,7 @@
       "--scx-scrollbar": scrollbar,
       "--scx-scrollbar-hover": scrollbarHover,
       "--scx-player-shadow": playerShadow,
+      "--scx-waveform-filter": waveformFilterFromAccent(base.accent),
     };
   }
 
