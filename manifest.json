@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SoundCloud UI Toolkit: Dark Mode, Fullscreen, Custom Themes, and More",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Widen SoundCloud, read long track names, customize with palette presets, and create custom themes.",
   "homepage_url": "https://kazansky.dev/products/soundcloud-ui-toolkit",
   "minimum_chrome_version": "121",
