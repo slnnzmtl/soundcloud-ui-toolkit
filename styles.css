@@ -38,13 +38,20 @@ html.scx-enabled.scx-hero-bg-text {
 
 html.scx-enabled.scx-hero-bg-accent section[aria-label="Track header"],
 html.scx-enabled.scx-hero-bg-text section[aria-label="Track header"] {
-  margin-top: 2rem;
   background: linear-gradient(
     to top,
     transparent,
     transparent,
     var(--scx-hero-mix)
   ) !important;
+}
+
+html.scx-enabled.scx-full-width #main {
+  padding: 1rem;
+}
+
+html.scx-enabled.scx-full-width .fullHero {
+  margin: 0;
 }
 
 html.scx-enabled.scx-hero-bg-accent .backgroundGradient__buffer,
