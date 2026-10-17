@@ -2,6 +2,7 @@
   const {
     THEME_GROUPS,
     RADII,
+    RADIUS_LABELS,
     FONTS,
     FONT_CATEGORIES,
     CUSTOM_PALETTE_KEYS,
@@ -40,7 +41,7 @@
     { id: "hide-artist-tools", key: "hideArtistTools" },
   ];
 
-  const heroSelects = [
+  const appearanceSelects = [
     {
       id: "hero-background-style",
       key: "heroBackgroundStyle",
@@ -55,6 +56,11 @@
       id: "ui-font",
       key: "font",
       sanitize: sanitizeFont,
+    },
+    {
+      id: "ui-radius",
+      key: "radius",
+      sanitize: sanitizeRadius,
     },
   ];
 
@@ -86,10 +92,16 @@
   let customPaletteDraft = null;
   let customPalettePersistTimer = null;
   let customPaletteSaveInFlight = false;
+  /** @type {HTMLElement | null} */
+  let themeSelectRoot = null;
   /** @type {HTMLButtonElement | null} */
   let themeSelectTrigger = null;
   /** @type {HTMLElement | null} */
   let themeSelectPanel = null;
+  /** @type {HTMLElement | null} */
+  let themeSelectTriggerSwatches = null;
+  /** @type {HTMLElement | null} */
+  let themeSelectTriggerLabel = null;
 
   function isCustomPaletteSyncStale(settings) {
     if (!customPaletteDraft) {
@@ -558,28 +570,6 @@
     return setSettings({ customPresets: presets }).then(syncAllControls);
   }
 
-  function createRadiusOption(id) {
-    const inputId = `radius-${id}`;
-
-    const label = document.createElement("label");
-    label.className = "radius-option";
-    label.htmlFor = inputId;
-
-    const input = document.createElement("input");
-    input.id = inputId;
-    input.className = "radius-option__input";
-    input.type = "radio";
-    input.name = "radius";
-    input.value = id;
-
-    const chip = document.createElement("span");
-    chip.className = "radius-option__chip";
-    chip.textContent = id;
-
-    label.append(input, chip);
-    return label;
-  }
-
   function fillThemeSwatches(container, colors) {
     container.replaceChildren();
     (colors || []).forEach((color) => {
@@ -588,7 +578,7 @@
   }
 
   function setThemeSelectOpen(open) {
-    const root = themeList.querySelector(".theme-select");
+    const root = themeSelectRoot;
     const trigger = themeSelectTrigger;
     const panel = themeSelectPanel;
     if (!root || !trigger || !panel) {
@@ -617,17 +607,16 @@
     }
     const { theme } = resolved;
     themeList.dataset.themeValue = theme.id;
-    const triggerSwatches = themeList.querySelector(
-      ".theme-select__trigger-swatches"
-    );
-    const triggerLabel = themeList.querySelector(".theme-select__trigger-label");
-    if (triggerSwatches) {
-      fillThemeSwatches(triggerSwatches, theme.swatches);
+    if (themeSelectTriggerSwatches) {
+      fillThemeSwatches(themeSelectTriggerSwatches, theme.swatches);
     }
-    if (triggerLabel) {
-      triggerLabel.textContent = theme.label;
+    if (themeSelectTriggerLabel) {
+      themeSelectTriggerLabel.textContent = theme.label;
     }
-    themeList.querySelectorAll('[role="option"]').forEach((option) => {
+    if (!themeSelectPanel) {
+      return;
+    }
+    themeSelectPanel.querySelectorAll('[role="option"]').forEach((option) => {
       const selected = option.dataset.themeId === theme.id;
       option.setAttribute("aria-selected", selected ? "true" : "false");
       option.classList.toggle("is-selected", selected);
@@ -636,15 +625,8 @@
 
   function applyThemeChoice(themeId) {
     const next = sanitizeTheme(themeId, currentPresets());
-    if (findCatalogTheme(next)) {
-      rememberCatalogTheme(next);
-      colorsPanelOverride = "presets";
-    } else {
-      if (!isSavedCustomThemeId(next) && next !== "custom") {
-        rememberCatalogTheme(next);
-      }
-      colorsPanelOverride = "custom";
-    }
+    rememberCatalogTheme(next);
+    colorsPanelOverride = findCatalogTheme(next) ? "presets" : "custom";
     setSettings({ theme: next }).then(syncAllControls);
   }
 
@@ -687,6 +669,11 @@
     panel.setAttribute("tabindex", "-1");
     panel.setAttribute("aria-label", "Theme");
 
+    const leftCol = document.createElement("div");
+    leftCol.className = "theme-select__column";
+    const rightCol = document.createElement("div");
+    rightCol.className = "theme-select__column";
+
     THEME_GROUPS.forEach((group) => {
       const groupEl = document.createElement("div");
       groupEl.className = `theme-select__group theme-select__group--${group.id}`;
@@ -719,12 +706,17 @@
         option.append(swatches, label);
         groupEl.appendChild(option);
       });
-      panel.appendChild(groupEl);
+      (group.column === "right" ? rightCol : leftCol).appendChild(groupEl);
     });
 
+    panel.append(leftCol, rightCol);
+
     root.append(trigger, panel);
+    themeSelectRoot = root;
     themeSelectTrigger = trigger;
     themeSelectPanel = panel;
+    themeSelectTriggerSwatches = triggerSwatches;
+    themeSelectTriggerLabel = triggerLabel;
     mount.replaceChildren(root);
     syncThemeSelectDisplay(previous);
   }
@@ -816,13 +808,19 @@
     });
   }
 
-  function renderRadiusList() {
-    const mount = document.getElementById("radius-list");
+  function renderRadiusSelect() {
+    const select = document.getElementById("ui-radius");
+    if (!select) {
+      return;
+    }
     const fragment = document.createDocumentFragment();
     RADII.forEach((id) => {
-      fragment.appendChild(createRadiusOption(id));
+      const option = document.createElement("option");
+      option.value = id;
+      option.textContent = RADIUS_LABELS[id] || id;
+      fragment.appendChild(option);
     });
-    mount.replaceChildren(fragment);
+    select.replaceChildren(fragment);
   }
 
   function renderFontSelect() {
@@ -858,7 +856,7 @@
       syncSwitch(document.getElementById(id), Boolean(settings[key]));
     });
 
-    heroSelects.forEach(({ id, key, sanitize }) => {
+    appearanceSelects.forEach(({ id, key, sanitize }) => {
       const select = document.getElementById(id);
       if (select) {
         select.value = sanitize(settings[key]);
@@ -887,11 +885,6 @@
         input.checked = activeTheme !== null && input.value === activeTheme;
       });
 
-    const radius = sanitizeRadius(settings.radius);
-    document.querySelectorAll('input[name="radius"]').forEach((input) => {
-      input.checked = input.value === radius;
-    });
-
     syncThemeModeUi(settings);
     syncCustomFields(resolveCustomPalette(settings));
     syncSavePresetButton(settings);
@@ -916,7 +909,7 @@
       });
     });
 
-    heroSelects.forEach(({ id, key, sanitize }) => {
+    appearanceSelects.forEach(({ id, key, sanitize }) => {
       const select = document.getElementById(id);
       select.addEventListener("change", () => {
         const value = sanitize(select.value);
@@ -1030,17 +1023,6 @@
       if (!themeList.contains(event.target)) {
         setThemeSelectOpen(false);
       }
-    });
-
-    document.querySelectorAll('input[name="radius"]').forEach((input) => {
-      input.addEventListener("change", () => {
-        if (!input.checked) {
-          return;
-        }
-        setSettings({ radius: sanitizeRadius(input.value) }).then(
-          applyPopupChrome
-        );
-      });
     });
 
     customReset.addEventListener("click", () => {
@@ -1229,7 +1211,7 @@
     });
   }
 
-  renderRadiusList();
+  renderRadiusSelect();
   renderFontSelect();
   renderThemeList();
   renderCustomFields();

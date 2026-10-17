@@ -20,7 +20,28 @@
   const FONT_CLASS = "scx-font";
   const NATIVE_DARK_CLASS = "scx-native-dark";
   const NATIVE_SCHEME_KEY = "scxNativeScheme";
-  const RADII = Object.freeze(["default", "none", "sm", "md", "lg", "xl"]);
+  const RADIUS_ALIASES = Object.freeze({
+    sm: "small",
+    md: "medium",
+    lg: "large",
+    xl: "xlarge",
+  });
+  const RADII = Object.freeze([
+    "default",
+    "none",
+    "small",
+    "medium",
+    "large",
+    "xlarge",
+  ]);
+  const RADIUS_LABELS = Object.freeze({
+    default: "Default",
+    none: "None",
+    small: "Small",
+    medium: "Medium",
+    large: "Large",
+    xlarge: "X-Large",
+  });
   const FONT_FALLBACK =
     '"Lucida Sans Unicode","Lucida Sans","Garuda","Verdana","Tahoma",sans-serif';
   /**
@@ -300,6 +321,7 @@
     {
       id: "classic",
       label: "Classic",
+      column: "left",
       themes: Object.freeze([
         {
           id: "default",
@@ -326,6 +348,7 @@
     {
       id: "accent",
       label: "Accent",
+      column: "right",
       themes: Object.freeze([
         {
           id: "matrix",
@@ -372,6 +395,7 @@
     {
       id: "style",
       label: "Style",
+      column: "left",
       themes: Object.freeze([
         {
           id: "minimal",
@@ -382,11 +406,6 @@
           id: "frost",
           label: "Frost",
           swatches: Object.freeze(["#090b0f", "#13161b", "#3a8cff"]),
-        },
-        {
-          id: "paper",
-          label: "Paper",
-          swatches: Object.freeze(["#f4f1ea", "#ffffff", "#c2410c"]),
         },
         {
           id: "noir",
@@ -413,6 +432,7 @@
     {
       id: "homage",
       label: "Homage",
+      column: "right",
       themes: Object.freeze([
         {
           id: "grove",
@@ -503,7 +523,7 @@
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "default",
-    radius: "md",
+    radius: "medium",
     font: "default",
     customPalette: DEFAULT_CUSTOM_PALETTE,
     customPresets: Object.freeze([]),
@@ -538,6 +558,39 @@
 
   function booleanSettingsChanged(raw, merged) {
     return BOOLEAN_SETTING_KEYS.some((key) => raw[key] !== merged[key]);
+  }
+
+  function featureClassWant(key, settings) {
+    if (key === "enabled") {
+      return Boolean(settings && settings.enabled);
+    }
+    return (
+      Boolean(settings && settings.enabled) && Boolean(settings && settings[key])
+    );
+  }
+
+  function featureClassesNeedPaint(root, settings) {
+    if (!root) {
+      return false;
+    }
+    return BOOLEAN_SETTING_KEYS.some(
+      (key) =>
+        root.classList.contains(FEATURE_CLASS_BY_SETTING[key]) !==
+        featureClassWant(key, settings)
+    );
+  }
+
+  function applyDocumentFeatureClasses(settings, options) {
+    const root = (options && options.root) || document.documentElement;
+    if (!root) {
+      return;
+    }
+    for (const key of BOOLEAN_SETTING_KEYS) {
+      root.classList.toggle(
+        FEATURE_CLASS_BY_SETTING[key],
+        featureClassWant(key, settings)
+      );
+    }
   }
 
   function themeClass(id) {
@@ -711,6 +764,7 @@
     liquid: "frost",
     spotify: "grove",
     mimi: "blush",
+    paper: "default",
   });
 
   function isSavedCustomThemeId(value) {
@@ -862,6 +916,9 @@
   }
 
   function sanitizeRadius(value) {
+    if (RADIUS_ALIASES[value]) {
+      value = RADIUS_ALIASES[value];
+    }
     return RADII.includes(value) ? value : DEFAULTS.radius;
   }
 
@@ -1465,6 +1522,9 @@
     }
 
     const active = !options || options.active !== false;
+    for (const legacyId of Object.keys(RADIUS_ALIASES)) {
+      root.classList.remove(radiusClass(legacyId));
+    }
     for (const id of RADII) {
       if (id === "default") {
         continue;
@@ -1617,10 +1677,6 @@
     CUSTOM_THEME_STYLE_ID,
     FONT_STYLE_ID,
     NATIVE_SCHEME_KEY,
-    ENABLED_CLASS,
-    FULL_WIDTH_CLASS,
-    ENLARGED_QUEUE_CLASS,
-    HIDE_ARTIST_TOOLS_CLASS,
     FEATURE_CLASS_BY_SETTING,
     BOOLEAN_SETTING_KEYS,
     HERO_BG_CLASS,
@@ -1640,6 +1696,7 @@
     MAX_CUSTOM_PRESETS,
     CUSTOM_PRESET_LABEL_MAX_LENGTH,
     RADII,
+    RADIUS_LABELS,
     DEFAULTS,
     themeClass,
     radiusClass,
@@ -1671,6 +1728,8 @@
     writePageCache,
     onSettingsChanged,
     applyDocumentTheme,
+    applyDocumentFeatureClasses,
+    featureClassesNeedPaint,
     applyCustomThemeVariables,
     clearCustomThemeVariables,
     readPresetSourcePalette,

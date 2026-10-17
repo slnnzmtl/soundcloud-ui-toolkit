@@ -132,7 +132,7 @@ test("getSettings migrates legacy theme aliases into sync storage", async () => 
         heroBackgroundStyle: "accent",
         heroWaveformStyle: "accent",
         theme: "spotify",
-        radius: "lg",
+        radius: "large",
       },
     },
   });
@@ -140,7 +140,7 @@ test("getSettings migrates legacy theme aliases into sync storage", async () => 
   const settings = await ScxSettings.getSettings();
   assert.equal(settings.theme, "grove");
   assert.equal(store.scxSettings.theme, "grove");
-  assert.equal(store.scxSettings.radius, "lg");
+  assert.equal(store.scxSettings.radius, "large");
 });
 
 test("getSettings does not rewrite storage when already canonical", async () => {
@@ -152,7 +152,7 @@ test("getSettings does not rewrite storage when already canonical", async () => 
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
-    radius: "md",
+    radius: "medium",
     font: "default",
   };
   const { ScxSettings, store } = loadScxSettings({
@@ -176,7 +176,7 @@ test("readPageCache rewrites local cache when theme was aliased", () => {
         heroBackgroundStyle: "accent",
         heroWaveformStyle: "accent",
         theme: "lifeinvader",
-        radius: "sm",
+        radius: "small",
       }),
     },
   });
@@ -189,6 +189,7 @@ test("readPageCache rewrites local cache when theme was aliased", () => {
 test("sanitizeTheme maps aliases and rejects unknown ids", () => {
   const { ScxSettings } = loadScxSettings();
   assert.equal(ScxSettings.sanitizeTheme("lifeinvader"), "blood");
+  assert.equal(ScxSettings.sanitizeTheme("paper"), "default");
   assert.equal(ScxSettings.sanitizeTheme("terminal"), "matrix");
   assert.equal(ScxSettings.sanitizeTheme("teal"), "tide");
   assert.equal(ScxSettings.sanitizeTheme("liquid"), "frost");
@@ -303,7 +304,7 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
-    radius: "md",
+    radius: "medium",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
   });
   assert.equal(preset.customPalette, undefined);
@@ -316,7 +317,7 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "custom",
-    radius: "md",
+    radius: "medium",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
   });
   assert.equal(custom.customPalette.background, "#111111");
@@ -364,7 +365,7 @@ test("persistableSettings omits customPalette for saved custom theme ids", () =>
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "c_abc123",
-    radius: "md",
+    radius: "medium",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
     customPresets: [
       {
@@ -398,7 +399,7 @@ test("persistableSettings keeps customPresets for built-in themes", () => {
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
-    radius: "md",
+    radius: "medium",
     customPalette: ScxSettings.DEFAULT_CUSTOM_PALETTE,
     customPresets: [preset],
   });
@@ -477,7 +478,7 @@ test("getSettings does not persist default customPalette for preset-only storage
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
-    radius: "md",
+    radius: "medium",
     font: "default",
   };
   const { ScxSettings, store } = loadScxSettings({
@@ -590,10 +591,12 @@ test("readPresetSourcePalette maps computed preset tokens to source colors", () 
 
 test("sanitizeRadius accepts catalog values and falls back", () => {
   const { ScxSettings } = loadScxSettings();
-  assert.equal(ScxSettings.sanitizeRadius("xl"), "xl");
+  assert.equal(ScxSettings.sanitizeRadius("xlarge"), "xlarge");
+  assert.equal(ScxSettings.sanitizeRadius("xl"), "xlarge");
+  assert.equal(ScxSettings.sanitizeRadius("md"), "medium");
   assert.equal(ScxSettings.sanitizeRadius("default"), "default");
-  assert.equal(ScxSettings.sanitizeRadius("huge"), "md");
-  assert.equal(ScxSettings.sanitizeRadius(null), "md");
+  assert.equal(ScxSettings.sanitizeRadius("huge"), "medium");
+  assert.equal(ScxSettings.sanitizeRadius(null), "medium");
 });
 
 test("sanitizeFont accepts catalog values and falls back", () => {
@@ -646,7 +649,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(fromNull.heroBackgroundStyle, "accent");
   assert.equal(fromNull.heroWaveformStyle, "accent");
   assert.equal(fromNull.theme, "default");
-  assert.equal(fromNull.radius, "md");
+  assert.equal(fromNull.radius, "medium");
   assert.equal(fromNull.font, "default");
 
   const merged = ScxSettings.mergeWithDefaults({
@@ -663,7 +666,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(merged.heroBackgroundStyle, "accent");
   assert.equal(merged.heroWaveformStyle, "accent");
   assert.equal(merged.theme, "grove");
-  assert.equal(merged.radius, "md");
+  assert.equal(merged.radius, "medium");
   assert.equal(merged.font, "default");
 });
 
@@ -711,21 +714,63 @@ test("applyDocumentTheme omits default on SoundCloud; includeDefault keeps it", 
   assert.deepEqual(other.toArray(), ["scx-theme", "scx-theme-purple"]);
 });
 
+test("applyDocumentFeatureClasses gates layout classes on enabled", () => {
+  const { ScxSettings, classList, documentElement } = loadScxSettings();
+
+  ScxSettings.applyDocumentFeatureClasses({
+    enabled: true,
+    fullWidth: true,
+    enlargedQueue: false,
+    hideArtistTools: true,
+  });
+  assert.deepEqual(classList.toArray().sort(), [
+    "scx-enabled",
+    "scx-full-width",
+    "scx-hide-artist-tools",
+  ]);
+  assert.equal(
+    ScxSettings.featureClassesNeedPaint(documentElement, {
+      enabled: true,
+      fullWidth: true,
+      enlargedQueue: false,
+      hideArtistTools: true,
+    }),
+    false
+  );
+  assert.equal(
+    ScxSettings.featureClassesNeedPaint(documentElement, {
+      enabled: true,
+      fullWidth: true,
+      enlargedQueue: true,
+      hideArtistTools: true,
+    }),
+    true
+  );
+
+  ScxSettings.applyDocumentFeatureClasses({
+    enabled: false,
+    fullWidth: true,
+    enlargedQueue: true,
+    hideArtistTools: true,
+  });
+  assert.deepEqual(classList.toArray(), []);
+});
+
 test("applyDocumentRadius clears when inactive", () => {
   const { ScxSettings, classList } = loadScxSettings();
 
-  ScxSettings.applyDocumentRadius("lg");
-  assert.deepEqual(classList.toArray(), ["scx-radius-lg"]);
+  ScxSettings.applyDocumentRadius("large");
+  assert.deepEqual(classList.toArray(), ["scx-radius-large"]);
 
-  ScxSettings.applyDocumentRadius("xl", { active: false });
+  ScxSettings.applyDocumentRadius("xlarge", { active: false });
   assert.deepEqual(classList.toArray(), []);
 });
 
 test("applyDocumentRadius skips class for default", () => {
   const { ScxSettings, classList } = loadScxSettings();
 
-  ScxSettings.applyDocumentRadius("lg");
-  assert.deepEqual(classList.toArray(), ["scx-radius-lg"]);
+  ScxSettings.applyDocumentRadius("large");
+  assert.deepEqual(classList.toArray(), ["scx-radius-large"]);
 
   ScxSettings.applyDocumentRadius("default");
   assert.deepEqual(classList.toArray(), []);
@@ -806,7 +851,7 @@ test("persistableSettings includes sanitized font", () => {
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
-    radius: "md",
+    radius: "medium",
     font: "roboto",
   });
   assert.equal(out.font, "roboto");
@@ -818,7 +863,7 @@ test("persistableSettings includes sanitized font", () => {
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
-    radius: "md",
+    radius: "medium",
     font: "nope",
   });
   assert.equal(bad.font, "default");
@@ -866,12 +911,10 @@ test("ScxSettings export matches content + popup usage", () => {
       "resolveCustomPalette",
       "sanitizeCustomPresets",
       "BOOLEAN_SETTING_KEYS",
-      "ENABLED_CLASS",
-      "ENLARGED_QUEUE_CLASS",
       "FEATURE_CLASS_BY_SETTING",
-      "FULL_WIDTH_CLASS",
-      "HIDE_ARTIST_TOOLS_CLASS",
       "CUSTOM_THEME_STYLE_ID",
+      "applyDocumentFeatureClasses",
+      "featureClassesNeedPaint",
       "FONTS",
       "FONT_CATEGORIES",
       "FONT_CLASS",
@@ -884,6 +927,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "NATIVE_SCHEME_KEY",
       "RADII",
       "RADIUS_CLASS",
+      "RADIUS_LABELS",
       "STORAGE_KEY",
       "THEME_ALIASES",
       "THEME_CLASS",
@@ -921,7 +965,10 @@ test("ScxSettings export matches content + popup usage", () => {
       "writePageCache",
     ].sort()
   );
-  assert.deepEqual([...ScxSettings.RADII], ["default", "none", "sm", "md", "lg", "xl"]);
+  assert.deepEqual(
+    [...ScxSettings.RADII],
+    ["default", "none", "small", "medium", "large", "xlarge"]
+  );
   assert.equal(ScxSettings.NATIVE_SCHEME_KEY, "scxNativeScheme");
   assert.equal(ScxSettings.NATIVE_DARK_CLASS, "scx-native-dark");
 });
@@ -987,14 +1034,16 @@ test("player iframe tags use theme chips; layout CSS stays unthemed", () => {
   assert.doesNotMatch(iframe, /\.sc-tag/);
 });
 
-test("popup builds radius radios from RADII; tokens.css is the palette source", () => {
+test("popup builds radius select from RADII; tokens.css is the palette source", () => {
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
   const popupCss = fs.readFileSync(path.join(ROOT, "popup/popup.css"), "utf8");
   const popupJs = fs.readFileSync(path.join(ROOT, "popup/popup.js"), "utf8");
 
-  assert.match(html, /id="radius-list"/);
-  assert.doesNotMatch(html, /id="radius-none"/);
-  assert.match(popupJs, /function renderRadiusList/);
+  assert.match(html, /id="ui-radius"/);
+  assert.doesNotMatch(html, /id="radius-list"/);
+  assert.doesNotMatch(popupCss, /\.radius-option/);
+  assert.match(popupJs, /function renderRadiusSelect/);
+  assert.match(popupJs, /id: "ui-radius"/);
   assert.match(popupJs, /RADII\.forEach/);
   assert.match(html, /href="\.\.\/shared\/tokens\.css"/);
   assert.match(popupCss, /^:root\s*\{/m);
@@ -1164,17 +1213,10 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\.scx-theme\b(?!\w)/);
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\[class\*="scx-radius-"\]/);
 
-  assert.match(content, /const FEATURE_CLASS_TOGGLES = BOOLEAN_SETTING_KEYS\.map/);
-  assert.match(content, /FEATURE_CLASS_BY_SETTING\[key\]/);
-  assert.match(
-    content,
-    /Boolean\(s\.enabled\) && Boolean\(s\[key\]\)/
-  );
+  assert.match(content, /featureClassesNeedPaint\(root, settings\)/);
+  assert.match(content, /applyDocumentFeatureClasses\(settings, \{ root \}\)/);
   assert.match(content, /applyDocumentHero\(root, settings\)/);
-  assert.match(
-    content,
-    /for \(const \[className, want\] of FEATURE_CLASS_TOGGLES\)/
-  );
+  assert.doesNotMatch(content, /FEATURE_CLASS_TOGGLES/);
   assert.match(content, /const theme = active \? settings\.theme : "default"/);
   assert.match(
     content,
@@ -1205,8 +1247,13 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
   assert.match(popupJs, /applyThemeChoice\(option\.dataset\.themeId\)/);
   assert.match(popupJs, /applyThemeChoice\(input\.value\)/);
   assert.doesNotMatch(popupJs, /catalogThemeIds/);
+  assert.doesNotMatch(popupJs, /\bheroSelects\b/);
+  assert.match(popupJs, /appearanceSelects/);
+  assert.match(popupJs, /themeSelectRoot = root/);
   assert.match(popupJs, /themeSelectTrigger = trigger/);
   assert.match(popupJs, /themeSelectPanel = panel/);
+  assert.match(popupJs, /themeSelectTriggerSwatches = triggerSwatches/);
+  assert.match(popupJs, /group\.column === "right"/);
   assert.match(popupJs, /theme-select__trigger/);
   assert.match(popupJs, /role", "listbox"/);
   assert.match(popupJs, /role", "option"/);
@@ -1217,11 +1264,23 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
   assert.match(popupJs, /resolveCustomPalette/);
   assert.match(popupCss, /\.theme-select__trigger/);
   assert.match(popupCss, /\.theme-select__option/);
-  assert.match(popupCss, /html \{\s*max-height:\s*800px;\s*overflow-x:\s*hidden;\s*overflow-y:\s*auto;/);
   assert.match(
     popupCss,
-    /grid-template-areas:\s*"classic accent"\s*"style homage"/
+    /html \{\s*width:\s*800px;\s*max-height:\s*600px;\s*overflow:\s*hidden;/
   );
+  assert.match(popupCss, /width:\s*800px;\s*min-width:\s*800px;/);
+  assert.match(
+    popupCss,
+    /grid-template-columns:\s*minmax\(0,\s*360px\)\s*minmax\(0,\s*1fr\)/
+  );
+  assert.match(popupCss, /\.theme-select__column/);
+  assert.match(popupJs, /theme-select__column/);
+  assert.match(
+    popupCss,
+    /\.theme-select__panel \{[\s\S]*?max-height:\s*280px;[\s\S]*?overflow-y:\s*auto;/
+  );
+  assert.match(html, /control-center__column--layout/);
+  assert.match(html, /control-center__column--appearance/);
   assert.doesNotMatch(
     popupCss,
     /\.custom-theme__presets \.theme-group__rows \{[\s\S]*?max-height/
@@ -1333,13 +1392,12 @@ test("THEME_GROUPS presets each have a tokens.css block", () => {
   const ids = ScxSettings.THEME_GROUPS.flatMap((group) =>
     group.themes.map((theme) => theme.id)
   );
-  assert.equal(ids.length, 24);
+  assert.equal(ids.length, 23);
   for (const id of [
     "carbon",
     "espresso",
     "azure",
     "flamingo",
-    "paper",
     "noir",
     "sand",
     "blurple",
@@ -1347,6 +1405,12 @@ test("THEME_GROUPS presets each have a tokens.css block", () => {
     "harbor",
   ]) {
     assert.ok(ids.includes(id), `${id} in THEME_GROUPS`);
+  }
+  for (const group of ScxSettings.THEME_GROUPS) {
+    assert.ok(
+      group.column === "left" || group.column === "right",
+      `${group.id} has column`
+    );
   }
   for (const id of ids) {
     assert.match(
@@ -1425,7 +1489,8 @@ test("applyDocumentHero toggles background and waveform classes", () => {
 test("watchOwnRoot restores layout classes for default theme", () => {
   const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
   assert.match(content, /function rootNeedsPaint/);
-  assert.match(content, /const FEATURE_CLASS_TOGGLES = BOOLEAN_SETTING_KEYS\.map/);
+  assert.match(content, /featureClassesNeedPaint\(root, settings\)/);
+  assert.doesNotMatch(content, /FEATURE_CLASS_TOGGLES/);
   assert.doesNotMatch(content, /function wantsFeatureClasses/);
   assert.doesNotMatch(
     content,
@@ -1434,10 +1499,6 @@ test("watchOwnRoot restores layout classes for default theme", () => {
   assert.match(
     content,
     /if \(!rootNeedsPaint\(root, latestSettings\)\)/
-  );
-  assert.match(
-    content,
-    /FEATURE_CLASS_TOGGLES\.some\(\s*\n\s*\(\[className, want\]\) =>/
   );
 });
 

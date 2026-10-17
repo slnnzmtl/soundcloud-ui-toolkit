@@ -431,28 +431,6 @@ html.scx-theme-flamingo {
   --scx-waveform-filter-text: hue-rotate(309deg) saturate(1) brightness(1.91);
 }
 
-/* Paper — light warm editorial */
-html.scx-theme-paper {
-  --scx-background: #f4f1ea;
-  --scx-surface: #ffffff;
-  --scx-surface-raised: #f1f1f1;
-  --scx-border: #d6d6d5;
-  --scx-text: #1c1917;
-  --scx-text-muted: #777470;
-  --scx-accent: #c2410c;
-  --scx-link: #883310;
-  --scx-focus: #883310;
-  --scx-shadow: 0 8px 24px rgb(0 0 0 / 12%);
-  --scx-surface-rgb: 255, 255, 255;
-  --scx-highlight-rgb: 241, 241, 241;
-  --scx-primary-rgb: 28, 25, 23;
-  --scx-secondary-rgb: 119, 116, 112;
-  --scx-special-rgb: 194, 65, 12;
-  --scx-link-rgb: 136, 51, 16;
-  --scx-waveform-filter: hue-rotate(-3deg) saturate(0.88) brightness(0.81);
-  --scx-waveform-filter-text: hue-rotate(4deg) saturate(0.1) brightness(0.2);
-}
-
 /* Noir — high-contrast B&W (links stay neutral like Minimal) */
 html.scx-theme-noir {
   --scx-background: #0a0a0a;
@@ -564,7 +542,7 @@ html.scx-theme-harbor {
 }
 
 /* Rounding scale — independent of color themes. Artwork uses medium
- * (never 50%); play uses --scx-radius-play (50% at xl only). */
+ * (never 50%); play uses --scx-radius-play (50% at xlarge only). */
 html.scx-radius-none {
   --scx-radius-small: 0;
   --scx-radius-medium: 0;
@@ -572,28 +550,28 @@ html.scx-radius-none {
   --scx-radius-play: 0;
 }
 
-html.scx-radius-sm {
+html.scx-radius-small {
   --scx-radius-small: 4px;
   --scx-radius-medium: 4px;
   --scx-radius-large: 8px;
   --scx-radius-play: 6px;
 }
 
-html.scx-radius-md {
+html.scx-radius-medium {
   --scx-radius-small: 6px;
   --scx-radius-medium: 10px;
   --scx-radius-large: 14px;
   --scx-radius-play: 10px;
 }
 
-html.scx-radius-lg {
+html.scx-radius-large {
   --scx-radius-small: 10px;
   --scx-radius-medium: 16px;
   --scx-radius-large: 20px;
   --scx-radius-play: 16px;
 }
 
-html.scx-radius-xl {
+html.scx-radius-xlarge {
   --scx-radius-small: 12px;
   --scx-radius-medium: 22px;
   --scx-radius-large: 28px;

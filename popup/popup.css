@@ -17,17 +17,17 @@
   box-sizing: border-box;
 }
 
-/* Chrome can grow popups toward ~800px; size to content and scroll only if needed. */
+/* Chrome extension popups cap near 800×600 — lock shell; scroll inside presets. */
 html {
-  max-height: 800px;
-  overflow-x: hidden;
-  overflow-y: auto;
+  width: 800px;
+  max-height: 600px;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
-  width: 520px;
-  min-width: 520px;
+  width: 800px;
+  min-width: 800px;
   font-family:
     system-ui,
     -apple-system,
@@ -70,8 +70,22 @@ body {
   color: var(--scx-text-muted);
 }
 
+.control-center__body {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
 .control-center__body--disabled {
   opacity: 0.45;
+}
+
+.control-center__column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
 }
 
 .control-center__group {
@@ -82,10 +96,6 @@ body {
   gap: 10px;
   display: flex;
   flex-direction: column;
-}
-
-.control-center__group + .control-center__group {
-  margin-top: 10px;
 }
 
 .control-center__group-title {
@@ -99,8 +109,8 @@ body {
 
 .feature-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px 10px;
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 
 .feature-list .switch-row {
@@ -228,70 +238,6 @@ body {
   outline-offset: 2px;
 }
 
-.radius-field {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
-}
-
-.radius-field__label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--scx-text);
-}
-
-.radius-list {
-  display: inline-flex;
-  flex-shrink: 0;
-  padding: 2px;
-  background: var(--scx-surface-raised);
-  border: 1px solid var(--scx-border);
-  border-radius: var(--scx-radius-medium);
-}
-
-.radius-option {
-  cursor: pointer;
-  user-select: none;
-}
-
-.radius-option__input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.radius-option__chip {
-  display: block;
-  min-width: 28px;
-  padding: 3px 6px;
-  border-radius: var(--scx-radius-small);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: lowercase;
-  color: var(--scx-text-muted);
-  transition:
-    color 0.15s ease,
-    background 0.15s ease;
-}
-
-.radius-option__input:checked + .radius-option__chip {
-  color: var(--scx-text);
-  background: color-mix(in srgb, var(--scx-accent) 35%, var(--scx-surface));
-}
-
-.radius-option__input:focus-visible + .radius-option__chip {
-  outline: 2px solid var(--scx-focus);
-  outline-offset: 1px;
-}
-
 .theme-list[hidden] {
   display: none !important;
 }
@@ -353,18 +299,17 @@ body {
 }
 
 .theme-select__panel {
-  /* In-flow so Chrome grows the popup instead of clipping an overlay. */
+  /* In-flow under the trigger; scroll inside so the popup shell stays fixed. */
   position: relative;
   z-index: 20;
   margin-top: 8px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas:
-    "classic accent"
-    "style homage";
   align-items: start;
-  gap: 10px 16px;
-  overflow: visible;
+  gap: 0 16px;
+  max-height: 280px;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 10px 10px 8px;
   border: 1px solid var(--scx-border);
   border-radius: var(--scx-radius-small);
@@ -372,20 +317,11 @@ body {
   box-shadow: var(--scx-shadow);
 }
 
-.theme-select__group--classic {
-  grid-area: classic;
-}
-
-.theme-select__group--accent {
-  grid-area: accent;
-}
-
-.theme-select__group--style {
-  grid-area: style;
-}
-
-.theme-select__group--homage {
-  grid-area: homage;
+.theme-select__column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
 .theme-select__panel[hidden] {

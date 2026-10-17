@@ -1,12 +1,12 @@
 (function () {
   const {
-    BOOLEAN_SETTING_KEYS,
-    FEATURE_CLASS_BY_SETTING,
     HERO_BACKGROUND_STYLES,
     HERO_WAVEFORM_STYLES,
     DEFAULTS,
     NATIVE_SCHEME_KEY,
     applyDocumentTheme,
+    applyDocumentFeatureClasses,
+    featureClassesNeedPaint,
     applyDocumentRadius,
     applyDocumentHero,
     paintDocumentFont,
@@ -124,21 +124,8 @@
     return globalThis.__scxStylesLoading;
   }
 
-  // Layout classes gated on enabled; theme/radius/hero stay in ScxSettings helpers.
-  const FEATURE_CLASS_TOGGLES = BOOLEAN_SETTING_KEYS.map((key) => [
-    FEATURE_CLASS_BY_SETTING[key],
-    key === "enabled"
-      ? (s) => Boolean(s.enabled)
-      : (s) => Boolean(s.enabled) && Boolean(s[key]),
-  ]);
-
   function rootNeedsPaint(root, settings) {
-    if (
-      FEATURE_CLASS_TOGGLES.some(
-        ([className, want]) =>
-          root.classList.contains(className) !== want(settings)
-      )
-    ) {
+    if (featureClassesNeedPaint(root, settings)) {
       return true;
     }
     const wantHero = new Set(desiredHeroClasses(settings));
@@ -168,9 +155,7 @@
       return;
     }
 
-    for (const [className, want] of FEATURE_CLASS_TOGGLES) {
-      root.classList.toggle(className, want(settings));
-    }
+    applyDocumentFeatureClasses(settings, { root });
     const active = Boolean(settings.enabled);
     const theme = active ? settings.theme : "default";
     applyDocumentTheme(theme, { root });

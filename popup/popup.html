@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scx-enabled scx-theme-default scx-radius-md">
+<html lang="en" class="scx-enabled scx-theme-default scx-radius-medium">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,178 +27,185 @@
       </header>
 
       <div id="control-center-body" class="control-center__body">
-      <section class="control-center__group" aria-labelledby="layout-heading">
-        <h2 id="layout-heading" class="control-center__group-title">
-          Layout
-        </h2>
+        <div class="control-center__column control-center__column--layout">
+          <section class="control-center__group" aria-labelledby="layout-heading">
+            <h2 id="layout-heading" class="control-center__group-title">
+              Layout
+            </h2>
 
-        <div class="feature-list">
-          <label class="switch-row" for="full-width">
-            <span class="switch-row__label">Enlarged layout</span>
-            <input
-              id="full-width"
-              class="switch-row__input"
-              type="checkbox"
-              role="switch"
-              checked
-            />
-            <span class="switch-row__track" aria-hidden="true">
-              <span class="switch-row__thumb"></span>
-            </span>
-          </label>
+            <div class="feature-list">
+              <label class="switch-row" for="full-width">
+                <span class="switch-row__label">Enlarged layout</span>
+                <input
+                  id="full-width"
+                  class="switch-row__input"
+                  type="checkbox"
+                  role="switch"
+                  checked
+                />
+                <span class="switch-row__track" aria-hidden="true">
+                  <span class="switch-row__thumb"></span>
+                </span>
+              </label>
 
-          <label class="switch-row" for="enlarged-queue">
-            <span class="switch-row__label">Enlarged queue</span>
-            <input
-              id="enlarged-queue"
-              class="switch-row__input"
-              type="checkbox"
-              role="switch"
-              checked
-            />
-            <span class="switch-row__track" aria-hidden="true">
-              <span class="switch-row__thumb"></span>
-            </span>
-          </label>
+              <label class="switch-row" for="enlarged-queue">
+                <span class="switch-row__label">Enlarged queue</span>
+                <input
+                  id="enlarged-queue"
+                  class="switch-row__input"
+                  type="checkbox"
+                  role="switch"
+                  checked
+                />
+                <span class="switch-row__track" aria-hidden="true">
+                  <span class="switch-row__thumb"></span>
+                </span>
+              </label>
 
-          <label class="switch-row" for="hide-artist-tools">
-            <span class="switch-row__label">Hide artist tools</span>
-            <input
-              id="hide-artist-tools"
-              class="switch-row__input"
-              type="checkbox"
-              role="switch"
-            />
-            <span class="switch-row__track" aria-hidden="true">
-              <span class="switch-row__thumb"></span>
-            </span>
-          </label>
-        </div>
-      </section>
+              <label class="switch-row" for="hide-artist-tools">
+                <span class="switch-row__label">Hide artist tools</span>
+                <input
+                  id="hide-artist-tools"
+                  class="switch-row__input"
+                  type="checkbox"
+                  role="switch"
+                />
+                <span class="switch-row__track" aria-hidden="true">
+                  <span class="switch-row__thumb"></span>
+                </span>
+              </label>
+            </div>
+          </section>
 
-      <section class="control-center__group" aria-labelledby="hero-heading">
-        <h2 id="hero-heading" class="control-center__group-title">Hero</h2>
+          <section class="control-center__group" aria-labelledby="hero-heading">
+            <h2 id="hero-heading" class="control-center__group-title">Hero</h2>
 
-        <div class="hero-fields">
-          <label class="hero-field" for="hero-background-style">
-            <span class="hero-field__label">Background style</span>
-            <select
-              id="hero-background-style"
-              class="hero-field__select"
-              aria-label="Hero background style"
-            >
-              <option value="default">Default</option>
-              <option value="accent" selected>Accent</option>
-              <option value="text">Text</option>
-              <option value="transparent">Transparent</option>
-            </select>
-          </label>
+            <div class="hero-fields">
+              <label class="hero-field" for="hero-background-style">
+                <span class="hero-field__label">Background style</span>
+                <select
+                  id="hero-background-style"
+                  class="hero-field__select"
+                  aria-label="Hero background style"
+                >
+                  <option value="default">Default</option>
+                  <option value="accent" selected>Accent</option>
+                  <option value="text">Text</option>
+                  <option value="transparent">Transparent</option>
+                </select>
+              </label>
 
-          <label class="hero-field" for="hero-waveform-style">
-            <span class="hero-field__label">Elements style</span>
-            <span class="hero-field__hint">Waveforms, title, play icon</span>
-            <select
-              id="hero-waveform-style"
-              class="hero-field__select"
-              aria-label="Elements style"
-            >
-              <option value="default">Default</option>
-              <option value="accent" selected>Accent</option>
-              <option value="text">Text</option>
-            </select>
-          </label>
-        </div>
-      </section>
-
-      <section
-        class="control-center__group"
-        aria-labelledby="appearance-heading"
-      >
-        <h2 id="appearance-heading" class="control-center__group-title">
-          Appearance
-        </h2>
-
-        <label class="hero-field" for="ui-font">
-          <span class="hero-field__label">Font</span>
-          <select id="ui-font" class="hero-field__select" aria-label="Font"></select>
-        </label>
-
-        <div class="radius-field">
-          <span id="radius-heading" class="radius-field__label">Rounding</span>
-          <div
-            id="radius-list"
-            class="radius-list"
-            role="radiogroup"
-            aria-labelledby="radius-heading"
-          ></div>
+              <label class="hero-field" for="hero-waveform-style">
+                <span class="hero-field__label">Elements style</span>
+                <span class="hero-field__hint">Waveforms, title, play icon</span>
+                <select
+                  id="hero-waveform-style"
+                  class="hero-field__select"
+                  aria-label="Elements style"
+                >
+                  <option value="default">Default</option>
+                  <option value="accent" selected>Accent</option>
+                  <option value="text">Text</option>
+                </select>
+              </label>
+            </div>
+          </section>
         </div>
 
-        <div
-          class="theme-mode"
-          role="radiogroup"
-          aria-labelledby="theme-mode-label"
-        >
-          <span id="theme-mode-label" class="theme-mode__label">Colors</span>
-          <div class="theme-mode__options">
-            <label class="theme-mode__option">
-              <input
-                class="theme-mode__input"
-                type="radio"
-                name="theme-mode"
-                value="presets"
-                checked
-              />
-              <span class="theme-mode__chip">Presets</span>
-            </label>
-            <label class="theme-mode__option">
-              <input
-                class="theme-mode__input"
-                type="radio"
-                name="theme-mode"
-                value="custom"
-              />
-              <span class="theme-mode__chip">Custom</span>
-            </label>
-          </div>
-        </div>
-
-        <div
-          id="theme-list"
-          class="theme-list"
-          aria-labelledby="appearance-heading"
-        ></div>
-
-        <div id="custom-theme-panel" class="custom-theme" hidden>
-          <div
-            id="custom-preset-list"
-            class="custom-theme__presets"
-            role="radiogroup"
-            aria-labelledby="custom-preset-heading"
-            hidden
-          ></div>
-
-          <div
-            class="custom-theme__preview"
-            id="custom-theme-preview"
-            aria-hidden="true"
+        <div class="control-center__column control-center__column--appearance">
+          <section
+            class="control-center__group"
+            aria-labelledby="appearance-heading"
           >
-            <span class="custom-theme__preview-surface"></span>
-            <span class="custom-theme__preview-accent"></span>
-            <span class="custom-theme__preview-text">Aa</span>
-          </div>
+            <h2 id="appearance-heading" class="control-center__group-title">
+              Appearance
+            </h2>
 
-          <div class="custom-theme__fields" id="custom-theme-fields"></div>
+            <label class="hero-field" for="ui-font">
+              <span class="hero-field__label">Font</span>
+              <select
+                id="ui-font"
+                class="hero-field__select"
+                aria-label="Font"
+              ></select>
+            </label>
 
-          <div class="custom-theme__actions">
-            <button type="button" class="custom-theme__btn" id="custom-reset">
-              Reset colors
-            </button>
-            <button type="button" class="custom-theme__btn" id="custom-save">
-              Save preset
-            </button>
-          </div>
+            <label class="hero-field" for="ui-radius">
+              <span class="hero-field__label">Rounding</span>
+              <select
+                id="ui-radius"
+                class="hero-field__select"
+                aria-label="Rounding"
+              ></select>
+            </label>
+
+            <div
+              class="theme-mode"
+              role="radiogroup"
+              aria-labelledby="theme-mode-label"
+            >
+              <span id="theme-mode-label" class="theme-mode__label">Colors</span>
+              <div class="theme-mode__options">
+                <label class="theme-mode__option">
+                  <input
+                    class="theme-mode__input"
+                    type="radio"
+                    name="theme-mode"
+                    value="presets"
+                    checked
+                  />
+                  <span class="theme-mode__chip">Presets</span>
+                </label>
+                <label class="theme-mode__option">
+                  <input
+                    class="theme-mode__input"
+                    type="radio"
+                    name="theme-mode"
+                    value="custom"
+                  />
+                  <span class="theme-mode__chip">Custom</span>
+                </label>
+              </div>
+            </div>
+
+            <div
+              id="theme-list"
+              class="theme-list"
+              aria-labelledby="appearance-heading"
+            ></div>
+
+            <div id="custom-theme-panel" class="custom-theme" hidden>
+              <div
+                id="custom-preset-list"
+                class="custom-theme__presets"
+                role="radiogroup"
+                aria-labelledby="custom-preset-heading"
+                hidden
+              ></div>
+
+              <div
+                class="custom-theme__preview"
+                id="custom-theme-preview"
+                aria-hidden="true"
+              >
+                <span class="custom-theme__preview-surface"></span>
+                <span class="custom-theme__preview-accent"></span>
+                <span class="custom-theme__preview-text">Aa</span>
+              </div>
+
+              <div class="custom-theme__fields" id="custom-theme-fields"></div>
+
+              <div class="custom-theme__actions">
+                <button type="button" class="custom-theme__btn" id="custom-reset">
+                  Reset colors
+                </button>
+                <button type="button" class="custom-theme__btn" id="custom-save">
+                  Save preset
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
       </div>
     </main>
 
