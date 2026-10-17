@@ -6,6 +6,7 @@
   const STORAGE_KEY = "scxSettings";
   const PAGE_CACHE_KEY = "scxSettingsCache";
   const CUSTOM_THEME_STYLE_ID = "scx-custom-theme-vars";
+  const FONT_STYLE_ID = "scx-font";
   /** Stock SoundCloud played-waveform orange (#ff5500 / #f50). */
   const STOCK_WAVEFORM_ORANGE_HSL = Object.freeze({ h: 20, s: 100, l: 50 });
   const ENABLED_CLASS = "scx-enabled";
@@ -15,9 +16,278 @@
   const HERO_WAVEFORM_CLASS = "scx-hero-waveform";
   const THEME_CLASS = "scx-theme";
   const RADIUS_CLASS = "scx-radius";
+  const FONT_CLASS = "scx-font";
   const NATIVE_DARK_CLASS = "scx-native-dark";
   const NATIVE_SCHEME_KEY = "scxNativeScheme";
   const RADII = Object.freeze(["default", "none", "sm", "md", "lg", "xl"]);
+  const FONT_FALLBACK =
+    '"Lucida Sans Unicode","Lucida Sans","Garuda","Verdana","Tahoma",sans-serif';
+  /**
+   * Font catalog. axes: Google CSS2 axis list; null = 400/600/700; "" = default style only.
+   * category: popup optgroup (see FONT_CATEGORIES).
+   */
+  const FONT_CATEGORIES = Object.freeze([
+    Object.freeze({ id: "default", label: "Default" }),
+    Object.freeze({ id: "sans", label: "Sans" }),
+    Object.freeze({ id: "mono", label: "Mono" }),
+    Object.freeze({ id: "pixel", label: "Pixel" }),
+    Object.freeze({ id: "display", label: "Display" }),
+    Object.freeze({ id: "script", label: "Script" }),
+  ]);
+  const FONTS = Object.freeze([
+    Object.freeze({
+      id: "default",
+      label: "Default",
+      family: null,
+      category: "default",
+    }),
+    Object.freeze({
+      id: "comfortaa",
+      label: "Comfortaa",
+      family: "Comfortaa",
+      category: "sans",
+    }),
+    Object.freeze({
+      id: "inter",
+      label: "Inter",
+      family: "Inter",
+      category: "sans",
+    }),
+    Object.freeze({
+      id: "lato",
+      label: "Lato",
+      family: "Lato",
+      axes: "wght@400;700",
+      category: "sans",
+    }),
+    Object.freeze({
+      id: "montserrat",
+      label: "Montserrat",
+      family: "Montserrat",
+      category: "sans",
+    }),
+    Object.freeze({
+      id: "open-sans",
+      label: "Open Sans",
+      family: "Open Sans",
+      category: "sans",
+    }),
+    Object.freeze({
+      id: "poppins",
+      label: "Poppins",
+      family: "Poppins",
+      category: "sans",
+    }),
+    Object.freeze({
+      id: "roboto",
+      label: "Roboto",
+      family: "Roboto",
+      category: "sans",
+    }),
+    Object.freeze({
+      id: "anonymous-pro",
+      label: "Anonymous Pro",
+      family: "Anonymous Pro",
+      axes: "wght@400;700",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "cousine",
+      label: "Cousine",
+      family: "Cousine",
+      axes: "wght@400;700",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "fira-code",
+      label: "Fira Code",
+      family: "Fira Code",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "fira-mono",
+      label: "Fira Mono",
+      family: "Fira Mono",
+      axes: "wght@400;700",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "ibm-plex-mono",
+      label: "IBM Plex Mono",
+      family: "IBM Plex Mono",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "jetbrains-mono",
+      label: "JetBrains Mono",
+      family: "JetBrains Mono",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "noto-sans-mono",
+      label: "Noto Sans Mono",
+      family: "Noto Sans Mono",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "overpass-mono",
+      label: "Overpass Mono",
+      family: "Overpass Mono",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "pt-mono",
+      label: "PT Mono",
+      family: "PT Mono",
+      axes: "",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "roboto-mono",
+      label: "Roboto Mono",
+      family: "Roboto Mono",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "source-code-pro",
+      label: "Source Code Pro",
+      family: "Source Code Pro",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "ubuntu-mono",
+      label: "Ubuntu Mono",
+      family: "Ubuntu Mono",
+      axes: "wght@400;700",
+      category: "mono",
+    }),
+    Object.freeze({
+      id: "handjet",
+      label: "Handjet",
+      family: "Handjet",
+      category: "pixel",
+    }),
+    Object.freeze({
+      id: "jersey-10",
+      label: "Jersey 10",
+      family: "Jersey 10",
+      axes: "",
+      category: "pixel",
+    }),
+    Object.freeze({
+      id: "pixelify",
+      label: "Pixelify",
+      family: "Pixelify Sans",
+      category: "pixel",
+    }),
+    Object.freeze({
+      id: "tiny5",
+      label: "Tiny5",
+      family: "Tiny5",
+      axes: "",
+      category: "pixel",
+    }),
+    Object.freeze({
+      id: "vt323",
+      label: "VT323",
+      family: "VT323",
+      axes: "",
+      category: "pixel",
+    }),
+    Object.freeze({
+      id: "dela-gothic-one",
+      label: "Dela Gothic One",
+      family: "Dela Gothic One",
+      axes: "",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "forum",
+      label: "Forum",
+      family: "Forum",
+      axes: "",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "oswald",
+      label: "Oswald",
+      family: "Oswald",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "playfair-display",
+      label: "Playfair Display",
+      family: "Playfair Display",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "poiret-one",
+      label: "Poiret One",
+      family: "Poiret One",
+      axes: "",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "prata",
+      label: "Prata",
+      family: "Prata",
+      axes: "",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "russo-one",
+      label: "Russo One",
+      family: "Russo One",
+      axes: "",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "tektur",
+      label: "Tektur",
+      family: "Tektur",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "unbounded",
+      label: "Unbounded",
+      family: "Unbounded",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "yanone-kaffeesatz",
+      label: "Yanone Kaffeesatz",
+      family: "Yanone Kaffeesatz",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "yeseva-one",
+      label: "Yeseva One",
+      family: "Yeseva One",
+      axes: "",
+      category: "display",
+    }),
+    Object.freeze({
+      id: "caveat",
+      label: "Caveat",
+      family: "Caveat",
+      category: "script",
+    }),
+    Object.freeze({
+      id: "lobster",
+      label: "Lobster",
+      family: "Lobster",
+      axes: "",
+      category: "script",
+    }),
+    Object.freeze({
+      id: "pacifico",
+      label: "Pacifico",
+      family: "Pacifico",
+      axes: "",
+      category: "script",
+    }),
+  ]);
+  const FONT_IDS = Object.freeze(FONTS.map((font) => font.id));
   const HERO_BACKGROUND_STYLES = Object.freeze([
     "default",
     "accent",
@@ -182,6 +452,7 @@
     heroWaveformStyle: "accent",
     theme: "default",
     radius: "md",
+    font: "default",
     customPalette: DEFAULT_CUSTOM_PALETTE,
     customPresets: Object.freeze([]),
   });
@@ -192,6 +463,121 @@
 
   function radiusClass(id) {
     return `${RADIUS_CLASS}-${id}`;
+  }
+
+  function fontClass(id) {
+    return `${FONT_CLASS}-${id}`;
+  }
+
+  function findFont(id) {
+    return FONTS.find((font) => font.id === id) || null;
+  }
+
+  function sanitizeFont(value) {
+    return FONT_IDS.includes(value) ? value : DEFAULTS.font;
+  }
+
+  function googleFontsCssUrl(family, axes) {
+    const param = family.replace(/ /g, "+");
+    const style = axes == null ? "wght@400;600;700" : axes;
+    const familyParam = style ? `${param}:${style}` : param;
+    return `https://fonts.googleapis.com/css2?family=${familyParam}&display=swap`;
+  }
+
+  function buildFontOverrideCss(entry) {
+    const family = entry.family;
+    const quoted = `"${family}"`;
+    return [
+      `html.scx-enabled.scx-font, html.scx-enabled.scx-font *, html.scx-enabled.scx-font body, html.scx-enabled.scx-font body._a3wf {`,
+      `  font-family: ${quoted}, serif !important;`,
+      `}`,
+      `html.scx-enabled.scx-font, html.scx-enabled.scx-font .theme-dark, html.scx-enabled.scx-font .theme-light {`,
+      `  --font-inter: ${quoted}, ${FONT_FALLBACK} !important;`,
+      `  --typography-heading4-font: 400 var(--font-inter) !important;`,
+      `  font-weight: 400 !important;`,
+      `}`,
+    ].join("\n");
+  }
+
+  /** @type {Map<string, string>} */
+  const fontFaceCache = new Map();
+  /** @type {Map<string, Promise<string>>} */
+  const fontFaceInflight = new Map();
+
+  function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 0x8000;
+    let binary = "";
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode.apply(
+        null,
+        bytes.subarray(i, i + chunkSize)
+      );
+    }
+    return btoa(binary);
+  }
+
+  async function inlineGoogleFontCss(cssText) {
+    const urlRe = /url\((?:'|"|)([^'")]+)(?:'|"|)\)/g;
+    const urls = new Set();
+    let match;
+    while ((match = urlRe.exec(cssText))) {
+      let url = match[1].trim();
+      if (url.startsWith("//")) {
+        url = `https:${url}`;
+      }
+      if (url.startsWith("https://")) {
+        urls.add(url);
+      }
+    }
+    let out = cssText;
+    for (const url of urls) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          continue;
+        }
+        const buffer = await response.arrayBuffer();
+        const mime = response.headers.get("content-type") || "font/woff2";
+        const dataUrl = `data:${mime.split(";")[0]};base64,${arrayBufferToBase64(buffer)}`;
+        out = out.split(url).join(dataUrl);
+      } catch {
+        /* keep remote url as fallback */
+      }
+    }
+    return out;
+  }
+
+  function ensureFontFaceCss(entry) {
+    if (fontFaceCache.has(entry.id)) {
+      return Promise.resolve(fontFaceCache.get(entry.id));
+    }
+    if (fontFaceInflight.has(entry.id)) {
+      return fontFaceInflight.get(entry.id);
+    }
+    const promise = fetch(googleFontsCssUrl(entry.family, entry.axes), {
+      credentials: "omit",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`font css ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(inlineGoogleFontCss)
+      .then((faceCss) => {
+        fontFaceInflight.delete(entry.id);
+        if (faceCss) {
+          fontFaceCache.set(entry.id, faceCss);
+        }
+        return faceCss || "";
+      })
+      .catch(() => {
+        fontFaceInflight.delete(entry.id);
+        return "";
+      });
+    fontFaceInflight.set(entry.id, promise);
+    return promise;
   }
 
   function heroBackgroundClass(id) {
@@ -671,6 +1057,7 @@
     merged.customPresets = sanitizeCustomPresets(raw.customPresets);
     merged.theme = sanitizeTheme(merged.theme, merged.customPresets);
     merged.radius = sanitizeRadius(merged.radius);
+    merged.font = sanitizeFont(merged.font);
     if (raw.customPalette && typeof raw.customPalette === "object") {
       merged.customPalette = sanitizeCustomPalette(raw.customPalette);
     } else if (merged.theme === "custom") {
@@ -692,6 +1079,7 @@
       heroWaveformStyle: sanitizeHeroWaveformStyle(settings.heroWaveformStyle),
       theme: settings.theme,
       radius: settings.radius,
+      font: sanitizeFont(settings.font),
     };
     const presets = sanitizeCustomPresets(settings.customPresets);
     if (presets.length) {
@@ -727,6 +1115,7 @@
       raw.heroWaveformStyle !== merged.heroWaveformStyle ||
       raw.theme !== merged.theme ||
       raw.radius !== merged.radius ||
+      raw.font !== merged.font ||
       paletteChanged ||
       !customPresetsEqual(raw.customPresets || [], merged.customPresets)
     );
@@ -767,6 +1156,7 @@
       next.customPresets = sanitizeCustomPresets(next.customPresets);
       next.theme = sanitizeTheme(next.theme, next.customPresets);
       next.radius = sanitizeRadius(next.radius);
+      next.font = sanitizeFont(next.font);
       if (partial && partial.customPalette) {
         next.customPalette = sanitizeCustomPalette(partial.customPalette);
       } else {
@@ -1019,9 +1409,140 @@
     }
   }
 
+  function fontDoc(root) {
+    const el = root || document.documentElement;
+    if (!el) {
+      return null;
+    }
+    return el.ownerDocument || document;
+  }
+
+  function fontStyleHost(root) {
+    const el = root || document.documentElement;
+    const doc = fontDoc(el);
+    if (!doc) {
+      return null;
+    }
+    let styleEl = doc.getElementById(FONT_STYLE_ID);
+    if (!styleEl) {
+      styleEl = doc.createElement("style");
+      styleEl.id = FONT_STYLE_ID;
+      const parent = doc.head || doc.documentElement;
+      parent.appendChild(styleEl);
+    }
+    return styleEl;
+  }
+
+  function clearDocumentFont(root) {
+    const el = root || document.documentElement;
+    if (!el) {
+      return;
+    }
+    el.classList.remove(FONT_CLASS);
+    for (const id of FONT_IDS) {
+      if (id === "default") {
+        continue;
+      }
+      el.classList.remove(fontClass(id));
+    }
+    const doc = fontDoc(el);
+    const styleEl = doc && doc.getElementById(FONT_STYLE_ID);
+    if (styleEl) {
+      styleEl.textContent = "";
+    }
+  }
+
+  /**
+   * Apply font override classes + CSS on root.
+   * faceCss: inlined @font-face rules; without it, family override applies with system fallback.
+   * Default / disabled clears the override so stock Inter/Lucida remains.
+   * @param {Element} root
+   * @param {{ enabled?: boolean, font?: string }} settings
+   * @param {string} [faceCss]
+   */
+  function applyDocumentFont(root, settings, faceCss) {
+    const el = root || document.documentElement;
+    if (!el) {
+      return;
+    }
+    const active = Boolean(settings && settings.enabled);
+    const next = sanitizeFont(settings && settings.font);
+    const entry = findFont(next);
+    if (!active || !entry || !entry.family) {
+      clearDocumentFont(el);
+      return;
+    }
+    el.classList.add(FONT_CLASS);
+    for (const id of FONT_IDS) {
+      if (id === "default") {
+        continue;
+      }
+      el.classList.toggle(fontClass(id), id === next);
+    }
+    const override = buildFontOverrideCss(entry);
+    const styleEl = fontStyleHost(el);
+    if (styleEl) {
+      styleEl.textContent =
+        typeof faceCss === "string" && faceCss
+          ? `${faceCss}\n${override}`
+          : override;
+    }
+  }
+
+  /**
+   * Fetch + cache Google Font faces, then apply on root.
+   * @param {Element} root
+   * @param {{ enabled?: boolean, font?: string }} settings
+   * @param {{ preview?: boolean, getSettings?: () => object|null, onLoaded?: (settings: object) => void }} [options]
+   *   preview: force enabled (popup chrome).
+   *   getSettings: latest settings for async race checks.
+   *   onLoaded: after inlined faces apply (e.g. repaint iframes).
+   */
+  function paintDocumentFont(root, settings, options) {
+    const opts = options || {};
+    const preview = Boolean(opts.preview);
+    const paintSettings = preview
+      ? { ...(settings || {}), enabled: true }
+      : settings;
+    const entry = findFont(sanitizeFont(settings && settings.font));
+    const active = Boolean(paintSettings && paintSettings.enabled);
+    if (!active || !entry || !entry.family) {
+      applyDocumentFont(root, paintSettings);
+      return;
+    }
+    const fontId = entry.id;
+    const cached = fontFaceCache.get(fontId);
+    applyDocumentFont(root, paintSettings, cached || undefined);
+    if (cached) {
+      return;
+    }
+    ensureFontFaceCss(entry).then((faceCss) => {
+      if (!faceCss) {
+        return;
+      }
+      const latest =
+        typeof opts.getSettings === "function" ? opts.getSettings() : settings;
+      if (!latest) {
+        return;
+      }
+      if (!preview && !latest.enabled) {
+        return;
+      }
+      if (sanitizeFont(latest.font) !== fontId) {
+        return;
+      }
+      const nextPaint = preview ? { ...latest, enabled: true } : latest;
+      applyDocumentFont(root, nextPaint, faceCss);
+      if (typeof opts.onLoaded === "function") {
+        opts.onLoaded(latest);
+      }
+    });
+  }
+
   global.ScxSettings = {
     STORAGE_KEY,
     CUSTOM_THEME_STYLE_ID,
+    FONT_STYLE_ID,
     NATIVE_SCHEME_KEY,
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
@@ -1032,9 +1553,12 @@
     HERO_WAVEFORM_STYLES,
     THEME_CLASS,
     RADIUS_CLASS,
+    FONT_CLASS,
     NATIVE_DARK_CLASS,
     THEME_GROUPS,
     THEMES,
+    FONTS,
+    FONT_CATEGORIES,
     CUSTOM_PALETTE_KEYS,
     DEFAULT_CUSTOM_PALETTE,
     MAX_CUSTOM_PRESETS,
@@ -1057,6 +1581,7 @@
     createCustomPreset,
     resolveCustomPalette,
     sanitizeRadius,
+    sanitizeFont,
     normalizeHexColor,
     customPalettesEqual,
     isCompleteCustomPaletteInput,
@@ -1075,5 +1600,7 @@
     readPresetSourcePalette,
     applyDocumentHero,
     applyDocumentRadius,
+    applyDocumentFont,
+    paintDocumentFont,
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);

@@ -10,6 +10,7 @@
     applyDocumentTheme,
     applyDocumentRadius,
     applyDocumentHero,
+    paintDocumentFont,
     applyCustomThemeVariables,
     clearCustomThemeVariables,
     desiredHeroClasses,
@@ -180,6 +181,14 @@
     }
     applyDocumentHero(root, settings);
     applyDocumentRadius(settings.radius, { active, root });
+    paintDocumentFont(root, settings, {
+      getSettings: () => latestSettings,
+      onLoaded: (next) => {
+        if (window === window.top) {
+          paintSameOriginFrames(next);
+        }
+      },
+    });
   }
 
   function paintSameOriginFrames(settings) {

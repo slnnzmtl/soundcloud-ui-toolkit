@@ -2,6 +2,8 @@
   const {
     THEME_GROUPS,
     RADII,
+    FONTS,
+    FONT_CATEGORIES,
     CUSTOM_PALETTE_KEYS,
     DEFAULT_CUSTOM_PALETTE,
     MAX_CUSTOM_PRESETS,
@@ -22,11 +24,13 @@
     isSavedCustomThemeId,
     applyDocumentTheme,
     applyDocumentRadius,
+    paintDocumentFont,
     applyCustomThemeVariables,
     clearCustomThemeVariables,
     readPresetSourcePalette,
     sanitizeHeroBackgroundStyle,
     sanitizeHeroWaveformStyle,
+    sanitizeFont,
     onSettingsChanged,
   } = ScxSettings;
 
@@ -45,6 +49,11 @@
       id: "hero-waveform-style",
       key: "heroWaveformStyle",
       sanitize: sanitizeHeroWaveformStyle,
+    },
+    {
+      id: "ui-font",
+      key: "font",
+      sanitize: sanitizeFont,
     },
   ];
 
@@ -104,6 +113,10 @@
       clearCustomThemeVariables(document.documentElement);
     }
     applyDocumentRadius(next.radius, { active: true });
+    paintDocumentFont(document.documentElement, next, {
+      preview: true,
+      getSettings: () => currentSettings,
+    });
     updateCustomPreview(resolveCustomPalette(next));
   }
 
@@ -666,6 +679,30 @@
     mount.replaceChildren(fragment);
   }
 
+  function renderFontSelect() {
+    const select = document.getElementById("ui-font");
+    if (!select) {
+      return;
+    }
+    const fragment = document.createDocumentFragment();
+    FONT_CATEGORIES.forEach((category) => {
+      const fonts = FONTS.filter((font) => font.category === category.id);
+      if (!fonts.length) {
+        return;
+      }
+      const group = document.createElement("optgroup");
+      group.label = category.label;
+      fonts.forEach((font) => {
+        const option = document.createElement("option");
+        option.value = font.id;
+        option.textContent = font.label;
+        group.appendChild(option);
+      });
+      fragment.appendChild(group);
+    });
+    select.replaceChildren(fragment);
+  }
+
   function syncAllControls(settings) {
     const active = Boolean(settings.enabled);
     syncSwitch(enabledInput, active);
@@ -726,7 +763,8 @@
       select.addEventListener("change", () => {
         const value = sanitize(select.value);
         select.value = value;
-        setSettings({ [key]: value }).then(() => {
+        setSettings({ [key]: value }).then((settings) => {
+          applyPopupChrome(settings);
           broadcastLiveSettings();
         });
       });
@@ -965,6 +1003,7 @@
   }
 
   renderRadiusList();
+  renderFontSelect();
   renderThemeList();
   renderCustomFields();
   bindControls();

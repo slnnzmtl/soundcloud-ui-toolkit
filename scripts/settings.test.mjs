@@ -151,6 +151,7 @@ test("getSettings does not rewrite storage when already canonical", async () => 
     heroWaveformStyle: "accent",
     theme: "midnight",
     radius: "md",
+    font: "default",
   };
   const { ScxSettings, store } = loadScxSettings({
     store: { scxSettings: { ...canonical } },
@@ -469,6 +470,7 @@ test("getSettings does not persist default customPalette for preset-only storage
     heroWaveformStyle: "accent",
     theme: "midnight",
     radius: "md",
+    font: "default",
   };
   const { ScxSettings, store } = loadScxSettings({
     store: { scxSettings: { ...canonical } },
@@ -586,6 +588,15 @@ test("sanitizeRadius accepts catalog values and falls back", () => {
   assert.equal(ScxSettings.sanitizeRadius(null), "md");
 });
 
+test("sanitizeFont accepts catalog values and falls back", () => {
+  const { ScxSettings } = loadScxSettings();
+  assert.equal(ScxSettings.sanitizeFont("pixelify"), "pixelify");
+  assert.equal(ScxSettings.sanitizeFont("roboto-mono"), "roboto-mono");
+  assert.equal(ScxSettings.sanitizeFont("default"), "default");
+  assert.equal(ScxSettings.sanitizeFont("comic-sans"), "default");
+  assert.equal(ScxSettings.sanitizeFont(null), "default");
+});
+
 test("DEFAULTS enable all feature toggles after install", () => {
   const { ScxSettings } = loadScxSettings();
   assert.equal(ScxSettings.DEFAULTS.enabled, true);
@@ -593,6 +604,7 @@ test("DEFAULTS enable all feature toggles after install", () => {
   assert.equal(ScxSettings.DEFAULTS.enlargedQueue, true);
   assert.equal(ScxSettings.DEFAULTS.heroBackgroundStyle, "accent");
   assert.equal(ScxSettings.DEFAULTS.heroWaveformStyle, "accent");
+  assert.equal(ScxSettings.DEFAULTS.font, "default");
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
   for (const id of ["extension-enabled", "full-width", "enlarged-queue"]) {
     assert.match(
@@ -603,6 +615,7 @@ test("DEFAULTS enable all feature toggles after install", () => {
   }
   assert.match(html, /id="hero-background-style"/);
   assert.match(html, /id="hero-waveform-style"/);
+  assert.match(html, /id="ui-font"/);
   assert.match(
     html,
     /id="hero-background-style"[\s\S]*?<option value="accent" selected>/
@@ -619,12 +632,14 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(fromNull.heroWaveformStyle, "accent");
   assert.equal(fromNull.theme, "default");
   assert.equal(fromNull.radius, "md");
+  assert.equal(fromNull.font, "default");
 
   const merged = ScxSettings.mergeWithDefaults({
     enabled: 0,
     fullWidth: 1,
     theme: "spotify",
     radius: "nope",
+    font: "nope",
   });
   assert.equal(merged.enabled, false);
   assert.equal(merged.fullWidth, true);
@@ -633,6 +648,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(merged.heroWaveformStyle, "accent");
   assert.equal(merged.theme, "grove");
   assert.equal(merged.radius, "md");
+  assert.equal(merged.font, "default");
 });
 
 test("mergeWithDefaults migrates legacy heroBackdrop boolean", () => {
@@ -699,6 +715,97 @@ test("applyDocumentRadius skips class for default", () => {
   assert.deepEqual(classList.toArray(), []);
 });
 
+test("applyDocumentFont sets override CSS and clears for Default", () => {
+  const { ScxSettings, documentElement, classList } = loadScxSettings();
+  const styleNodes = [];
+  const document = {
+    documentElement,
+    head: {
+      appendChild(node) {
+        styleNodes.push(node);
+      },
+    },
+    getElementById(id) {
+      return styleNodes.find((node) => node.id === id) || null;
+    },
+    createElement() {
+      return { id: "", textContent: "" };
+    },
+  };
+  documentElement.ownerDocument = document;
+
+  ScxSettings.applyDocumentFont(documentElement, {
+    enabled: true,
+    font: "pixelify",
+  });
+  assert.ok(classList.contains("scx-font"));
+  assert.ok(classList.contains("scx-font-pixelify"));
+  const styleEl = document.getElementById(ScxSettings.FONT_STYLE_ID);
+  assert.ok(styleEl);
+  assert.equal(document.getElementById("scx-font-link"), null);
+  assert.doesNotMatch(styleEl.textContent, /@import/);
+  assert.doesNotMatch(styleEl.textContent, /fonts\.googleapis\.com/);
+  assert.match(styleEl.textContent, /--font-inter:\s*"Pixelify Sans"/);
+  assert.match(styleEl.textContent, /html\.scx-enabled\.scx-font/);
+
+  ScxSettings.applyDocumentFont(documentElement, {
+    enabled: true,
+    font: "roboto-mono",
+  });
+  assert.ok(classList.contains("scx-font-roboto-mono"));
+  assert.ok(!classList.contains("scx-font-pixelify"));
+  assert.match(styleEl.textContent, /--font-inter:\s*"Roboto Mono"/);
+
+  ScxSettings.applyDocumentFont(
+    documentElement,
+    { enabled: true, font: "poppins" },
+    "@font-face{font-family:'Poppins';src:url(data:font/woff2;base64,AA)}"
+  );
+  assert.ok(classList.contains("scx-font-poppins"));
+  assert.match(styleEl.textContent, /@font-face\{font-family:'Poppins'/);
+  assert.match(styleEl.textContent, /--font-inter:\s*"Poppins"/);
+
+  ScxSettings.applyDocumentFont(documentElement, {
+    enabled: true,
+    font: "default",
+  });
+  assert.deepEqual(classList.toArray(), []);
+  assert.equal(styleEl.textContent, "");
+
+  ScxSettings.applyDocumentFont(documentElement, {
+    enabled: false,
+    font: "montserrat",
+  });
+  assert.deepEqual(classList.toArray(), []);
+  assert.equal(styleEl.textContent, "");
+});
+
+test("persistableSettings includes sanitized font", () => {
+  const { ScxSettings } = loadScxSettings();
+  const out = ScxSettings.persistableSettings({
+    enabled: true,
+    fullWidth: true,
+    enlargedQueue: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
+    theme: "midnight",
+    radius: "md",
+    font: "roboto",
+  });
+  assert.equal(out.font, "roboto");
+  const bad = ScxSettings.persistableSettings({
+    enabled: true,
+    fullWidth: true,
+    enlargedQueue: true,
+    heroBackgroundStyle: "accent",
+    heroWaveformStyle: "accent",
+    theme: "midnight",
+    radius: "md",
+    font: "nope",
+  });
+  assert.equal(bad.font, "default");
+});
+
 test("applyDocumentTheme adds scx-native-dark for default + dark scheme", () => {
   const { ScxSettings, classList } = loadScxSettings();
 
@@ -743,6 +850,11 @@ test("ScxSettings export matches content + popup usage", () => {
       "ENABLED_CLASS",
       "ENLARGED_QUEUE_CLASS",
       "FULL_WIDTH_CLASS",
+      "CUSTOM_THEME_STYLE_ID",
+      "FONTS",
+      "FONT_CATEGORIES",
+      "FONT_CLASS",
+      "FONT_STYLE_ID",
       "HERO_BACKGROUND_STYLES",
       "HERO_BG_CLASS",
       "HERO_WAVEFORM_CLASS",
@@ -752,12 +864,12 @@ test("ScxSettings export matches content + popup usage", () => {
       "RADII",
       "RADIUS_CLASS",
       "STORAGE_KEY",
-      "CUSTOM_THEME_STYLE_ID",
       "THEME_ALIASES",
       "THEME_CLASS",
       "THEME_GROUPS",
       "THEMES",
       "applyCustomThemeVariables",
+      "applyDocumentFont",
       "applyDocumentHero",
       "applyDocumentRadius",
       "applyDocumentTheme",
@@ -772,11 +884,13 @@ test("ScxSettings export matches content + popup usage", () => {
       "mergeWithDefaults",
       "normalizeHexColor",
       "onSettingsChanged",
+      "paintDocumentFont",
       "persistableSettings",
       "radiusClass",
       "readPageCache",
       "readPresetSourcePalette",
       "sanitizeCustomPalette",
+      "sanitizeFont",
       "sanitizeHeroBackgroundStyle",
       "sanitizeHeroWaveformStyle",
       "sanitizeRadius",
@@ -1031,6 +1145,9 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
     content,
     /applyDocumentRadius\(settings\.radius, \{ active, root \}\)/
   );
+  assert.match(content, /paintDocumentFont\(root, settings/);
+  assert.doesNotMatch(content, /ensureFontFaceCss/);
+  assert.doesNotMatch(content, /inlineGoogleFontCss/);
 });
 
 test("popup uses shared custom theme helpers for chrome preview", () => {
@@ -1072,7 +1189,79 @@ test("content paintRoot applies and clears custom variables", () => {
   assert.match(content, /applyCustomThemeVariables\(root, settings\)/);
   assert.match(content, /clearCustomThemeVariables\(root\)/);
   assert.match(content, /applyDocumentHero\(root, settings\)/);
+  assert.match(content, /paintDocumentFont\(root, settings/);
   assert.match(content, /isCustomThemeId\(theme\)/);
+});
+
+test("manifest allows Google Fonts host permissions", () => {
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8")
+  );
+  assert.ok(manifest.host_permissions.includes("https://fonts.googleapis.com/*"));
+  assert.ok(manifest.host_permissions.includes("https://fonts.gstatic.com/*"));
+});
+
+test("popup wires font select like hero selects", () => {
+  const { ScxSettings } = loadScxSettings();
+  const popupJs = fs.readFileSync(path.join(ROOT, "popup/popup.js"), "utf8");
+  const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
+  assert.match(popupJs, /sanitizeFont/);
+  assert.match(popupJs, /id:\s*"ui-font"/);
+  assert.match(popupJs, /key:\s*"font"/);
+  assert.match(popupJs, /renderFontSelect/);
+  assert.match(popupJs, /\bFONTS\b/);
+  assert.match(popupJs, /\bFONT_CATEGORIES\b/);
+  assert.match(popupJs, /optgroup/);
+  assert.match(popupJs, /paintDocumentFont/);
+  assert.match(popupJs, /preview:\s*true/);
+  assert.doesNotMatch(popupJs, /ensureFontFaceCss/);
+  assert.doesNotMatch(popupJs, /inlineGoogleFontCss/);
+  assert.match(html, /class="[^"]*\bscx-enabled\b/);
+  assert.match(html, /id="ui-font"/);
+  const ids = ScxSettings.FONTS.map((font) => font.id);
+  assert.ok(!ids.includes("press-start-2p"));
+  assert.ok(ids.includes("poppins"));
+  assert.ok(ids.includes("tiny5"));
+  assert.ok(ids.includes("caveat"));
+  assert.ok(ids.includes("oswald"));
+  assert.ok(ids.includes("playfair-display"));
+  assert.ok(ids.includes("russo-one"));
+  assert.ok(ids.includes("unbounded"));
+  assert.ok(ids.includes("jetbrains-mono"));
+  assert.ok(ids.includes("fira-code"));
+  assert.ok(ids.includes("ibm-plex-mono"));
+  assert.equal(ScxSettings.FONTS.length, 39);
+  const displayLabels = ScxSettings.FONTS.filter((f) => f.category === "display")
+    .map((f) => f.label)
+    .join(",");
+  assert.equal(
+    displayLabels,
+    "Dela Gothic One,Forum,Oswald,Playfair Display,Poiret One,Prata,Russo One,Tektur,Unbounded,Yanone Kaffeesatz,Yeseva One"
+  );
+  const monoLabels = ScxSettings.FONTS.filter((f) => f.category === "mono")
+    .map((f) => f.label)
+    .join(",");
+  assert.equal(
+    monoLabels,
+    "Anonymous Pro,Cousine,Fira Code,Fira Mono,IBM Plex Mono,JetBrains Mono,Noto Sans Mono,Overpass Mono,PT Mono,Roboto Mono,Source Code Pro,Ubuntu Mono"
+  );
+  assert.equal(
+    ScxSettings.FONT_CATEGORIES.map((c) => c.id).join(","),
+    "default,sans,mono,pixel,display,script"
+  );
+  assert.ok(ScxSettings.FONTS.every((font) => font.category));
+  const pixelLabels = ScxSettings.FONTS.filter((f) => f.category === "pixel")
+    .map((f) => f.label)
+    .join(",");
+  assert.equal(pixelLabels, "Handjet,Jersey 10,Pixelify,Tiny5,VT323");
+});
+
+test("google font axes produce valid catalog entries", () => {
+  const { ScxSettings } = loadScxSettings();
+  const jersey = ScxSettings.FONTS.find((font) => font.id === "jersey-10");
+  assert.equal(jersey.axes, "");
+  const lato = ScxSettings.FONTS.find((font) => font.id === "lato");
+  assert.equal(lato.axes, "wght@400;700");
 });
 
 test("tokens.css declares catalog --scx-waveform-filter", () => {
