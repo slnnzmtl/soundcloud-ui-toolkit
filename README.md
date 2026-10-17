@@ -6,6 +6,13 @@ toolbar popup control center; every feature defaults on after install. Supported
 browsers: Chrome, Edge, Opera, and Brave (Chrome 121+ or equivalent). Firefox
 and Safari are not supported.
 
+### What’s new in 1.5.0
+
+- **Theme catalog** — swatch theme select with more presets (Style + Homage expansions); two-column control center under Chrome’s 800×600 popup cap
+- **Hide artist tools** — optional layout toggle to hide credit tracker, alerts, sidebar/header upsells, and quota meter
+- **Rounding** — classic select with `small` / `medium` / `large` / `xlarge` (legacy `sm`–`xl` still migrate)
+- **Font** — categorized Google Font picker for SoundCloud and popup preview
+
 ### What’s new in 1.4.2
 
 - **Hero section** — Background style (Default / Accent / Text / Transparent) replaces the old accent-backdrop toggle
@@ -48,12 +55,14 @@ Click the extension icon in the toolbar to open the **Control center**.
 | Setting              | Default | Effect |
 | -------------------- | ------- | ------ |
 | Enabled              | On      | Master switch — clears all toolkit classes to restore stock SoundCloud (extension stays installed for instant re-enable) |
-| Enlarged layout      | On      | Widens the main layout (`.l-container`, player UI) and enlarges listen-page hero at wide viewports |
+| Enlarged layout      | On      | Widens the main layout (`.l-container`, player UI) and enlarges listen-page hero at wide viewports (≥1200px) |
 | Enlarged queue       | On      | Makes the play-queue panel larger |
+| Hide artist tools    | Off     | Hides credit tracker, alerts, sidebar/header upsells, and quota meter |
 | Hero background      | Accent  | Listen/track hero: Default (stock), Accent / Text gradient + blur, or Transparent |
 | Elements style       | Accent  | Canvas waveforms, hero title, and player play icon: Default (stock orange), Accent, or Text (progress bar stays accent) |
-| Rounding             | md      | Corner radius for artwork, buttons, and play (`default` = native; `none` / `sm` / `md` / `lg` / `xl`; play is circular at `xl`) |
-| Appearance           | Default | Classic (Default follows SoundCloud light/dark in the popup; Midnight, OLED, Slate), Accent (Matrix, Fallout, Cyberpunk, Purple, Tide, Blood), Style (Minimal, Frost), or Homage (Grove, Blush); custom presets supported |
+| Font                 | Default | Optional Google Font override for SoundCloud and popup preview |
+| Rounding             | Medium  | Corner radius for artwork, buttons, and play (`default` = native; `none` / `small` / `medium` / `large` / `xlarge`; play is circular at `xlarge`) |
+| Appearance           | Default | Classic, Accent, Style, and Homage catalog themes via swatch select; saved custom presets supported |
 
 Preferences sync via `chrome.storage.sync` and apply immediately on open
 SoundCloud tabs. The control-center chrome follows the selected appearance
