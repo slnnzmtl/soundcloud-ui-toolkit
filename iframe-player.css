@@ -15,10 +15,9 @@ html.scx-enabled.scx-full-width main.MuiBox-root {
  * Two-column grid on the track *body* parent (the MuiStack after the two
  * Track header sections — e.g. .mui-xh7knn), matching .l-fluid-fixed.
  * Do not key this off the aside; the sidebar is only a grid item.
- * Breakpoint stays 1200px here; classic listen hero band in styles.css
- * uses 1800px until intentionally aligned.
+ * Breakpoint matches classic listen (.l-fluid-fixed) at 1200px.
  */
-@media (min-width: 1800px) {
+@media (min-width: 1200px) {
   html.scx-enabled.scx-full-width
     main#main
     > .MuiStack-root

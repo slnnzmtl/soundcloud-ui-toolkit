@@ -137,7 +137,7 @@ html.scx-enabled.scx-full-width .spotlightUpsellBanner__background .g-flex-row-c
   justify-content: space-between !important;
 }
 
-@media (min-width: 1800px) {
+@media (min-width: 1200px) {
   html.scx-enabled.scx-full-width .l-fluid-fixed {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) var(--scx-sidebar-width) !important;
