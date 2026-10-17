@@ -12,6 +12,7 @@
   const ENABLED_CLASS = "scx-enabled";
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
+  const HIDE_ARTIST_TOOLS_CLASS = "scx-hide-artist-tools";
   const HERO_BG_CLASS = "scx-hero-bg";
   const HERO_WAVEFORM_CLASS = "scx-hero-waveform";
   const THEME_CLASS = "scx-theme";
@@ -448,6 +449,7 @@
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "default",
@@ -456,6 +458,33 @@
     customPalette: DEFAULT_CUSTOM_PALETTE,
     customPresets: Object.freeze([]),
   });
+
+  /** Boolean layout/master flags — coerce, persist, and dirty-check from this list. */
+  const BOOLEAN_SETTING_KEYS = Object.freeze([
+    "enabled",
+    "fullWidth",
+    "enlargedQueue",
+    "hideArtistTools",
+  ]);
+
+  function coerceBooleanSettings(target) {
+    for (const key of BOOLEAN_SETTING_KEYS) {
+      target[key] = Boolean(target[key]);
+    }
+    return target;
+  }
+
+  function pickBooleanSettings(settings) {
+    const out = {};
+    for (const key of BOOLEAN_SETTING_KEYS) {
+      out[key] = settings[key];
+    }
+    return out;
+  }
+
+  function booleanSettingsChanged(raw, merged) {
+    return BOOLEAN_SETTING_KEYS.some((key) => raw[key] !== merged[key]);
+  }
 
   function themeClass(id) {
     return `${THEME_CLASS}-${id}`;
@@ -1034,13 +1063,10 @@
 
   function mergeWithDefaults(stored) {
     const raw = stored && typeof stored === "object" ? stored : {};
-    const merged = {
+    const merged = coerceBooleanSettings({
       ...DEFAULTS,
       ...raw,
-    };
-    merged.enabled = Boolean(merged.enabled);
-    merged.fullWidth = Boolean(merged.fullWidth);
-    merged.enlargedQueue = Boolean(merged.enlargedQueue);
+    });
     delete merged.heroBackdrop;
     if (
       raw.heroBackgroundStyle == null &&
@@ -1070,9 +1096,7 @@
 
   function persistableSettings(settings) {
     const out = {
-      enabled: settings.enabled,
-      fullWidth: settings.fullWidth,
-      enlargedQueue: settings.enlargedQueue,
+      ...pickBooleanSettings(settings),
       heroBackgroundStyle: sanitizeHeroBackgroundStyle(
         settings.heroBackgroundStyle
       ),
@@ -1107,9 +1131,7 @@
         merged.customPalette
       );
     return (
-      raw.enabled !== merged.enabled ||
-      raw.fullWidth !== merged.fullWidth ||
-      raw.enlargedQueue !== merged.enlargedQueue ||
+      booleanSettingsChanged(raw, merged) ||
       Object.prototype.hasOwnProperty.call(raw, "heroBackdrop") ||
       raw.heroBackgroundStyle !== merged.heroBackgroundStyle ||
       raw.heroWaveformStyle !== merged.heroWaveformStyle ||
@@ -1142,10 +1164,7 @@
 
   function applySettingsPartial(partial) {
     return getSettings().then((current) => {
-      const next = { ...current, ...partial };
-      next.enabled = Boolean(next.enabled);
-      next.fullWidth = Boolean(next.fullWidth);
-      next.enlargedQueue = Boolean(next.enlargedQueue);
+      const next = coerceBooleanSettings({ ...current, ...partial });
       delete next.heroBackdrop;
       next.heroBackgroundStyle = sanitizeHeroBackgroundStyle(
         next.heroBackgroundStyle
@@ -1547,6 +1566,7 @@
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
+    HIDE_ARTIST_TOOLS_CLASS,
     HERO_BG_CLASS,
     HERO_WAVEFORM_CLASS,
     HERO_BACKGROUND_STYLES,

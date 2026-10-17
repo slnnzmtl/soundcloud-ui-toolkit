@@ -128,6 +128,7 @@ test("getSettings migrates legacy theme aliases into sync storage", async () => 
         enabled: true,
         fullWidth: true,
         enlargedQueue: true,
+        hideArtistTools: false,
         heroBackgroundStyle: "accent",
         heroWaveformStyle: "accent",
         theme: "spotify",
@@ -147,6 +148,7 @@ test("getSettings does not rewrite storage when already canonical", async () => 
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -170,6 +172,7 @@ test("readPageCache rewrites local cache when theme was aliased", () => {
         enabled: true,
         fullWidth: true,
         enlargedQueue: true,
+        hideArtistTools: false,
         heroBackgroundStyle: "accent",
         heroWaveformStyle: "accent",
         theme: "lifeinvader",
@@ -296,6 +299,7 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -308,6 +312,7 @@ test("persistableSettings keeps customPalette only for custom theme", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "custom",
@@ -355,6 +360,7 @@ test("persistableSettings omits customPalette for saved custom theme ids", () =>
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "c_abc123",
@@ -388,6 +394,7 @@ test("persistableSettings keeps customPresets for built-in themes", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -466,6 +473,7 @@ test("getSettings does not persist default customPalette for preset-only storage
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -602,6 +610,7 @@ test("DEFAULTS enable all feature toggles after install", () => {
   assert.equal(ScxSettings.DEFAULTS.enabled, true);
   assert.equal(ScxSettings.DEFAULTS.fullWidth, true);
   assert.equal(ScxSettings.DEFAULTS.enlargedQueue, true);
+  assert.equal(ScxSettings.DEFAULTS.hideArtistTools, false);
   assert.equal(ScxSettings.DEFAULTS.heroBackgroundStyle, "accent");
   assert.equal(ScxSettings.DEFAULTS.heroWaveformStyle, "accent");
   assert.equal(ScxSettings.DEFAULTS.font, "default");
@@ -613,6 +622,11 @@ test("DEFAULTS enable all feature toggles after install", () => {
       `${id} checked by default in popup`
     );
   }
+  assert.match(
+    html,
+    /id="hide-artist-tools"\s+class="switch-row__input"\s+type="checkbox"\s+role="switch"\s*\/>/,
+    "hide-artist-tools unchecked by default in popup"
+  );
   assert.match(html, /id="hero-background-style"/);
   assert.match(html, /id="hero-waveform-style"/);
   assert.match(html, /id="ui-font"/);
@@ -628,6 +642,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(fromNull.enabled, true);
   assert.equal(fromNull.fullWidth, true);
   assert.equal(fromNull.enlargedQueue, true);
+  assert.equal(fromNull.hideArtistTools, false);
   assert.equal(fromNull.heroBackgroundStyle, "accent");
   assert.equal(fromNull.heroWaveformStyle, "accent");
   assert.equal(fromNull.theme, "default");
@@ -644,6 +659,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(merged.enabled, false);
   assert.equal(merged.fullWidth, true);
   assert.equal(merged.enlargedQueue, true);
+  assert.equal(merged.hideArtistTools, false);
   assert.equal(merged.heroBackgroundStyle, "accent");
   assert.equal(merged.heroWaveformStyle, "accent");
   assert.equal(merged.theme, "grove");
@@ -786,6 +802,7 @@ test("persistableSettings includes sanitized font", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -797,6 +814,7 @@ test("persistableSettings includes sanitized font", () => {
     enabled: true,
     fullWidth: true,
     enlargedQueue: true,
+    hideArtistTools: false,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -850,6 +868,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "ENABLED_CLASS",
       "ENLARGED_QUEUE_CLASS",
       "FULL_WIDTH_CLASS",
+      "HIDE_ARTIST_TOOLS_CLASS",
       "CUSTOM_THEME_STYLE_ID",
       "FONTS",
       "FONT_CATEGORIES",
@@ -1118,6 +1137,19 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
 
   assert.match(styles, /html\.scx-enabled\.scx-full-width/);
   assert.match(styles, /html\.scx-enabled\.scx-enlarged-queue/);
+  assert.match(styles, /html\.scx-enabled\.scx-hide-artist-tools/);
+  assert.match(styles, /\.homeCreditTracker/);
+  assert.match(styles, /\.quotaMeterWrapper/);
+  assert.match(
+    styles,
+    /\.announcement-wrapper__alert:has\(a\[href\*="checkout\.soundcloud\.com\/artist"\]\)/
+  );
+  assert.match(
+    styles,
+    /\.l-user-sidebar-right[\s\S]*\.sidebarModule:has\(\[src\*="credit-tracker"\],\s*\[href\*="credit-tracker"\]\)/
+  );
+  assert.match(styles, /\.header__creatorUpsell/);
+  assert.match(styles, /\.header__forArtistsButton/);
   assert.match(iframe, /html\.scx-enabled\.scx-full-width/);
   assert.match(themes, /html\.scx-enabled\.scx-theme/);
   assert.match(themes, /html\.scx-enabled\[class\*="scx-radius-"\]/);
@@ -1125,6 +1157,7 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   // No bare feature/theme/radius selectors that could leak when Enabled is off.
   assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-full-width\b/);
   assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-enlarged-queue\b/);
+  assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-hide-artist-tools\b/);
   assert.doesNotMatch(iframe, /(?:^|[^.\w-])html\.scx-full-width\b/);
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\.scx-theme\b(?!\w)/);
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\[class\*="scx-radius-"\]/);
@@ -1134,6 +1167,10 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   assert.match(
     content,
     /ENLARGED_QUEUE_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.enlargedQueue\)/
+  );
+  assert.match(
+    content,
+    /HIDE_ARTIST_TOOLS_CLASS,\s*\n?\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.hideArtistTools\)/
   );
   assert.match(content, /applyDocumentHero\(root, settings\)/);
   assert.match(

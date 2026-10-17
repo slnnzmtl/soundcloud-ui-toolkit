@@ -17,7 +17,7 @@
   box-sizing: border-box;
 }
 
-/* Chrome caps extension popups at ~600px; scroll only as a last resort. */
+/* Chrome hard-caps extension popups near 600px — stay at/under that so overflow scrolls. */
 html {
   max-height: 600px;
   overflow-x: hidden;
@@ -28,7 +28,6 @@ body {
   margin: 0;
   width: 520px;
   min-width: 520px;
-  height: fit-content;
   font-family:
     system-ui,
     -apple-system,
@@ -42,7 +41,7 @@ body {
 }
 
 .control-center {
-  padding: 6px 12px 12px;
+  padding: 4px 12px 8px;
 }
 
 .control-center__header {
@@ -50,7 +49,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .control-center__title {
@@ -76,17 +75,17 @@ body {
 }
 
 .control-center__group {
-  padding: 6px 10px;
+  padding: 4px 8px;
   background: var(--scx-surface);
   border: 1px solid var(--scx-border);
   border-radius: var(--scx-radius-medium);
-  gap: 8px;
+  gap: 6px;
   display: flex;
   flex-direction: column;
 }
 
 .control-center__group + .control-center__group {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .control-center__group-title {
@@ -100,8 +99,17 @@ body {
 
 .feature-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+
+.feature-list .switch-row {
+  gap: 8px;
+}
+
+.feature-list .switch-row__label {
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 .switch-row {
@@ -174,7 +182,7 @@ body {
 
 .hero-fields {
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .hero-field {
@@ -202,7 +210,7 @@ body {
   align-self: center;
   width: 100%;
   margin: 0;
-  padding: 6px 8px;
+  padding: 4px 8px;
   border: 1px solid var(--scx-border);
   border-radius: var(--scx-radius-small);
   background: var(--scx-surface-raised);
@@ -223,7 +231,7 @@ body {
 .radius-field {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
+  gap: 4px 16px;
 }
 
 .radius-field__label {
@@ -261,7 +269,7 @@ body {
 .radius-option__chip {
   display: block;
   min-width: 28px;
-  padding: 4px 6px;
+  padding: 3px 6px;
   border-radius: var(--scx-radius-small);
   font-size: 12px;
   font-weight: 600;
@@ -296,7 +304,7 @@ body {
     "classic accent"
     "style accent"
     "homage accent";
-  gap: 8px 16px;
+  gap: 4px 12px;
   align-items: start;
 }
 
@@ -341,7 +349,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 3px 8px;
+  padding: 1px 8px;
   margin: 0 -8px;
   border-radius: var(--scx-radius-small);
   cursor: pointer;
@@ -471,7 +479,7 @@ body {
 
 .theme-mode__chip {
   display: block;
-  padding: 4px 10px;
+  padding: 3px 10px;
   border-radius: var(--scx-radius-small);
   font-size: 12px;
   font-weight: 600;

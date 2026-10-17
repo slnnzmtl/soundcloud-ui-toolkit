@@ -3,8 +3,8 @@
  *
  * Active layout tweaks only. Master switch is html.scx-enabled — every
  * override also requires it so Enabled off restores stock SoundCloud.
- * Features: scx-full-width, scx-enlarged-queue, scx-hero-bg-*.
- * Button chrome lives in themes.css.
+ * Features: scx-full-width, scx-enlarged-queue, scx-hide-artist-tools,
+ * scx-hero-bg-*. Button chrome lives in themes.css.
  */
 
 /* Tiny scrollbars — size always; dark color when enabled without a theme.
@@ -302,4 +302,17 @@ html.scx-enabled.scx-enlarged-queue .queueItemView__title.sc-truncate:hover {
   html.scx-enabled.scx-enlarged-queue .playControls__queue {
     width: calc(100% - 16px) !important;
   }
+}
+
+/* Hide artist tools — html.scx-enabled.scx-hide-artist-tools */
+html.scx-enabled.scx-hide-artist-tools .homeCreditTracker,
+html.scx-enabled.scx-hide-artist-tools .quotaMeterWrapper,
+html.scx-enabled.scx-hide-artist-tools
+  .announcement-wrapper__alert:has(a[href*="checkout.soundcloud.com/artist"]),
+html.scx-enabled.scx-hide-artist-tools
+  .l-user-sidebar-right
+  .sidebarModule:has([src*="credit-tracker"], [href*="credit-tracker"]),
+html.scx-enabled.scx-hide-artist-tools .header__creatorUpsell,
+html.scx-enabled.scx-hide-artist-tools .header__forArtistsButton {
+  display: none !important;
 }

@@ -3,6 +3,7 @@
     ENABLED_CLASS,
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
+    HIDE_ARTIST_TOOLS_CLASS,
     HERO_BACKGROUND_STYLES,
     HERO_WAVEFORM_STYLES,
     DEFAULTS,
@@ -130,6 +131,10 @@
     [ENABLED_CLASS, (s) => Boolean(s.enabled)],
     [FULL_WIDTH_CLASS, (s) => Boolean(s.enabled) && Boolean(s.fullWidth)],
     [ENLARGED_QUEUE_CLASS, (s) => Boolean(s.enabled) && Boolean(s.enlargedQueue)],
+    [
+      HIDE_ARTIST_TOOLS_CLASS,
+      (s) => Boolean(s.enabled) && Boolean(s.hideArtistTools),
+    ],
   ];
 
   function rootNeedsPaint(root, settings) {

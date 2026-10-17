@@ -37,6 +37,7 @@
   const switches = [
     { id: "full-width", key: "fullWidth" },
     { id: "enlarged-queue", key: "enlargedQueue" },
+    { id: "hide-artist-tools", key: "hideArtistTools" },
   ];
 
   const heroSelects = [
