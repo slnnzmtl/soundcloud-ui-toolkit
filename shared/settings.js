@@ -357,6 +357,16 @@
           label: "Blood",
           swatches: Object.freeze(["#060606", "#ff2b2b", "#db0000"]),
         },
+        {
+          id: "azure",
+          label: "Azure",
+          swatches: Object.freeze(["#061018", "#0b1a28", "#3d8bfd"]),
+        },
+        {
+          id: "flamingo",
+          label: "Flamingo",
+          swatches: Object.freeze(["#140810", "#1f0e18", "#ff4fa3"]),
+        },
       ]),
     },
     {
@@ -373,6 +383,31 @@
           label: "Frost",
           swatches: Object.freeze(["#090b0f", "#13161b", "#3a8cff"]),
         },
+        {
+          id: "paper",
+          label: "Paper",
+          swatches: Object.freeze(["#f4f1ea", "#ffffff", "#c2410c"]),
+        },
+        {
+          id: "noir",
+          label: "Noir",
+          swatches: Object.freeze(["#0a0a0a", "#141414", "#fafafa"]),
+        },
+        {
+          id: "sand",
+          label: "Sand",
+          swatches: Object.freeze(["#1c1917", "#292524", "#e7b56c"]),
+        },
+        {
+          id: "carbon",
+          label: "Carbon",
+          swatches: Object.freeze(["#121417", "#1a1d22", "#8ab4ff"]),
+        },
+        {
+          id: "espresso",
+          label: "Espresso",
+          swatches: Object.freeze(["#1a1412", "#241c18", "#d4a574"]),
+        },
       ]),
     },
     {
@@ -388,6 +423,21 @@
           id: "blush",
           label: "Blush",
           swatches: Object.freeze(["#12242e", "#e4a2b1", "#fbe2a7"]),
+        },
+        {
+          id: "blurple",
+          label: "Blurple",
+          swatches: Object.freeze(["#1e1f22", "#2b2d31", "#5865f2"]),
+        },
+        {
+          id: "vinyl",
+          label: "Vinyl",
+          swatches: Object.freeze(["#0f0f0f", "#1a1a1a", "#ff0033"]),
+        },
+        {
+          id: "harbor",
+          label: "Harbor",
+          swatches: Object.freeze(["#0d1110", "#161c1a", "#1da09a"]),
         },
       ]),
     },
@@ -459,13 +509,17 @@
     customPresets: Object.freeze([]),
   });
 
-  /** Boolean layout/master flags — coerce, persist, and dirty-check from this list. */
-  const BOOLEAN_SETTING_KEYS = Object.freeze([
-    "enabled",
-    "fullWidth",
-    "enlargedQueue",
-    "hideArtistTools",
-  ]);
+  /** Setting key → layout class. Boolean coerce/persist/dirty-check and content toggles share this. */
+  const FEATURE_CLASS_BY_SETTING = Object.freeze({
+    enabled: ENABLED_CLASS,
+    fullWidth: FULL_WIDTH_CLASS,
+    enlargedQueue: ENLARGED_QUEUE_CLASS,
+    hideArtistTools: HIDE_ARTIST_TOOLS_CLASS,
+  });
+
+  const BOOLEAN_SETTING_KEYS = Object.freeze(
+    Object.keys(FEATURE_CLASS_BY_SETTING)
+  );
 
   function coerceBooleanSettings(target) {
     for (const key of BOOLEAN_SETTING_KEYS) {
@@ -1567,6 +1621,8 @@
     FULL_WIDTH_CLASS,
     ENLARGED_QUEUE_CLASS,
     HIDE_ARTIST_TOOLS_CLASS,
+    FEATURE_CLASS_BY_SETTING,
+    BOOLEAN_SETTING_KEYS,
     HERO_BG_CLASS,
     HERO_WAVEFORM_CLASS,
     HERO_BACKGROUND_STYLES,

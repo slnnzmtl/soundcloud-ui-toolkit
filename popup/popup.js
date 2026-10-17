@@ -86,6 +86,10 @@
   let customPaletteDraft = null;
   let customPalettePersistTimer = null;
   let customPaletteSaveInFlight = false;
+  /** @type {HTMLButtonElement | null} */
+  let themeSelectTrigger = null;
+  /** @type {HTMLElement | null} */
+  let themeSelectPanel = null;
 
   function isCustomPaletteSyncStale(settings) {
     if (!customPaletteDraft) {
@@ -145,10 +149,27 @@
     return (currentSettings && currentSettings.customPresets) || [];
   }
 
+  function findCatalogTheme(id) {
+    for (const group of THEME_GROUPS) {
+      const theme = group.themes.find((entry) => entry.id === id);
+      if (theme) {
+        return { group, theme };
+      }
+    }
+    return null;
+  }
+
   function resolveActivePresetTheme() {
-    const checked = document.querySelector('input[name="theme"]:checked');
+    const checked = document.querySelector(
+      '#custom-preset-list input[name="theme"]:checked'
+    );
     if (checked) {
       lastPresetTheme = sanitizeTheme(checked.value, currentPresets());
+      return lastPresetTheme;
+    }
+    const catalogValue = themeList && themeList.dataset.themeValue;
+    if (catalogValue && findCatalogTheme(catalogValue)) {
+      lastPresetTheme = sanitizeTheme(catalogValue);
     }
     return lastPresetTheme;
   }
@@ -559,29 +580,153 @@
     return label;
   }
 
+  function fillThemeSwatches(container, colors) {
+    container.replaceChildren();
+    (colors || []).forEach((color) => {
+      container.appendChild(createSwatch(color));
+    });
+  }
+
+  function setThemeSelectOpen(open) {
+    const root = themeList.querySelector(".theme-select");
+    const trigger = themeSelectTrigger;
+    const panel = themeSelectPanel;
+    if (!root || !trigger || !panel) {
+      return;
+    }
+    root.classList.toggle("is-open", open);
+    trigger.setAttribute("aria-expanded", open ? "true" : "false");
+    panel.hidden = !open;
+    if (open) {
+      const selected =
+        panel.querySelector('[role="option"][aria-selected="true"]') ||
+        panel.querySelector('[role="option"]');
+      if (selected) {
+        selected.focus();
+      }
+    }
+  }
+
+  function syncThemeSelectDisplay(themeId) {
+    const resolved =
+      findCatalogTheme(themeId) ||
+      findCatalogTheme(lastPresetTheme) ||
+      findCatalogTheme("default");
+    if (!resolved) {
+      return;
+    }
+    const { theme } = resolved;
+    themeList.dataset.themeValue = theme.id;
+    const triggerSwatches = themeList.querySelector(
+      ".theme-select__trigger-swatches"
+    );
+    const triggerLabel = themeList.querySelector(".theme-select__trigger-label");
+    if (triggerSwatches) {
+      fillThemeSwatches(triggerSwatches, theme.swatches);
+    }
+    if (triggerLabel) {
+      triggerLabel.textContent = theme.label;
+    }
+    themeList.querySelectorAll('[role="option"]').forEach((option) => {
+      const selected = option.dataset.themeId === theme.id;
+      option.setAttribute("aria-selected", selected ? "true" : "false");
+      option.classList.toggle("is-selected", selected);
+    });
+  }
+
+  function applyThemeChoice(themeId) {
+    const next = sanitizeTheme(themeId, currentPresets());
+    if (findCatalogTheme(next)) {
+      rememberCatalogTheme(next);
+      colorsPanelOverride = "presets";
+    } else {
+      if (!isSavedCustomThemeId(next) && next !== "custom") {
+        rememberCatalogTheme(next);
+      }
+      colorsPanelOverride = "custom";
+    }
+    setSettings({ theme: next }).then(syncAllControls);
+  }
+
   function renderThemeList() {
-    const mount = document.getElementById("theme-list");
-    const fragment = document.createDocumentFragment();
+    const mount = themeList;
+    if (!mount) {
+      return;
+    }
+    const previous = mount.dataset.themeValue || lastPresetTheme || "default";
+
+    const root = document.createElement("div");
+    root.className = "theme-select";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "theme-select__trigger";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-controls", "theme-select-listbox");
+
+    const triggerSwatches = document.createElement("span");
+    triggerSwatches.className =
+      "theme-select__trigger-swatches theme-row__swatches";
+    triggerSwatches.setAttribute("aria-hidden", "true");
+
+    const triggerLabel = document.createElement("span");
+    triggerLabel.className = "theme-select__trigger-label";
+
+    const chevron = document.createElement("span");
+    chevron.className = "theme-select__chevron";
+    chevron.setAttribute("aria-hidden", "true");
+
+    trigger.append(triggerSwatches, triggerLabel, chevron);
+
+    const panel = document.createElement("div");
+    panel.className = "theme-select__panel";
+    panel.id = "theme-select-listbox";
+    panel.hidden = true;
+    panel.setAttribute("role", "listbox");
+    panel.setAttribute("tabindex", "-1");
+    panel.setAttribute("aria-label", "Theme");
 
     THEME_GROUPS.forEach((group) => {
-      const section = document.createElement("div");
-      section.className = `theme-group theme-group--${group.id}`;
+      const groupEl = document.createElement("div");
+      groupEl.className = `theme-select__group theme-select__group--${group.id}`;
+      groupEl.setAttribute("role", "group");
+      groupEl.setAttribute("aria-label", group.label);
 
-      const title = document.createElement("h3");
-      title.className = "theme-group__title";
+      const title = document.createElement("div");
+      title.className = "theme-select__group-title";
       title.textContent = group.label;
 
-      const rows = document.createElement("div");
-      rows.className = "theme-group__rows";
+      groupEl.appendChild(title);
       group.themes.forEach((theme) => {
-        rows.appendChild(createThemeRow(theme));
-      });
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "theme-select__option";
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", "false");
+        option.dataset.themeId = theme.id;
+        option.tabIndex = -1;
 
-      section.append(title, rows);
-      fragment.appendChild(section);
+        const swatches = document.createElement("span");
+        swatches.className = "theme-row__swatches";
+        swatches.setAttribute("aria-hidden", "true");
+        fillThemeSwatches(swatches, theme.swatches);
+
+        const label = document.createElement("span");
+        label.className = "theme-select__option-label";
+        label.textContent = theme.label;
+
+        option.append(swatches, label);
+        groupEl.appendChild(option);
+      });
+      panel.appendChild(groupEl);
     });
 
-    mount.replaceChildren(fragment);
+    root.append(trigger, panel);
+    themeSelectTrigger = trigger;
+    themeSelectPanel = panel;
+    mount.replaceChildren(root);
+    syncThemeSelectDisplay(previous);
   }
 
   function renderSavedPresetList(customPresets) {
@@ -721,14 +866,26 @@
     });
 
     const theme = sanitizeTheme(settings.theme, settings.customPresets);
-    renderThemeList();
+    if (!themeList.querySelector(".theme-select")) {
+      renderThemeList();
+    }
     if (!isPresetNameEditing()) {
       renderSavedPresetList(settings.customPresets);
     }
+    const catalogActive =
+      settings.theme !== "custom" && findCatalogTheme(theme) ? theme : null;
+    if (catalogActive) {
+      rememberCatalogTheme(catalogActive);
+      syncThemeSelectDisplay(catalogActive);
+    } else {
+      syncThemeSelectDisplay(lastPresetTheme);
+    }
     const activeTheme = settings.theme === "custom" ? null : theme;
-    document.querySelectorAll('input[name="theme"]').forEach((input) => {
-      input.checked = activeTheme !== null && input.value === activeTheme;
-    });
+    document
+      .querySelectorAll('#custom-preset-list input[name="theme"]')
+      .forEach((input) => {
+        input.checked = activeTheme !== null && input.value === activeTheme;
+      });
 
     const radius = sanitizeRadius(settings.radius);
     document.querySelectorAll('input[name="radius"]').forEach((input) => {
@@ -786,25 +943,94 @@
       });
     });
 
-    function onThemeRadioChange(event) {
+    customPresetList.addEventListener("change", (event) => {
       const input = event.target;
       if (!input || input.name !== "theme" || !input.checked) {
         return;
       }
-      const next = sanitizeTheme(input.value, currentPresets());
-      if (!isSavedCustomThemeId(next)) {
-        rememberCatalogTheme(next);
-      }
-      if (themeList.contains(input)) {
-        colorsPanelOverride = "presets";
-      } else if (customPresetList.contains(input)) {
-        colorsPanelOverride = "custom";
-      }
-      setSettings({ theme: next }).then(syncAllControls);
-    }
+      applyThemeChoice(input.value);
+    });
 
-    themeList.addEventListener("change", onThemeRadioChange);
-    customPresetList.addEventListener("change", onThemeRadioChange);
+    themeList.addEventListener("click", (event) => {
+      const trigger = event.target.closest(".theme-select__trigger");
+      if (trigger && themeList.contains(trigger)) {
+        event.preventDefault();
+        const open = trigger.getAttribute("aria-expanded") === "true";
+        setThemeSelectOpen(!open);
+        return;
+      }
+      const option = event.target.closest(".theme-select__option");
+      if (option && themeList.contains(option)) {
+        event.preventDefault();
+        applyThemeChoice(option.dataset.themeId);
+      }
+    });
+
+    themeList.addEventListener("keydown", (event) => {
+      const trigger = themeSelectTrigger;
+      const panel = themeSelectPanel;
+      if (!trigger || !panel) {
+        return;
+      }
+      const open = trigger.getAttribute("aria-expanded") === "true";
+      const options = [...panel.querySelectorAll('[role="option"]')];
+      const active = document.activeElement;
+      const optionIndex = options.indexOf(active);
+
+      if (event.target === trigger) {
+        if (
+          event.key === "ArrowDown" ||
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          setThemeSelectOpen(true);
+          return;
+        }
+      }
+
+      if (!open) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setThemeSelectOpen(false);
+        trigger.focus();
+        return;
+      }
+
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        if (!options.length) {
+          return;
+        }
+        let nextIndex = optionIndex;
+        if (optionIndex < 0) {
+          nextIndex = event.key === "ArrowDown" ? 0 : options.length - 1;
+        } else if (event.key === "ArrowDown") {
+          nextIndex = (optionIndex + 1) % options.length;
+        } else {
+          nextIndex = (optionIndex - 1 + options.length) % options.length;
+        }
+        options[nextIndex].focus();
+        return;
+      }
+
+      if (
+        (event.key === "Enter" || event.key === " ") &&
+        optionIndex >= 0
+      ) {
+        event.preventDefault();
+        applyThemeChoice(options[optionIndex].dataset.themeId);
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!themeList.contains(event.target)) {
+        setThemeSelectOpen(false);
+      }
+    });
 
     document.querySelectorAll('input[name="radius"]').forEach((input) => {
       input.addEventListener("change", () => {

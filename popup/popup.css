@@ -17,9 +17,9 @@
   box-sizing: border-box;
 }
 
-/* Chrome hard-caps extension popups near 600px — stay at/under that so overflow scrolls. */
+/* Chrome can grow popups toward ~800px; size to content and scroll only if needed. */
 html {
-  max-height: 600px;
+  max-height: 800px;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -41,7 +41,7 @@ body {
 }
 
 .control-center {
-  padding: 4px 12px 8px;
+  padding: 10px 14px 14px;
 }
 
 .control-center__header {
@@ -49,7 +49,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
 }
 
 .control-center__title {
@@ -75,17 +75,17 @@ body {
 }
 
 .control-center__group {
-  padding: 4px 8px;
+  padding: 10px 12px;
   background: var(--scx-surface);
   border: 1px solid var(--scx-border);
   border-radius: var(--scx-radius-medium);
-  gap: 6px;
+  gap: 10px;
   display: flex;
   flex-direction: column;
 }
 
 .control-center__group + .control-center__group {
-  margin-top: 4px;
+  margin-top: 10px;
 }
 
 .control-center__group-title {
@@ -182,7 +182,7 @@ body {
 
 .hero-fields {
   display: grid;
-  gap: 4px;
+  gap: 8px;
 }
 
 .hero-field {
@@ -231,7 +231,7 @@ body {
 .radius-field {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px 16px;
+  gap: 8px 16px;
 }
 
 .radius-field__label {
@@ -297,37 +297,146 @@ body {
 }
 
 .theme-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* Homage under Style (not a full-width third row) keeps presets under 600px. */
-  grid-template-areas:
-    "classic accent"
-    "style accent"
-    "homage accent";
-  gap: 4px 12px;
-  align-items: start;
+  position: relative;
 }
 
-.theme-group--classic {
+.theme-select {
+  position: relative;
+}
+
+.theme-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--scx-border);
+  border-radius: var(--scx-radius-small);
+  background: var(--scx-surface-raised);
+  color: var(--scx-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme-select__trigger:focus-visible {
+  outline: 2px solid var(--scx-focus);
+  outline-offset: 2px;
+}
+
+.theme-select__trigger-swatches {
+  flex-shrink: 0;
+}
+
+.theme-select__trigger-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-select__chevron {
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--scx-text-muted);
+}
+
+.theme-select.is-open .theme-select__chevron {
+  transform: rotate(180deg);
+}
+
+.theme-select__panel {
+  /* In-flow so Chrome grows the popup instead of clipping an overlay. */
+  position: relative;
+  z-index: 20;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "classic accent"
+    "style homage";
+  align-items: start;
+  gap: 10px 16px;
+  overflow: visible;
+  padding: 10px 10px 8px;
+  border: 1px solid var(--scx-border);
+  border-radius: var(--scx-radius-small);
+  background: var(--scx-surface);
+  box-shadow: var(--scx-shadow);
+}
+
+.theme-select__group--classic {
   grid-area: classic;
 }
 
-.theme-group--accent {
+.theme-select__group--accent {
   grid-area: accent;
 }
 
-.theme-group--style {
+.theme-select__group--style {
   grid-area: style;
 }
 
-.theme-group--homage {
+.theme-select__group--homage {
   grid-area: homage;
 }
 
-.theme-group--homage .theme-group__rows {
+.theme-select__panel[hidden] {
+  display: none !important;
+}
+
+.theme-select__group-title {
+  margin: 0 0 1px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--scx-text-muted);
+}
+
+.theme-select__option {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: var(--scx-radius-small);
+  background: transparent;
+  color: var(--scx-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme-select__option:hover,
+.theme-select__option:focus-visible,
+.theme-select__option.is-selected {
+  background: var(--scx-surface-raised);
+}
+
+.theme-select__option:focus-visible {
+  outline: 2px solid var(--scx-focus);
+  outline-offset: -2px;
+}
+
+.theme-select__option-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .theme-group__title {

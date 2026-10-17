@@ -865,8 +865,10 @@ test("ScxSettings export matches content + popup usage", () => {
       "isSavedCustomThemeId",
       "resolveCustomPalette",
       "sanitizeCustomPresets",
+      "BOOLEAN_SETTING_KEYS",
       "ENABLED_CLASS",
       "ENLARGED_QUEUE_CLASS",
+      "FEATURE_CLASS_BY_SETTING",
       "FULL_WIDTH_CLASS",
       "HIDE_ARTIST_TOOLS_CLASS",
       "CUSTOM_THEME_STYLE_ID",
@@ -1162,15 +1164,11 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\.scx-theme\b(?!\w)/);
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\[class\*="scx-radius-"\]/);
 
-  assert.match(content, /const FEATURE_CLASS_TOGGLES = \[/);
-  assert.match(content, /FULL_WIDTH_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.fullWidth\)/);
+  assert.match(content, /const FEATURE_CLASS_TOGGLES = BOOLEAN_SETTING_KEYS\.map/);
+  assert.match(content, /FEATURE_CLASS_BY_SETTING\[key\]/);
   assert.match(
     content,
-    /ENLARGED_QUEUE_CLASS,\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.enlargedQueue\)/
-  );
-  assert.match(
-    content,
-    /HIDE_ARTIST_TOOLS_CLASS,\s*\n?\s*\(s\) => Boolean\(s\.enabled\) && Boolean\(s\.hideArtistTools\)/
+    /Boolean\(s\.enabled\) && Boolean\(s\[key\]\)/
   );
   assert.match(content, /applyDocumentHero\(root, settings\)/);
   assert.match(
@@ -1203,21 +1201,38 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
   assert.match(popupJs, /custom-preset-list/);
   assert.match(popupJs, /renderSavedPresetList/);
   assert.match(popupJs, /lastPresetTheme = preset\.id/);
-  assert.match(popupJs, /themeList\.addEventListener\("change"/);
+  assert.match(popupJs, /function applyThemeChoice\(/);
+  assert.match(popupJs, /applyThemeChoice\(option\.dataset\.themeId\)/);
+  assert.match(popupJs, /applyThemeChoice\(input\.value\)/);
+  assert.doesNotMatch(popupJs, /catalogThemeIds/);
+  assert.match(popupJs, /themeSelectTrigger = trigger/);
+  assert.match(popupJs, /themeSelectPanel = panel/);
+  assert.match(popupJs, /theme-select__trigger/);
+  assert.match(popupJs, /role", "listbox"/);
+  assert.match(popupJs, /role", "option"/);
   assert.match(popupJs, /broadcastLiveSettings\(\)/);
   assert.match(popupJs, /addEventListener\("dblclick"/);
   assert.match(popupJs, /renameCustomPreset/);
   assert.match(popupJs, /theme-row__name--editing/);
   assert.match(popupJs, /resolveCustomPalette/);
-  assert.match(popupCss, /grid-template-columns:\s*minmax\(0, 1fr\) minmax\(0, 1fr\)/);
-  assert.match(popupCss, /html \{\s*max-height:\s*600px;\s*overflow-x:\s*hidden;\s*overflow-y:\s*auto;/);
+  assert.match(popupCss, /\.theme-select__trigger/);
+  assert.match(popupCss, /\.theme-select__option/);
+  assert.match(popupCss, /html \{\s*max-height:\s*800px;\s*overflow-x:\s*hidden;\s*overflow-y:\s*auto;/);
   assert.match(
     popupCss,
-    /grid-template-areas:\s*"classic accent"\s*"style accent"\s*"homage accent"/
+    /grid-template-areas:\s*"classic accent"\s*"style homage"/
   );
   assert.doesNotMatch(
     popupCss,
     /\.custom-theme__presets \.theme-group__rows \{[\s\S]*?max-height/
+  );
+  assert.match(
+    html,
+    /id="theme-list"\s+class="theme-list"\s+aria-labelledby="appearance-heading"/
+  );
+  assert.doesNotMatch(
+    html,
+    /id="theme-list"[^>]*role="radiogroup"/
   );
 });
 
@@ -1312,6 +1327,36 @@ test("tokens.css declares catalog --scx-waveform-filter", () => {
   );
 });
 
+test("THEME_GROUPS presets each have a tokens.css block", () => {
+  const { ScxSettings } = loadScxSettings();
+  const tokens = fs.readFileSync(path.join(ROOT, "shared/tokens.css"), "utf8");
+  const ids = ScxSettings.THEME_GROUPS.flatMap((group) =>
+    group.themes.map((theme) => theme.id)
+  );
+  assert.equal(ids.length, 24);
+  for (const id of [
+    "carbon",
+    "espresso",
+    "azure",
+    "flamingo",
+    "paper",
+    "noir",
+    "sand",
+    "blurple",
+    "vinyl",
+    "harbor",
+  ]) {
+    assert.ok(ids.includes(id), `${id} in THEME_GROUPS`);
+  }
+  for (const id of ids) {
+    assert.match(
+      tokens,
+      new RegExp(`html\\.scx-theme-${id}\\s*\\{`),
+      `tokens.css missing scx-theme-${id}`
+    );
+  }
+});
+
 test("themes.css tints waveform and progress bar via hero waveform classes", () => {
   const css = fs.readFileSync(path.join(ROOT, "themes.css"), "utf8");
   assert.match(
@@ -1380,7 +1425,7 @@ test("applyDocumentHero toggles background and waveform classes", () => {
 test("watchOwnRoot restores layout classes for default theme", () => {
   const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
   assert.match(content, /function rootNeedsPaint/);
-  assert.match(content, /const FEATURE_CLASS_TOGGLES = \[/);
+  assert.match(content, /const FEATURE_CLASS_TOGGLES = BOOLEAN_SETTING_KEYS\.map/);
   assert.doesNotMatch(content, /function wantsFeatureClasses/);
   assert.doesNotMatch(
     content,

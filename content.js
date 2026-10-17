@@ -1,9 +1,7 @@
 (function () {
   const {
-    ENABLED_CLASS,
-    FULL_WIDTH_CLASS,
-    ENLARGED_QUEUE_CLASS,
-    HIDE_ARTIST_TOOLS_CLASS,
+    BOOLEAN_SETTING_KEYS,
+    FEATURE_CLASS_BY_SETTING,
     HERO_BACKGROUND_STYLES,
     HERO_WAVEFORM_STYLES,
     DEFAULTS,
@@ -127,15 +125,12 @@
   }
 
   // Layout classes gated on enabled; theme/radius/hero stay in ScxSettings helpers.
-  const FEATURE_CLASS_TOGGLES = [
-    [ENABLED_CLASS, (s) => Boolean(s.enabled)],
-    [FULL_WIDTH_CLASS, (s) => Boolean(s.enabled) && Boolean(s.fullWidth)],
-    [ENLARGED_QUEUE_CLASS, (s) => Boolean(s.enabled) && Boolean(s.enlargedQueue)],
-    [
-      HIDE_ARTIST_TOOLS_CLASS,
-      (s) => Boolean(s.enabled) && Boolean(s.hideArtistTools),
-    ],
-  ];
+  const FEATURE_CLASS_TOGGLES = BOOLEAN_SETTING_KEYS.map((key) => [
+    FEATURE_CLASS_BY_SETTING[key],
+    key === "enabled"
+      ? (s) => Boolean(s.enabled)
+      : (s) => Boolean(s.enabled) && Boolean(s[key]),
+  ]);
 
   function rootNeedsPaint(root, settings) {
     if (

@@ -343,6 +343,226 @@ html.scx-theme-blood {
   --scx-waveform-filter-text: hue-rotate(-20deg) saturate(1) brightness(1.17);
 }
 
+/* Carbon — cool graphite + ice blue */
+html.scx-theme-carbon {
+  --scx-background: #121417;
+  --scx-surface: #1a1d22;
+  --scx-surface-raised: #2f3237;
+  --scx-border: #686c73;
+  --scx-text: #e8eef6;
+  --scx-text-muted: #8e9298;
+  --scx-accent: #8ab4ff;
+  --scx-link: #8ab4ff;
+  --scx-focus: #8ab4ff;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 26, 29, 34;
+  --scx-highlight-rgb: 47, 50, 55;
+  --scx-primary-rgb: 232, 238, 246;
+  --scx-secondary-rgb: 142, 146, 152;
+  --scx-special-rgb: 138, 180, 255;
+  --scx-link-rgb: 138, 180, 255;
+  --scx-waveform-filter: hue-rotate(198deg) saturate(1) brightness(1.54);
+  --scx-waveform-filter-text: hue-rotate(194deg) saturate(0.44) brightness(1.87);
+}
+
+/* Espresso — warm brown café */
+html.scx-theme-espresso {
+  --scx-background: #1a1412;
+  --scx-surface: #241c18;
+  --scx-surface-raised: #39312c;
+  --scx-border: #736b64;
+  --scx-text: #f5ebe0;
+  --scx-text-muted: #999189;
+  --scx-accent: #d4a574;
+  --scx-link: #93b2ee;
+  --scx-focus: #99b1e3;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 36, 28, 24;
+  --scx-highlight-rgb: 57, 49, 44;
+  --scx-primary-rgb: 245, 235, 224;
+  --scx-secondary-rgb: 153, 145, 137;
+  --scx-special-rgb: 212, 165, 116;
+  --scx-link-rgb: 147, 178, 238;
+  --scx-waveform-filter: hue-rotate(11deg) saturate(0.53) brightness(1.29);
+  --scx-waveform-filter-text: hue-rotate(11deg) saturate(0.51) brightness(1.84);
+}
+
+/* Azure — deep navy + electric blue */
+html.scx-theme-azure {
+  --scx-background: #061018;
+  --scx-surface: #0b1a28;
+  --scx-surface-raised: #21303e;
+  --scx-border: #5f6c7a;
+  --scx-text: #e8f1ff;
+  --scx-text-muted: #89939e;
+  --scx-accent: #3d8bfd;
+  --scx-link: #81afff;
+  --scx-focus: #7bacff;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 11, 26, 40;
+  --scx-highlight-rgb: 33, 48, 62;
+  --scx-primary-rgb: 232, 241, 255;
+  --scx-secondary-rgb: 137, 147, 158;
+  --scx-special-rgb: 61, 139, 253;
+  --scx-link-rgb: 129, 175, 255;
+  --scx-waveform-filter: hue-rotate(196deg) saturate(0.98) brightness(1.23);
+  --scx-waveform-filter-text: hue-rotate(197deg) saturate(1) brightness(1.91);
+}
+
+/* Flamingo — hot pink neon */
+html.scx-theme-flamingo {
+  --scx-background: #140810;
+  --scx-surface: #1f0e18;
+  --scx-surface-raised: #35242e;
+  --scx-border: #74616c;
+  --scx-text: #ffe8f4;
+  --scx-text-muted: #9c8a94;
+  --scx-accent: #ff4fa3;
+  --scx-link: #98a8f4;
+  --scx-focus: #a1a0ed;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 31, 14, 24;
+  --scx-highlight-rgb: 53, 36, 46;
+  --scx-primary-rgb: 255, 232, 244;
+  --scx-secondary-rgb: 156, 138, 148;
+  --scx-special-rgb: 255, 79, 163;
+  --scx-link-rgb: 152, 168, 244;
+  --scx-waveform-filter: hue-rotate(311deg) saturate(1) brightness(1.31);
+  --scx-waveform-filter-text: hue-rotate(309deg) saturate(1) brightness(1.91);
+}
+
+/* Paper — light warm editorial */
+html.scx-theme-paper {
+  --scx-background: #f4f1ea;
+  --scx-surface: #ffffff;
+  --scx-surface-raised: #f1f1f1;
+  --scx-border: #d6d6d5;
+  --scx-text: #1c1917;
+  --scx-text-muted: #777470;
+  --scx-accent: #c2410c;
+  --scx-link: #883310;
+  --scx-focus: #883310;
+  --scx-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  --scx-surface-rgb: 255, 255, 255;
+  --scx-highlight-rgb: 241, 241, 241;
+  --scx-primary-rgb: 28, 25, 23;
+  --scx-secondary-rgb: 119, 116, 112;
+  --scx-special-rgb: 194, 65, 12;
+  --scx-link-rgb: 136, 51, 16;
+  --scx-waveform-filter: hue-rotate(-3deg) saturate(0.88) brightness(0.81);
+  --scx-waveform-filter-text: hue-rotate(4deg) saturate(0.1) brightness(0.2);
+}
+
+/* Noir — high-contrast B&W (links stay neutral like Minimal) */
+html.scx-theme-noir {
+  --scx-background: #0a0a0a;
+  --scx-surface: #141414;
+  --scx-surface-raised: #2b2b2b;
+  --scx-border: #6b6b6b;
+  --scx-text: #fafafa;
+  --scx-text-muted: #959595;
+  --scx-accent: #fafafa;
+  --scx-link: #e5e5e5;
+  --scx-focus: #a3a3a3;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 20, 20, 20;
+  --scx-highlight-rgb: 43, 43, 43;
+  --scx-primary-rgb: 250, 250, 250;
+  --scx-secondary-rgb: 149, 149, 149;
+  --scx-special-rgb: 250, 250, 250;
+  --scx-link-rgb: 229, 229, 229;
+  --scx-waveform-filter: none;
+  --scx-waveform-filter-text: none;
+}
+
+/* Sand — warm stone / desert night */
+html.scx-theme-sand {
+  --scx-background: #1c1917;
+  --scx-surface: #292524;
+  --scx-surface-raised: #3d3938;
+  --scx-border: #77726e;
+  --scx-text: #f5f0e8;
+  --scx-text-muted: #9a9690;
+  --scx-accent: #e7b56c;
+  --scx-link: #95b4ed;
+  --scx-focus: #9db4e2;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 41, 37, 36;
+  --scx-highlight-rgb: 61, 57, 56;
+  --scx-primary-rgb: 245, 240, 232;
+  --scx-secondary-rgb: 154, 150, 144;
+  --scx-special-rgb: 231, 181, 108;
+  --scx-link-rgb: 149, 180, 237;
+  --scx-waveform-filter: hue-rotate(16deg) saturate(0.72) brightness(1.33);
+  --scx-waveform-filter-text: hue-rotate(17deg) saturate(0.39) brightness(1.87);
+}
+
+/* Blurple — Discord-inspired */
+html.scx-theme-blurple {
+  --scx-background: #1e1f22;
+  --scx-surface: #2b2d31;
+  --scx-surface-raised: #3f4145;
+  --scx-border: #77787b;
+  --scx-text: #f2f3f5;
+  --scx-text-muted: #999a9c;
+  --scx-accent: #5865f2;
+  --scx-link: #84abfd;
+  --scx-focus: #80a4fc;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 43, 45, 49;
+  --scx-highlight-rgb: 63, 65, 69;
+  --scx-primary-rgb: 242, 243, 245;
+  --scx-secondary-rgb: 153, 154, 156;
+  --scx-special-rgb: 88, 101, 242;
+  --scx-link-rgb: 132, 171, 253;
+  --scx-waveform-filter: hue-rotate(215deg) saturate(0.86) brightness(1.29);
+  --scx-waveform-filter-text: hue-rotate(200deg) saturate(0.13) brightness(1.91);
+}
+
+/* Vinyl — YouTube Music-inspired */
+html.scx-theme-vinyl {
+  --scx-background: #0f0f0f;
+  --scx-surface: #1a1a1a;
+  --scx-surface-raised: #313131;
+  --scx-border: #717171;
+  --scx-text: #ffffff;
+  --scx-text-muted: #9a9a9a;
+  --scx-accent: #ff0033;
+  --scx-link: #989ee7;
+  --scx-focus: #a190d6;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 26, 26, 26;
+  --scx-highlight-rgb: 49, 49, 49;
+  --scx-primary-rgb: 255, 255, 255;
+  --scx-secondary-rgb: 154, 154, 154;
+  --scx-special-rgb: 255, 0, 51;
+  --scx-link-rgb: 152, 158, 231;
+  --scx-waveform-filter: hue-rotate(328deg) saturate(1) brightness(1);
+  --scx-waveform-filter-text: none;
+}
+
+/* Harbor — Bandcamp-inspired */
+html.scx-theme-harbor {
+  --scx-background: #0d1110;
+  --scx-surface: #161c1a;
+  --scx-surface-raised: #2b3230;
+  --scx-border: #666e6c;
+  --scx-text: #e8f4f3;
+  --scx-text-muted: #8c9594;
+  --scx-accent: #1da09a;
+  --scx-link: #7db2f3;
+  --scx-focus: #74b0eb;
+  --scx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  --scx-surface-rgb: 22, 28, 26;
+  --scx-highlight-rgb: 43, 50, 48;
+  --scx-primary-rgb: 232, 244, 243;
+  --scx-secondary-rgb: 140, 149, 148;
+  --scx-special-rgb: 29, 160, 154;
+  --scx-link-rgb: 125, 178, 243;
+  --scx-waveform-filter: hue-rotate(157deg) saturate(0.69) brightness(0.74);
+  --scx-waveform-filter-text: hue-rotate(155deg) saturate(0.35) brightness(1.87);
+}
+
 /* Rounding scale — independent of color themes. Artwork uses medium
  * (never 50%); play uses --scx-radius-play (50% at xl only). */
 html.scx-radius-none {
