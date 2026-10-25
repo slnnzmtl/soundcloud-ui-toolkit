@@ -4,7 +4,7 @@
  * Active layout tweaks only. Master switch is html.scx-enabled — every
  * override also requires it so Enabled off restores stock SoundCloud.
  * Features: scx-full-width, scx-enlarged-queue, scx-hide-artist-tools,
- * scx-hero-bg-*. Button chrome lives in themes.css.
+ * scx-hide-avatar-placeholder, scx-hero-bg-*. Button chrome lives in themes.css.
  */
 
 /* Tiny scrollbars — size always; dark color when enabled without a theme.
@@ -36,6 +36,12 @@ html.scx-enabled.scx-hero-bg-text {
   --scx-hero-mix: color-mix(in srgb, var(--scx-text) 50%, transparent);
 }
 
+html.scx-enabled.scx-hero-bg-accent .profileHeaderBackground,
+html.scx-enabled.scx-hero-bg-text .profileHeaderBackground,
+html.scx-enabled.scx-hero-bg-transparent .profileHeaderBackground {
+  background: transparent !important;
+}
+
 html.scx-enabled.scx-hero-bg-accent section[aria-label="Track header"],
 html.scx-enabled.scx-hero-bg-text section[aria-label="Track header"] {
   background: linear-gradient(
@@ -46,12 +52,25 @@ html.scx-enabled.scx-hero-bg-text section[aria-label="Track header"] {
   ) !important;
 }
 
+/* Hide profile avatar placeholders — html.scx-enabled.scx-hide-avatar-placeholder
+ * Placeholder and uploaded avatars share sc-artwork-placeholder-*.
+ * A real image is the same node with an inline background-image. */
+html.scx-enabled.scx-hide-avatar-placeholder
+  .profileHeaderInfo__avatar:not(:has([style*="background-image"])) {
+  display: none !important;
+}
+
 html.scx-enabled.scx-full-width #main {
   padding: 1rem;
 }
 
 html.scx-enabled.scx-full-width .fullHero {
   margin: 0;
+}
+
+html.scx-enabled.scx-full-width .l-user-hero {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 html.scx-enabled.scx-hero-bg-accent .backgroundGradient__buffer,

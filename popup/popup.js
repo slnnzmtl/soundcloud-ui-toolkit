@@ -39,6 +39,7 @@
     { id: "full-width", key: "fullWidth" },
     { id: "enlarged-queue", key: "enlargedQueue" },
     { id: "hide-artist-tools", key: "hideArtistTools" },
+    { id: "hide-avatar-placeholder", key: "hideAvatarPlaceholder" },
   ];
 
   const appearanceSelects = [

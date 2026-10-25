@@ -129,6 +129,7 @@ test("getSettings migrates legacy theme aliases into sync storage", async () => 
         fullWidth: true,
         enlargedQueue: true,
         hideArtistTools: false,
+        hideAvatarPlaceholder: true,
         heroBackgroundStyle: "accent",
         heroWaveformStyle: "accent",
         theme: "spotify",
@@ -149,6 +150,7 @@ test("getSettings does not rewrite storage when already canonical", async () => 
     fullWidth: true,
     enlargedQueue: true,
     hideArtistTools: false,
+    hideAvatarPlaceholder: true,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -475,6 +477,7 @@ test("getSettings does not persist default customPalette for preset-only storage
     fullWidth: true,
     enlargedQueue: true,
     hideArtistTools: false,
+    hideAvatarPlaceholder: true,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "midnight",
@@ -614,11 +617,17 @@ test("DEFAULTS enable all feature toggles after install", () => {
   assert.equal(ScxSettings.DEFAULTS.fullWidth, true);
   assert.equal(ScxSettings.DEFAULTS.enlargedQueue, true);
   assert.equal(ScxSettings.DEFAULTS.hideArtistTools, false);
+  assert.equal(ScxSettings.DEFAULTS.hideAvatarPlaceholder, true);
   assert.equal(ScxSettings.DEFAULTS.heroBackgroundStyle, "accent");
   assert.equal(ScxSettings.DEFAULTS.heroWaveformStyle, "accent");
   assert.equal(ScxSettings.DEFAULTS.font, "default");
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
-  for (const id of ["extension-enabled", "full-width", "enlarged-queue"]) {
+  for (const id of [
+    "extension-enabled",
+    "full-width",
+    "enlarged-queue",
+    "hide-avatar-placeholder",
+  ]) {
     assert.match(
       html,
       new RegExp(`id="${id}"[\\s\\S]*?checked`),
@@ -646,6 +655,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(fromNull.fullWidth, true);
   assert.equal(fromNull.enlargedQueue, true);
   assert.equal(fromNull.hideArtistTools, false);
+  assert.equal(fromNull.hideAvatarPlaceholder, true);
   assert.equal(fromNull.heroBackgroundStyle, "accent");
   assert.equal(fromNull.heroWaveformStyle, "accent");
   assert.equal(fromNull.theme, "default");
@@ -663,6 +673,7 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(merged.fullWidth, true);
   assert.equal(merged.enlargedQueue, true);
   assert.equal(merged.hideArtistTools, false);
+  assert.equal(merged.hideAvatarPlaceholder, true);
   assert.equal(merged.heroBackgroundStyle, "accent");
   assert.equal(merged.heroWaveformStyle, "accent");
   assert.equal(merged.theme, "grove");
@@ -722,11 +733,13 @@ test("applyDocumentFeatureClasses gates layout classes on enabled", () => {
     fullWidth: true,
     enlargedQueue: false,
     hideArtistTools: true,
+    hideAvatarPlaceholder: true,
   });
   assert.deepEqual(classList.toArray().sort(), [
     "scx-enabled",
     "scx-full-width",
     "scx-hide-artist-tools",
+    "scx-hide-avatar-placeholder",
   ]);
   assert.equal(
     ScxSettings.featureClassesNeedPaint(documentElement, {
@@ -734,6 +747,7 @@ test("applyDocumentFeatureClasses gates layout classes on enabled", () => {
       fullWidth: true,
       enlargedQueue: false,
       hideArtistTools: true,
+      hideAvatarPlaceholder: true,
     }),
     false
   );
@@ -743,6 +757,7 @@ test("applyDocumentFeatureClasses gates layout classes on enabled", () => {
       fullWidth: true,
       enlargedQueue: true,
       hideArtistTools: true,
+      hideAvatarPlaceholder: true,
     }),
     true
   );
@@ -752,6 +767,7 @@ test("applyDocumentFeatureClasses gates layout classes on enabled", () => {
     fullWidth: true,
     enlargedQueue: true,
     hideArtistTools: true,
+    hideAvatarPlaceholder: true,
   });
   assert.deepEqual(classList.toArray(), []);
 });
@@ -1189,6 +1205,15 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   assert.match(styles, /html\.scx-enabled\.scx-full-width/);
   assert.match(styles, /html\.scx-enabled\.scx-enlarged-queue/);
   assert.match(styles, /html\.scx-enabled\.scx-hide-artist-tools/);
+  assert.match(styles, /html\.scx-enabled\.scx-hide-avatar-placeholder/);
+  assert.match(
+    styles,
+    /html\.scx-enabled\.scx-hide-avatar-placeholder[\s\S]*\.profileHeaderInfo__avatar:not\(:has\(\[style\*="background-image"\]\)\)/
+  );
+  assert.doesNotMatch(
+    styles,
+    /scx-hero-bg-(?:accent|text)[\s\S]{0,120}\.profileHeaderInfo__avatar/
+  );
   assert.match(styles, /\.homeCreditTracker/);
   assert.match(styles, /\.quotaMeterWrapper/);
   assert.match(
@@ -1209,6 +1234,7 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
   assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-full-width\b/);
   assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-enlarged-queue\b/);
   assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-hide-artist-tools\b/);
+  assert.doesNotMatch(styles, /(?:^|[^.\w-])html\.scx-hide-avatar-placeholder\b/);
   assert.doesNotMatch(iframe, /(?:^|[^.\w-])html\.scx-full-width\b/);
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\.scx-theme\b(?!\w)/);
   assert.doesNotMatch(themes, /(?:^|[^.\w-])html\[class\*="scx-radius-"\]/);

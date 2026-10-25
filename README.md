@@ -6,6 +6,10 @@ toolbar popup control center; every feature defaults on after install. Supported
 browsers: Chrome, Edge, Opera, and Brave (Chrome 121+ or equivalent). Firefox
 and Safari are not supported.
 
+### What’s new in 1.5.1
+
+- **Hide avatar placeholder** — optional Hero toggle; hides profile header avatars that have no uploaded image (detected via missing inline `background-image`, not placeholder class alone)
+
 ### What’s new in 1.5.0
 
 - **Theme catalog** — swatch theme select with more presets (Style + Homage expansions); two-column control center under Chrome’s 800×600 popup cap
@@ -58,6 +62,7 @@ Click the extension icon in the toolbar to open the **Control center**.
 | Enlarged layout      | On      | Widens the main layout (`.l-container`, player UI) and enlarges listen-page hero at wide viewports (≥1200px) |
 | Enlarged queue       | On      | Makes the play-queue panel larger |
 | Hide artist tools    | Off     | Hides credit tracker, alerts, sidebar/header upsells, and quota meter |
+| Hide avatar placeholder | On      | Hides a profile header avatar that is still the default placeholder |
 | Hero background      | Accent  | Listen/track hero: Default (stock), Accent / Text gradient + blur, or Transparent |
 | Elements style       | Accent  | Canvas waveforms, hero title, and player play icon: Default (stock orange), Accent, or Text (progress bar stays accent) |
 | Font                 | Default | Optional Google Font override for SoundCloud and popup preview |

@@ -13,6 +13,7 @@
   const FULL_WIDTH_CLASS = "scx-full-width";
   const ENLARGED_QUEUE_CLASS = "scx-enlarged-queue";
   const HIDE_ARTIST_TOOLS_CLASS = "scx-hide-artist-tools";
+  const HIDE_AVATAR_PLACEHOLDER_CLASS = "scx-hide-avatar-placeholder";
   const HERO_BG_CLASS = "scx-hero-bg";
   const HERO_WAVEFORM_CLASS = "scx-hero-waveform";
   const THEME_CLASS = "scx-theme";
@@ -520,6 +521,7 @@
     fullWidth: true,
     enlargedQueue: true,
     hideArtistTools: false,
+    hideAvatarPlaceholder: true,
     heroBackgroundStyle: "accent",
     heroWaveformStyle: "accent",
     theme: "default",
@@ -535,6 +537,7 @@
     fullWidth: FULL_WIDTH_CLASS,
     enlargedQueue: ENLARGED_QUEUE_CLASS,
     hideArtistTools: HIDE_ARTIST_TOOLS_CLASS,
+    hideAvatarPlaceholder: HIDE_AVATAR_PLACEHOLDER_CLASS,
   });
 
   const BOOLEAN_SETTING_KEYS = Object.freeze(
