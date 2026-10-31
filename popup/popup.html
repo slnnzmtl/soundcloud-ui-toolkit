@@ -83,15 +83,19 @@
             <div class="hero-fields">
               <label class="hero-field" for="hero-background-style">
                 <span class="hero-field__label">Background style</span>
+                <span class="hero-field__hint"
+                  >Cover matching samples artwork from sndcdn.com</span
+                >
                 <select
                   id="hero-background-style"
                   class="hero-field__select"
                   aria-label="Hero background style"
                 >
-                  <option value="default">Default</option>
-                  <option value="accent" selected>Accent</option>
+                  <option value="default" selected>Default</option>
+                  <option value="accent">Accent</option>
                   <option value="text">Text</option>
                   <option value="transparent">Transparent</option>
+                  <option value="cover">Cover matching</option>
                 </select>
               </label>
 
@@ -103,8 +107,8 @@
                   class="hero-field__select"
                   aria-label="Elements style"
                 >
-                  <option value="default">Default</option>
-                  <option value="accent" selected>Accent</option>
+                  <option value="default" selected>Default</option>
+                  <option value="accent">Accent</option>
                   <option value="text">Text</option>
                 </select>
               </label>
@@ -298,7 +302,10 @@
       </div>
     </div>
 
+    <script src="../shared/settings/catalogs.js"></script>
+    <script src="../shared/settings/apply.js"></script>
     <script src="../shared/settings.js"></script>
+    <script src="review-prompt.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

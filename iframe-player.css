@@ -25,7 +25,7 @@ html.scx-enabled.scx-full-width main.MuiBox-root {
     + section[aria-label="Track header"]
     + .MuiStack-root {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 420px !important;
+    grid-template-columns: minmax(0, 1fr) 30% !important;
     gap: 30px !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -61,19 +61,19 @@ html.scx-enabled.scx-full-width main.MuiBox-root {
     + .MuiStack-root
     > :nth-child(2) {
     grid-column: 2 !important;
-    width: 420px !important;
-    max-width: 420px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
   
   html.scx-enabled.scx-full-width section[aria-label="Track header"] > div > div > div:nth-child(2) {
     width: var(--scx-sidebar-width) !important;
-    height: var(--scx-sidebar-width) !important;
+    height: 100%;
   }
 
   html.scx-enabled.scx-full-width aside[aria-label="Track sidebar"] {
-    width: 420px !important;
-    max-width: 420px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
 }

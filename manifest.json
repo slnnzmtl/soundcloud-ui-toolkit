@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SoundCloud UI Toolkit: Dark Mode, Fullscreen, Custom Themes, and More",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Customize SoundCloud with themes, fonts, and hide artist tools. Palette presets, rounding, enlarged layout, and a queue preview.",
   "homepage_url": "https://kazansky.dev/products/soundcloud-ui-toolkit",
   "minimum_chrome_version": "121",
@@ -14,6 +14,9 @@
     "https://soundcloud.com/*",
     "https://fonts.googleapis.com/*",
     "https://fonts.gstatic.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*.sndcdn.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -40,7 +43,10 @@
         "https://soundcloud.com/*"
       ],
       "js": [
+        "shared/settings/catalogs.js",
+        "shared/settings/apply.js",
         "shared/settings.js",
+        "content/hero-cover.js",
         "content.js"
       ],
       "all_frames": true,

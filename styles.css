@@ -22,10 +22,19 @@ html.scx-enabled div.MuiCardContent-root .MuiListItem-gutters > div {
   backdrop-filter: blur(0px) !important;
 }
 
-/* Hero background styles — html.scx-hero-bg-{accent|text|transparent} */
+/* Hero background styles — html.scx-hero-bg-{accent|text|transparent|cover} */
+@property --scx-hero-cover {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
 html.scx-enabled.scx-hero-bg-accent,
-html.scx-enabled.scx-hero-bg-text {
+html.scx-enabled.scx-hero-bg-text,
+html.scx-enabled.scx-hero-bg-cover,
+html.scx-enabled.scx-hero-bg-transparent {
   --scx-hero-backdrop-blur: 14px;
+  --scx-hero-bg-transition: 0s ease;
 }
 
 html.scx-enabled.scx-hero-bg-accent {
@@ -36,20 +45,54 @@ html.scx-enabled.scx-hero-bg-text {
   --scx-hero-mix: color-mix(in srgb, var(--scx-text) 50%, transparent);
 }
 
+html.scx-enabled.scx-hero-bg-cover {
+  --scx-hero-cover: transparent;
+  --scx-hero-mix: color-mix(in srgb, var(--scx-hero-cover) 50%, transparent);
+  transition: --scx-hero-cover var(--scx-hero-bg-transition);
+}
+
 html.scx-enabled.scx-hero-bg-accent .profileHeaderBackground,
 html.scx-enabled.scx-hero-bg-text .profileHeaderBackground,
+html.scx-enabled.scx-hero-bg-cover .profileHeaderBackground,
 html.scx-enabled.scx-hero-bg-transparent .profileHeaderBackground {
   background: transparent !important;
 }
 
-html.scx-enabled.scx-hero-bg-accent section[aria-label="Track header"],
-html.scx-enabled.scx-hero-bg-text section[aria-label="Track header"] {
+/*
+ * Player iframe: two stacked Track header sections — tint the info band (first),
+ * leave the artwork band (second sibling) clear. Do not use :has(img); the info
+ * band includes icon <img> nodes and would miss the gradient otherwise.
+ */
+html.scx-enabled:is(.scx-hero-bg-accent, .scx-hero-bg-text, .scx-hero-bg-cover)
+  section[aria-label="Track header"]:not(
+    section[aria-label="Track header"] + section[aria-label="Track header"]
+  ) {
   background: linear-gradient(
     to top,
     transparent,
     transparent,
+    var(--scx-hero-mix),
     var(--scx-hero-mix)
   ) !important;
+  backdrop-filter: blur(var(--scx-hero-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--scx-hero-backdrop-blur));
+  transition: background var(--scx-hero-bg-transition);
+}
+
+html.scx-enabled:is(.scx-hero-bg-accent, .scx-hero-bg-text, .scx-hero-bg-cover)
+  section[aria-label="Track header"]:not(
+    section[aria-label="Track header"] + section[aria-label="Track header"]
+  )
+  > :is(.MuiStack-root, .MuiBox-root) {
+  background-color: transparent !important;
+}
+
+html.scx-enabled:is(.scx-hero-bg-accent, .scx-hero-bg-text, .scx-hero-bg-cover)
+  section[aria-label="Track header"]
+  + section[aria-label="Track header"] {
+  background: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Hide profile avatar placeholders — html.scx-enabled.scx-hide-avatar-placeholder
@@ -74,7 +117,8 @@ html.scx-enabled.scx-full-width .l-user-hero {
 }
 
 html.scx-enabled.scx-hero-bg-accent .backgroundGradient__buffer,
-html.scx-enabled.scx-hero-bg-text .backgroundGradient__buffer {
+html.scx-enabled.scx-hero-bg-text .backgroundGradient__buffer,
+html.scx-enabled.scx-hero-bg-cover .backgroundGradient__buffer {
   background: linear-gradient(
     to top,
     transparent,
@@ -84,6 +128,7 @@ html.scx-enabled.scx-hero-bg-text .backgroundGradient__buffer {
   ) !important;
   backdrop-filter: blur(var(--scx-hero-backdrop-blur));
   -webkit-backdrop-filter: blur(var(--scx-hero-backdrop-blur));
+  transition: background var(--scx-hero-bg-transition);
 }
 
 html.scx-enabled.scx-hero-bg-transparent section[aria-label="Track header"],
@@ -91,6 +136,10 @@ html.scx-enabled.scx-hero-bg-transparent .backgroundGradient__buffer {
   background: transparent !important;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  transition:
+    background var(--scx-hero-bg-transition),
+    backdrop-filter var(--scx-hero-bg-transition),
+    -webkit-backdrop-filter var(--scx-hero-bg-transition);
 }
 
 html.scx-enabled ::-webkit-scrollbar {

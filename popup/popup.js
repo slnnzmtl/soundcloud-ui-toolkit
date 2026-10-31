@@ -20,6 +20,7 @@
     isCompleteCustomPaletteInput,
     sanitizeCustomPalette,
     createCustomPreset,
+    findCatalogTheme,
     findCustomPreset,
     isCustomThemeId,
     isSavedCustomThemeId,
@@ -31,9 +32,12 @@
     readPresetSourcePalette,
     sanitizeHeroBackgroundStyle,
     sanitizeHeroWaveformStyle,
+    heroStylesForTheme,
     sanitizeFont,
     onSettingsChanged,
   } = ScxSettings;
+
+  const COVER_PERMISSION_PENDING_KEY = "scxCoverPermissionPending";
 
   const switches = [
     { id: "full-width", key: "fullWidth" },
@@ -103,6 +107,20 @@
   let themeSelectTriggerSwatches = null;
   /** @type {HTMLElement | null} */
   let themeSelectTriggerLabel = null;
+  let initialHeroBackgroundStyle = "default";
+  let initialHeroWaveformStyle = "default";
+
+  function rememberInitialHeroStyles(settings) {
+    if (!settings) {
+      return;
+    }
+    initialHeroBackgroundStyle = sanitizeHeroBackgroundStyle(
+      settings.heroBackgroundStyle
+    );
+    initialHeroWaveformStyle = sanitizeHeroWaveformStyle(
+      settings.heroWaveformStyle
+    );
+  }
 
   function isCustomPaletteSyncStale(settings) {
     if (!customPaletteDraft) {
@@ -162,14 +180,13 @@
     return (currentSettings && currentSettings.customPresets) || [];
   }
 
-  function findCatalogTheme(id) {
-    for (const group of THEME_GROUPS) {
-      const theme = group.themes.find((entry) => entry.id === id);
-      if (theme) {
-        return { group, theme };
+  function syncAppearanceSelects(settings) {
+    appearanceSelects.forEach(({ id, key, sanitize }) => {
+      const select = document.getElementById(id);
+      if (select) {
+        select.value = sanitize(settings[key]);
       }
-    }
-    return null;
+    });
   }
 
   function resolveActivePresetTheme() {
@@ -329,8 +346,9 @@
     updateCustomPreview(palette);
   }
 
-  function broadcastLiveSettings() {
-    if (!currentSettings || typeof chrome === "undefined" || !chrome.tabs) {
+  function broadcastLiveSettings(settings) {
+    const payload = settings || currentSettings;
+    if (!payload || typeof chrome === "undefined" || !chrome.tabs) {
       return;
     }
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -341,7 +359,7 @@
       chrome.tabs
         .sendMessage(tab.id, {
           type: LIVE_SETTINGS_MESSAGE,
-          settings: { ...currentSettings },
+          settings: { ...payload },
         })
         .catch(() => {});
     });
@@ -624,11 +642,59 @@
     });
   }
 
-  function applyThemeChoice(themeId) {
+  function clearCoverPermissionPending() {
+    chrome.storage.local.remove(COVER_PERMISSION_PENDING_KEY);
+  }
+
+  function beginCoverHostPermission(fallbackStyle, patch) {
+    chrome.storage.local.set(
+      {
+        [COVER_PERMISSION_PENDING_KEY]: {
+          fallbackHeroBackgroundStyle: fallbackStyle || null,
+          patch: patch || null,
+        },
+      },
+      () => {
+        chrome.runtime.sendMessage({ type: "scx-request-cover-host" });
+      }
+    );
+  }
+
+  function themeChangePlan(themeId) {
     const next = sanitizeTheme(themeId, currentPresets());
-    rememberCatalogTheme(next);
-    colorsPanelOverride = findCatalogTheme(next) ? "presets" : "custom";
-    setSettings({ theme: next }).then(syncAllControls);
+    const hero = heroStylesForTheme(next);
+    const patch = { theme: next };
+    if (hero && initialHeroBackgroundStyle === "default") {
+      patch.heroBackgroundStyle = hero.heroBackgroundStyle;
+    }
+    if (hero && initialHeroWaveformStyle === "default") {
+      patch.heroWaveformStyle = hero.heroWaveformStyle;
+    }
+    const needsCoverGrant = patch.heroBackgroundStyle === "cover";
+    const persistPatch = { ...patch };
+    if (needsCoverGrant) {
+      delete persistPatch.heroBackgroundStyle;
+    }
+    return { next, persistPatch, needsCoverGrant, patch };
+  }
+
+  function applyThemeChoice(themeId) {
+    const plan = themeChangePlan(themeId);
+    rememberCatalogTheme(plan.next);
+    colorsPanelOverride = findCatalogTheme(plan.next) ? "presets" : "custom";
+    if (currentSettings) {
+      currentSettings = { ...currentSettings, ...plan.persistPatch };
+      syncAppearanceSelects(currentSettings);
+      broadcastLiveSettings(currentSettings);
+    }
+    if (plan.needsCoverGrant) {
+      beginCoverHostPermission("accent", plan.persistPatch);
+    } else {
+      setSettings(plan.persistPatch).then(syncAllControls);
+      if (plan.patch.heroBackgroundStyle) {
+        clearCoverPermissionPending();
+      }
+    }
   }
 
   function renderThemeList() {
@@ -857,12 +923,7 @@
       syncSwitch(document.getElementById(id), Boolean(settings[key]));
     });
 
-    appearanceSelects.forEach(({ id, key, sanitize }) => {
-      const select = document.getElementById(id);
-      if (select) {
-        select.value = sanitize(settings[key]);
-      }
-    });
+    syncAppearanceSelects(settings);
 
     const theme = sanitizeTheme(settings.theme, settings.customPresets);
     if (!themeList.querySelector(".theme-select")) {
@@ -914,11 +975,26 @@
       const select = document.getElementById(id);
       select.addEventListener("change", () => {
         const value = sanitize(select.value);
+        const previousHero =
+          currentSettings && currentSettings.heroBackgroundStyle;
+        if (
+          key === "heroBackgroundStyle" &&
+          value === "cover" &&
+          previousHero !== "cover"
+        ) {
+          select.value = sanitize(previousHero);
+          beginCoverHostPermission(null, { heroBackgroundStyle: "cover" });
+          return;
+        }
         select.value = value;
-        setSettings({ [key]: value }).then((settings) => {
-          applyPopupChrome(settings);
-          broadcastLiveSettings();
-        });
+        if (currentSettings) {
+          currentSettings = { ...currentSettings, [key]: value };
+          broadcastLiveSettings(currentSettings);
+        }
+        setSettings({ [key]: value }).then(applyPopupChrome);
+        if (key === "heroBackgroundStyle" && value !== "cover") {
+          clearCoverPermissionPending();
+        }
       });
     });
 
@@ -1062,156 +1138,6 @@
     });
   }
 
-  const REVIEW_PROMPT_KEY = "scxReviewPrompt";
-  const REVIEW_PROMPT_OPEN_THRESHOLD = 3;
-
-  function getReviewPromptState() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(REVIEW_PROMPT_KEY, (result) => {
-        const raw = result[REVIEW_PROMPT_KEY];
-        resolve(raw && typeof raw === "object" ? raw : {});
-      });
-    });
-  }
-
-  function setReviewPromptState(next) {
-    return new Promise((resolve) => {
-      chrome.storage.local.set({ [REVIEW_PROMPT_KEY]: next }, resolve);
-    });
-  }
-
-  function hideReviewPrompt() {
-    const root = document.getElementById("review-prompt");
-    if (root) {
-      root.hidden = true;
-    }
-  }
-
-  function showReviewPrompt() {
-    const root = document.getElementById("review-prompt");
-    const firstStar = document.querySelector(".review-prompt__star");
-    if (!root || !firstStar) {
-      return;
-    }
-    root.hidden = false;
-    firstStar.focus();
-  }
-
-  function markReviewPromptDismissed(version) {
-    return getReviewPromptState().then((state) =>
-      setReviewPromptState({
-        ...state,
-        lastPromptedVersion: version,
-        countVersion: version,
-      })
-    );
-  }
-
-  function markReviewPromptRated(rating) {
-    return getReviewPromptState().then((state) =>
-      setReviewPromptState({
-        ...state,
-        rated: true,
-        rating,
-      })
-    );
-  }
-
-  function setStarPreview(stars, rating) {
-    stars.forEach((star) => {
-      star.classList.toggle("is-active", Number(star.dataset.rating) <= rating);
-    });
-  }
-
-  function clearStarPreview(stars) {
-    stars.forEach((star) => {
-      star.classList.remove("is-active");
-    });
-  }
-
-  function bindReviewPrompt(version) {
-    const root = document.getElementById("review-prompt");
-    const backdrop = document.getElementById("review-prompt-backdrop");
-    const dismissBtn = document.getElementById("review-prompt-dismiss");
-    const starsRoot = document.getElementById("review-prompt-stars");
-    if (!root || !backdrop || !dismissBtn || !starsRoot) {
-      return;
-    }
-
-    const stars = Array.from(
-      starsRoot.querySelectorAll(".review-prompt__star")
-    );
-
-    dismissBtn.addEventListener("click", () => {
-      markReviewPromptDismissed(version).then(hideReviewPrompt);
-    });
-
-    stars.forEach((star) => {
-      star.addEventListener("mouseenter", () => {
-        setStarPreview(stars, Number(star.dataset.rating));
-      });
-      star.addEventListener("focus", () => {
-        setStarPreview(stars, Number(star.dataset.rating));
-      });
-      star.addEventListener("click", () => {
-        const rating = Number(star.dataset.rating);
-        setStarPreview(stars, rating);
-        chrome.tabs.create(
-          {
-            url: "https://chromewebstore.google.com/detail/ejehihdgbonfaddicbenfbakcmcdkpnd/reviews/my-review",
-            active: true,
-          },
-          (tab) => {
-            if (tab && tab.windowId != null) {
-              chrome.windows.update(tab.windowId, { focused: true });
-            }
-            markReviewPromptRated(rating).then(hideReviewPrompt);
-          }
-        );
-      });
-    });
-
-    starsRoot.addEventListener("mouseleave", () => {
-      clearStarPreview(stars);
-    });
-
-    backdrop.addEventListener("click", () => {
-      hideReviewPrompt();
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !root.hidden) {
-        hideReviewPrompt();
-      }
-    });
-  }
-
-  function maybeShowReviewPrompt() {
-    const version = chrome.runtime.getManifest().version;
-    bindReviewPrompt(version);
-    return getReviewPromptState().then((state) => {
-      if (state.rated || state.lastPromptedVersion === version) {
-        return;
-      }
-      const priorCount = Number(state.openCount);
-      let openCount =
-        state.countVersion === version && Number.isFinite(priorCount)
-          ? priorCount
-          : 0;
-      openCount += 1;
-      const next = {
-        ...state,
-        countVersion: version,
-        openCount,
-      };
-      return setReviewPromptState(next).then(() => {
-        if (openCount >= REVIEW_PROMPT_OPEN_THRESHOLD) {
-          showReviewPrompt();
-        }
-      });
-    });
-  }
-
   renderRadiusSelect();
   renderFontSelect();
   renderThemeList();
@@ -1220,8 +1146,9 @@
   onNativeSchemeChanged();
   Promise.all([getSettings(), loadNativeScheme()]).then(([settings]) => {
     rememberCatalogTheme(settings.theme);
+    rememberInitialHeroStyles(settings);
     syncAllControls(settings);
-    maybeShowReviewPrompt();
+    globalThis.__scxMaybeShowReviewPrompt();
   });
   onSettingsChanged((settings) => {
     if (isCustomPaletteSyncStale(settings)) {

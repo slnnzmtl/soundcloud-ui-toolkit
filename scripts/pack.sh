@@ -17,6 +17,7 @@ zip -r "$ZIP_PATH" \
   manifest.json \
   background.js \
   content.js \
+  content \
   styles.css \
   themes.css \
   iframe-player.css \

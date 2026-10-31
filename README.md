@@ -6,6 +6,12 @@ toolbar popup control center; every feature defaults on after install. Supported
 browsers: Chrome, Edge, Opera, and Brave (Chrome 121+ or equivalent). Firefox
 and Safari are not supported.
 
+### What’s new in 1.5.2
+
+- **Cover matching** — tints from on-page track artwork, or (after an optional sndcdn permission) playlist/listen-hero CSS artwork fetched in the background worker
+- **Theme presets set hero styles** — Classic / Style / Homage use cover matching + accent elements; Accent themes use accent for both
+- **SPA and iframe sampling** — cover tint follows the current page on back navigation and when opening a track from a playlist in the iframe player
+
 ### What’s new in 1.5.1
 
 - **Hide avatar placeholder** — optional Hero toggle; hides profile header avatars that have no uploaded image (detected via missing inline `background-image`, not placeholder class alone)
@@ -100,7 +106,7 @@ Developer notes: `SELECTORS.md` (selector map) and `snapshots/` (normalized
 browser-rendered DOM trees) are for maintenance only and are excluded from the
 store package. Refresh route snapshots with `npm install --include=dev` and
 `npm run snapshot:dom`. Preset catalog lives in `shared/tokens.css`
-and `THEME_GROUPS` / `RADII` in `shared/settings.js`. SoundCloud token mapping
+and `THEME_GROUPS` / `RADII` in `shared/settings/catalogs.js`. SoundCloud token mapping
 lives in `themes.css`.
 
 ## Publishing

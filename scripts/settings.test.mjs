@@ -7,6 +7,15 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+function readContentSources() {
+  return [
+    "content/hero-cover.js",
+    "content.js",
+  ]
+    .map((file) => fs.readFileSync(path.join(ROOT, file), "utf8"))
+    .join("\n");
+}
+
 function createClassList(initial = []) {
   const set = new Set(initial);
   return {
@@ -106,11 +115,15 @@ function loadScxSettings(options = {}) {
   context.globalThis = context;
   context.self = context;
 
-  const source = fs.readFileSync(
-    path.join(ROOT, "shared/settings.js"),
-    "utf8"
-  );
-  vm.runInNewContext(source, context, { filename: "shared/settings.js" });
+  const settingsFiles = [
+    "shared/settings/catalogs.js",
+    "shared/settings/apply.js",
+    "shared/settings.js",
+  ];
+  for (const file of settingsFiles) {
+    const source = fs.readFileSync(path.join(ROOT, file), "utf8");
+    vm.runInNewContext(source, context, { filename: file });
+  }
 
   return {
     ScxSettings: context.ScxSettings,
@@ -618,8 +631,8 @@ test("DEFAULTS enable all feature toggles after install", () => {
   assert.equal(ScxSettings.DEFAULTS.enlargedQueue, true);
   assert.equal(ScxSettings.DEFAULTS.hideArtistTools, false);
   assert.equal(ScxSettings.DEFAULTS.hideAvatarPlaceholder, true);
-  assert.equal(ScxSettings.DEFAULTS.heroBackgroundStyle, "accent");
-  assert.equal(ScxSettings.DEFAULTS.heroWaveformStyle, "accent");
+  assert.equal(ScxSettings.DEFAULTS.heroBackgroundStyle, "default");
+  assert.equal(ScxSettings.DEFAULTS.heroWaveformStyle, "default");
   assert.equal(ScxSettings.DEFAULTS.font, "default");
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
   for (const id of [
@@ -644,7 +657,7 @@ test("DEFAULTS enable all feature toggles after install", () => {
   assert.match(html, /id="ui-font"/);
   assert.match(
     html,
-    /id="hero-background-style"[\s\S]*?<option value="accent" selected>/
+    /id="hero-background-style"[\s\S]*?<option value="default" selected>/
   );
 });
 
@@ -656,8 +669,8 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(fromNull.enlargedQueue, true);
   assert.equal(fromNull.hideArtistTools, false);
   assert.equal(fromNull.hideAvatarPlaceholder, true);
-  assert.equal(fromNull.heroBackgroundStyle, "accent");
-  assert.equal(fromNull.heroWaveformStyle, "accent");
+  assert.equal(fromNull.heroBackgroundStyle, "default");
+  assert.equal(fromNull.heroWaveformStyle, "default");
   assert.equal(fromNull.theme, "default");
   assert.equal(fromNull.radius, "medium");
   assert.equal(fromNull.font, "default");
@@ -674,8 +687,8 @@ test("mergeWithDefaults fills missing keys and sanitizes", () => {
   assert.equal(merged.enlargedQueue, true);
   assert.equal(merged.hideArtistTools, false);
   assert.equal(merged.hideAvatarPlaceholder, true);
-  assert.equal(merged.heroBackgroundStyle, "accent");
-  assert.equal(merged.heroWaveformStyle, "accent");
+  assert.equal(merged.heroBackgroundStyle, "default");
+  assert.equal(merged.heroWaveformStyle, "default");
   assert.equal(merged.theme, "grove");
   assert.equal(merged.radius, "medium");
   assert.equal(merged.font, "default");
@@ -921,6 +934,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "MAX_CUSTOM_PRESETS",
       "CUSTOM_PRESET_LABEL_MAX_LENGTH",
       "createCustomPreset",
+      "findCatalogTheme",
       "findCustomPreset",
       "isCustomThemeId",
       "isSavedCustomThemeId",
@@ -937,6 +951,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "FONT_STYLE_ID",
       "HERO_BACKGROUND_STYLES",
       "HERO_BG_CLASS",
+      "HERO_COVER_CSS_VAR",
       "HERO_WAVEFORM_CLASS",
       "HERO_WAVEFORM_STYLES",
       "NATIVE_DARK_CLASS",
@@ -950,6 +965,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "THEME_GROUPS",
       "THEMES",
       "applyCustomThemeVariables",
+      "averageRgbFromCoverPixels",
       "applyDocumentFont",
       "applyDocumentHero",
       "applyDocumentRadius",
@@ -960,6 +976,7 @@ test("ScxSettings export matches content + popup usage", () => {
       "desiredHeroClasses",
       "getSettings",
       "heroBackgroundClass",
+      "heroStylesForTheme",
       "heroWaveformClass",
       "isCompleteCustomPaletteInput",
       "mergeWithDefaults",
@@ -1072,6 +1089,7 @@ test("pack.sh lists only runtime paths", () => {
     "manifest.json",
     "background.js",
     "content.js",
+    "content",
     "styles.css",
     "themes.css",
     "iframe-player.css",
@@ -1110,7 +1128,7 @@ test("content scripts inject JS only; CSS loads once via content.js", () => {
     "themes.css",
   ]);
 
-  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  const content = readContentSources();
   const filesMatch = content.match(/const STYLE_FILES = (\[[\s\S]*?\])/);
   assert.ok(filesMatch, "STYLE_FILES present");
   const files = Function(`"use strict"; return ${filesMatch[1]}`)();
@@ -1170,12 +1188,20 @@ test("scrollbar color is themed once; styles.css keeps size only on *", () => {
 
 test("hero background styles and enlarged hero layout are class-gated", () => {
   const styles = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
-  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  const content = readContentSources();
   const html = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
 
   assert.match(styles, /html\.scx-enabled\.scx-hero-bg-accent/);
   assert.match(styles, /html\.scx-enabled\.scx-hero-bg-text/);
   assert.match(styles, /html\.scx-enabled\.scx-hero-bg-transparent/);
+  assert.match(styles, /html\.scx-enabled\.scx-hero-bg-cover/);
+  assert.match(styles, /--scx-hero-cover/);
+  assert.match(styles, /@property --scx-hero-cover/);
+  assert.match(
+    styles,
+    /html\.scx-enabled\.scx-hero-bg-cover\s*\{[\s\S]*?--scx-hero-cover:\s*transparent/
+  );
+  assert.match(styles, /--scx-hero-bg-transition/);
   assert.match(styles, /--scx-hero-mix/);
   assert.match(
     styles,
@@ -1187,6 +1213,43 @@ test("hero background styles and enlarged hero layout are class-gated", () => {
     /scx-hero-bg-accent[\s\S]{0,200}--mui-palette-contrast-contrastText/
   );
   assert.match(content, /applyDocumentHero\(root, settings\)/);
+  assert.match(content, /syncHeroCover\(root, settings\)/);
+  assert.match(content, /scheduleHeroCoverRetries\(root\)/);
+  assert.match(content, /requestHeroCoverSample\(root\)/);
+  assert.match(content, /stopHeroCoverSampling\(root\)/);
+  assert.match(content, /applyHeroCoverSample\(root\)/);
+  assert.match(content, /findListenHeroCoverSource\(doc\)/);
+  assert.match(content, /function coverFromTrackHeader/);
+  assert.match(content, /__scxScheduleFramePaint/);
+  assert.match(content, /function watchSpaNavigation/);
+  assert.match(content, /lastMatchingCover\(heroes/);
+  assert.match(content, /isDisplayedElement\(/);
+  assert.match(content, /COVER_FETCH_MESSAGE = "scx-fetch-cover"/);
+  assert.match(content, /fetchCoverViaBackground\(/);
+  assert.match(content, /Number\.isFinite\(response\.r\)/);
+  assert.doesNotMatch(content, /response\.buffer/);
+  assert.match(content, /kind: "url"/);
+  assert.match(content, /classicCoverFromHero\(hero, doc\)/);
+  assert.doesNotMatch(content, /crossOrigin = "anonymous"/);
+  assert.doesNotMatch(content, /loadCoverImageElement/);
+  assert.match(content, /watchIframeCoverResize\(/);
+  assert.match(content, /FRAME_PAINT_DELAYS_MS = \[0, 50, 150, 400, 800, 1600, 3200\]/);
+  assert.match(content, /coverLocationKey\(doc\)/);
+  assert.match(content, /lastCoverPageKeyByRoot/);
+  assert.match(content, /addEventListener\("popstate"/);
+  assert.match(content, /pushState", "replaceState"/);
+  assert.match(content, /getElementById\("content"\)/);
+  assert.match(content, /docFromRoot\(root\)/);
+  assert.match(content, /COVER_ARTWORK_URL_RE = \/artworks\[-_\/\]\/i/);
+  assert.doesNotMatch(content, /seedHeroCoverFromAccent/);
+  assert.match(
+    styles,
+    /section\[aria-label="Track header"\]:not\([\s\S]*section\[aria-label="Track header"\] \+ section\[aria-label="Track header"\]/
+  );
+  assert.match(
+    styles,
+    /section\[aria-label="Track header"\]:not\([\s\S]*backdrop-filter:\s*blur/
+  );
   assert.match(content, /desiredHeroClasses/);
   assert.match(html, /id="hero-background-style"/);
   assert.match(html, /id="hero-waveform-style"/);
@@ -1200,7 +1263,7 @@ test("SoundCloud overrides co-gate under html.scx-enabled; paintRoot disables fe
     path.join(ROOT, "iframe-player.css"),
     "utf8"
   );
-  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  const content = readContentSources();
 
   assert.match(styles, /html\.scx-enabled\.scx-full-width/);
   assert.match(styles, /html\.scx-enabled\.scx-enlarged-queue/);
@@ -1270,6 +1333,12 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
   assert.match(popupJs, /renderSavedPresetList/);
   assert.match(popupJs, /lastPresetTheme = preset\.id/);
   assert.match(popupJs, /function applyThemeChoice\(/);
+  assert.match(popupJs, /heroStylesForTheme\(next\)/);
+  assert.match(popupJs, /function themeChangePlan/);
+  assert.match(popupJs, /function rememberInitialHeroStyles/);
+  assert.match(popupJs, /initialHeroBackgroundStyle === "default"/);
+  assert.match(popupJs, /initialHeroWaveformStyle === "default"/);
+  assert.match(popupJs, /rememberInitialHeroStyles\(settings\)/);
   assert.match(popupJs, /applyThemeChoice\(option\.dataset\.themeId\)/);
   assert.match(popupJs, /applyThemeChoice\(input\.value\)/);
   assert.doesNotMatch(popupJs, /catalogThemeIds/);
@@ -1284,6 +1353,8 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
   assert.match(popupJs, /role", "listbox"/);
   assert.match(popupJs, /role", "option"/);
   assert.match(popupJs, /broadcastLiveSettings\(\)/);
+  assert.match(popupJs, /function syncAppearanceSelects\(/);
+  assert.match(popupJs, /broadcastLiveSettings\(currentSettings\)/);
   assert.match(popupJs, /addEventListener\("dblclick"/);
   assert.match(popupJs, /renameCustomPreset/);
   assert.match(popupJs, /theme-row__name--editing/);
@@ -1322,7 +1393,7 @@ test("popup uses shared custom theme helpers for chrome preview", () => {
 });
 
 test("content paintRoot applies and clears custom variables", () => {
-  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  const content = readContentSources();
   assert.match(content, /applyCustomThemeVariables\(root, settings\)/);
   assert.match(content, /clearCustomThemeVariables\(root\)/);
   assert.match(content, /applyDocumentHero\(root, settings\)/);
@@ -1334,8 +1405,58 @@ test("manifest allows Google Fonts host permissions", () => {
   const manifest = JSON.parse(
     fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8")
   );
+  const popupJs = fs.readFileSync(path.join(ROOT, "popup/popup.js"), "utf8");
+  const background = fs.readFileSync(
+    path.join(ROOT, "background.js"),
+    "utf8"
+  );
+  const coverOrigin = "https://*.sndcdn.com/*";
   assert.ok(manifest.host_permissions.includes("https://fonts.googleapis.com/*"));
   assert.ok(manifest.host_permissions.includes("https://fonts.gstatic.com/*"));
+  assert.ok(!manifest.host_permissions.includes(coverOrigin));
+  assert.deepEqual(manifest.optional_host_permissions, [coverOrigin]);
+  assert.match(popupJs, /COVER_PERMISSION_PENDING_KEY = "scxCoverPermissionPending"/);
+  assert.match(popupJs, /function beginCoverHostPermission/);
+  assert.match(popupJs, /type: "scx-request-cover-host"/);
+  assert.doesNotMatch(
+    popupJs,
+    /sendMessage\(\{\s*type: "scx-request-cover-host",\s*fallbackHeroBackgroundStyle/
+  );
+  assert.doesNotMatch(popupJs, /chrome\.permissions\.request\(/);
+  assert.doesNotMatch(popupJs, /settleCoverHostPermission/);
+  assert.doesNotMatch(popupJs, /denyCoverHostPermission/);
+  assert.doesNotMatch(popupJs, /applyCoverRequestPatch/);
+  assert.doesNotMatch(popupJs, /scx-cover-host-granted/);
+  assert.match(
+    popupJs,
+    /beginCoverHostPermission\(null, \{ heroBackgroundStyle: "cover" \}\)/
+  );
+  assert.match(popupJs, /beginCoverHostPermission\("accent", plan\.persistPatch\)/);
+  assert.match(popupJs, /select\.value = sanitize\(previousHero\)/);
+  assert.match(popupJs, /initialHeroBackgroundStyle === "default"/);
+  assert.match(popupJs, /initialHeroWaveformStyle === "default"/);
+  assert.doesNotMatch(popupJs, /ensureCoverHostPermission/);
+  assert.doesNotMatch(popupJs, /revertHeroBackgroundStyle/);
+  assert.match(background, /COVER_HOST_PERMISSION = "https:\/\/\*\.sndcdn\.com\/\*"/);
+  assert.match(background, /chrome\.permissions\.contains\(\{ origins: \[COVER_HOST_PERMISSION\] \}/);
+  assert.match(background, /chrome\.permissions\.request\(/);
+  assert.match(background, /COVER_HOST_GRANTED_MESSAGE = "scx-cover-host-granted"/);
+  assert.match(background, /COVER_HOST_REQUEST_MESSAGE = "scx-request-cover-host"/);
+  assert.match(background, /COVER_PERMISSION_PENDING_KEY = "scxCoverPermissionPending"/);
+  assert.match(background, /function completeCoverHostRequest/);
+  assert.match(background, /function requestCoverHostPermissionFromPending/);
+  assert.match(background, /function mergeHeroPatchFromPending/);
+  assert.match(background, /function patchSettings/);
+  assert.doesNotMatch(background, /function finishCoverHostRequest/);
+  assert.doesNotMatch(background, /function commitPendingCoverThenNotify/);
+  assert.doesNotMatch(background, /function settingsFromCoverRequest/);
+  assert.doesNotMatch(background, /function coverRequestPatch/);
+  assert.doesNotMatch(background, /COVER_HOST_GRANTED_MESSAGE\)/);
+  assert.match(background, /heroWaveformStyle/);
+  assert.match(background, /permissions\.onAdded/);
+  assert.match(background, /OffscreenCanvas/);
+  assert.match(background, /coverHostGranted/);
+  assert.match(background, /sendResponse\(\{ ok: true, r:/);
 });
 
 test("popup wires font select like hero selects", () => {
@@ -1485,6 +1606,89 @@ test("themes.css tints waveform and progress bar via hero waveform classes", () 
   );
 });
 
+test("averageRgbFromCoverPixels prefers saturated pixels over neutrals", () => {
+  const { ScxSettings } = loadScxSettings();
+  const size = 4;
+  const data = new Uint8ClampedArray(size * size * 4);
+  for (let i = 0; i < data.length; i += 4) {
+    data[i] = 255;
+    data[i + 1] = 255;
+    data[i + 2] = 255;
+    data[i + 3] = 255;
+  }
+  data[0] = 40;
+  data[1] = 80;
+  data[2] = 200;
+  const rgb = ScxSettings.averageRgbFromCoverPixels({
+    data,
+    width: size,
+    height: size,
+  });
+  assert.ok(rgb);
+  assert.equal(rgb.r, 40);
+  assert.equal(rgb.g, 80);
+  assert.equal(rgb.b, 200);
+});
+
+test("sanitizeHeroBackgroundStyle accepts cover", () => {
+  const { ScxSettings } = loadScxSettings();
+  assert.equal(ScxSettings.sanitizeHeroBackgroundStyle("cover"), "cover");
+  assert.equal(
+    ScxSettings.sanitizeHeroBackgroundStyle("not-a-style"),
+    ScxSettings.DEFAULTS.heroBackgroundStyle
+  );
+});
+
+test("findCatalogTheme resolves aliases and catalog ids", () => {
+  const { ScxSettings } = loadScxSettings();
+  const grove = ScxSettings.findCatalogTheme("grove");
+  assert.ok(grove);
+  assert.equal(grove.group.id, "homage");
+  assert.equal(grove.theme.id, "grove");
+
+  const spotify = ScxSettings.findCatalogTheme("spotify");
+  assert.ok(spotify);
+  assert.equal(spotify.theme.id, "grove");
+
+  assert.equal(ScxSettings.findCatalogTheme("custom"), null);
+  assert.equal(ScxSettings.findCatalogTheme("c_abc123"), null);
+});
+
+test("heroStylesForTheme follows catalog groups", () => {
+  const { ScxSettings } = loadScxSettings();
+
+  function assertHeroStyles(themeId, background, waveform, label) {
+    const styles = ScxSettings.heroStylesForTheme(themeId);
+    assert.ok(styles, label);
+    assert.equal(styles.heroBackgroundStyle, background, label);
+    assert.equal(styles.heroWaveformStyle, waveform, label);
+  }
+
+  for (const group of ScxSettings.THEME_GROUPS) {
+    for (const theme of group.themes) {
+      const background =
+        theme.id === "default"
+          ? "default"
+          : group.id === "accent"
+            ? "accent"
+            : "cover";
+      const waveform = theme.id === "default" ? "default" : "accent";
+      assertHeroStyles(
+        theme.id,
+        background,
+        waveform,
+        `${group.id}/${theme.id}`
+      );
+    }
+  }
+
+  assertHeroStyles("spotify", "cover", "accent", "alias homage");
+  assertHeroStyles("terminal", "accent", "accent", "alias accent");
+  assertHeroStyles("default", "default", "default", "default theme");
+  assert.equal(ScxSettings.heroStylesForTheme("custom"), null);
+  assert.equal(ScxSettings.heroStylesForTheme("c_abc123"), null);
+});
+
 test("applyDocumentHero toggles background and waveform classes", () => {
   const { ScxSettings, classList, documentElement } = loadScxSettings();
   ScxSettings.applyDocumentHero(documentElement, {
@@ -1496,6 +1700,13 @@ test("applyDocumentHero toggles background and waveform classes", () => {
     "scx-hero-bg-accent",
     "scx-hero-waveform-text",
   ]);
+
+  ScxSettings.applyDocumentHero(documentElement, {
+    enabled: true,
+    heroBackgroundStyle: "cover",
+    heroWaveformStyle: "default",
+  });
+  assert.deepEqual(classList.toArray(), ["scx-hero-bg-cover"]);
 
   ScxSettings.applyDocumentHero(documentElement, {
     enabled: true,
@@ -1513,7 +1724,7 @@ test("applyDocumentHero toggles background and waveform classes", () => {
 });
 
 test("watchOwnRoot restores layout classes for default theme", () => {
-  const content = fs.readFileSync(path.join(ROOT, "content.js"), "utf8");
+  const content = readContentSources();
   assert.match(content, /function rootNeedsPaint/);
   assert.match(content, /featureClassesNeedPaint\(root, settings\)/);
   assert.doesNotMatch(content, /FEATURE_CLASS_TOGGLES/);
@@ -1526,6 +1737,96 @@ test("watchOwnRoot restores layout classes for default theme", () => {
     content,
     /if \(!rootNeedsPaint\(root, latestSettings\)\)/
   );
+});
+
+test("completeCoverHostRequest merges pending theme patch on grant", () => {
+  const background = fs.readFileSync(
+    path.join(ROOT, "background.js"),
+    "utf8"
+  );
+  const localStore = {};
+  const syncStore = {};
+  const { completeCoverHostRequest } = vm.runInNewContext(
+    `${background}\n({ completeCoverHostRequest });`,
+    {
+      chrome: {
+        scripting: {
+          insertCSS() {},
+          removeCSS() {
+            return Promise.resolve();
+          },
+          executeScript() {},
+        },
+        tabs: {
+          query(_query, callback) {
+            callback([]);
+          },
+        },
+        webNavigation: {
+          onCommitted: { addListener() {} },
+          onCompleted: { addListener() {} },
+          onHistoryStateUpdated: { addListener() {} },
+          onDOMContentLoaded: { addListener() {} },
+          getAllFrames() {},
+        },
+        runtime: {
+          lastError: undefined,
+          onInstalled: { addListener() {} },
+          onStartup: { addListener() {} },
+          onMessage: { addListener() {} },
+        },
+        permissions: {
+          contains(_opts, callback) {
+            callback(false);
+          },
+          onAdded: { addListener() {} },
+          request() {},
+        },
+        storage: {
+          local: {
+            get(keys, callback) {
+              const key = typeof keys === "string" ? keys : keys[0];
+              callback({ [key]: localStore[key] });
+            },
+            remove(key, callback) {
+              delete localStore[key];
+              if (callback) {
+                callback();
+              }
+            },
+          },
+          sync: {
+            get(keys, callback) {
+              const key = typeof keys === "string" ? keys : keys[0];
+              callback({ [key]: syncStore[key] });
+            },
+            set(data, callback) {
+              Object.assign(syncStore, data);
+              if (callback) {
+                callback();
+              }
+            },
+          },
+        },
+      },
+    },
+    { filename: "background.js" }
+  );
+
+  localStore.scxCoverPermissionPending = {
+    fallbackHeroBackgroundStyle: "accent",
+    patch: {
+      theme: "midnight",
+      heroWaveformStyle: "accent",
+    },
+  };
+
+  completeCoverHostRequest(true);
+
+  assert.equal("scxCoverPermissionPending" in localStore, false);
+  assert.equal(syncStore.scxSettings.theme, "midnight");
+  assert.equal(syncStore.scxSettings.heroWaveformStyle, "accent");
+  assert.equal(syncStore.scxSettings.heroBackgroundStyle, "cover");
 });
 
 test("isOpaqueChildUrl and isSoundCloudUrl classify inject targets", () => {
@@ -1555,6 +1856,11 @@ test("isOpaqueChildUrl and isSoundCloudUrl classify inject targets", () => {
         runtime: {
           onInstalled: { addListener() {} },
           onStartup: { addListener() {} },
+          onMessage: { addListener() {} },
+        },
+        permissions: {
+          contains() {},
+          onAdded: { addListener() {} },
         },
       },
     },
@@ -1673,6 +1979,11 @@ test("SPA parent history update strips leftover CSS and injects JS only", () => 
             listeners.onStartup.push(fn);
           },
         },
+        onMessage: { addListener() {} },
+      },
+      permissions: {
+        contains() {},
+        onAdded: { addListener() {} },
       },
     },
   });

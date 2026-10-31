@@ -32,7 +32,7 @@
     "shared/tokens.css",
     "themes.css",
   ];
-  const FRAME_PAINT_DELAYS_MS = [0, 50, 150, 400, 800, 1600];
+  const FRAME_PAINT_DELAYS_MS = [0, 50, 150, 400, 800, 1600, 3200];
   let latestSettings = null;
   let paintingRoot = false;
 
@@ -165,6 +165,7 @@
       clearCustomThemeVariables(root);
     }
     applyDocumentHero(root, settings);
+    globalThis.__scxSyncHeroCover(root, settings);
     applyDocumentRadius(settings.radius, { active, root });
     paintDocumentFont(root, settings, {
       getSettings: () => latestSettings,
@@ -182,6 +183,7 @@
     }
     const css = readStyleText();
     for (const iframe of document.querySelectorAll("iframe")) {
+      globalThis.__scxWatchIframeCoverResize(iframe);
       try {
         const doc = iframe.contentDocument;
         if (doc && doc.documentElement) {
@@ -224,8 +226,38 @@
     }
   }
 
+  globalThis.__scxScheduleFramePaint = scheduleFramePaint;
+
+  function watchSpaNavigation() {
+    if (window !== window.top) {
+      return;
+    }
+    function onNav() {
+      if (!latestSettings) {
+        return;
+      }
+      scheduleFramePaint();
+    }
+    window.addEventListener("popstate", onNav);
+    const historyObj = window.history;
+    if (historyObj) {
+      for (const method of ["pushState", "replaceState"]) {
+        const original = historyObj[method];
+        if (typeof original !== "function") {
+          continue;
+        }
+        historyObj[method] = function scxSpaFramePaint() {
+          const result = original.apply(this, arguments);
+          onNav();
+          return result;
+        };
+      }
+    }
+  }
+
   function applySettings(settings) {
     latestSettings = mergeWithDefaults(settings);
+    globalThis.__scxLatestSettings = latestSettings;
     paintRoot(document.documentElement, latestSettings);
     if (window !== window.top) {
       return;
@@ -355,11 +387,12 @@
   ensureExtensionStyles();
 
   const alreadyLoaded = Boolean(globalThis.__scxContentLoaded);
+  globalThis.__scxWatchHeroCoverArt();
   const cached = readPageCache();
   if (cached) {
     applySettings(cached);
-  } else if (window === window.top && !alreadyLoaded) {
-    applySettings(DEFAULTS);
+  } else if (!alreadyLoaded) {
+    applySettings(window === window.top ? DEFAULTS : mergeWithDefaults(null));
   }
 
   getSettings().then((settings) => {
@@ -401,6 +434,7 @@
       inheritStyleFromParent();
     }
     latestSettings = mergeWithDefaults(data.settings);
+    globalThis.__scxLatestSettings = latestSettings;
     paintRoot(document.documentElement, latestSettings);
   });
 
@@ -418,4 +452,5 @@
   watchChildFrames();
   watchOwnRoot();
   watchNativeScheme();
+  watchSpaNavigation();
 })();
