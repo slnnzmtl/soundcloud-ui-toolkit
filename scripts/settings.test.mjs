@@ -1406,6 +1406,7 @@ test("manifest allows Google Fonts host permissions", () => {
     fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8")
   );
   const popupJs = fs.readFileSync(path.join(ROOT, "popup/popup.js"), "utf8");
+  const popupHtml = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
   const background = fs.readFileSync(
     path.join(ROOT, "background.js"),
     "utf8"
@@ -1416,14 +1417,22 @@ test("manifest allows Google Fonts host permissions", () => {
   assert.ok(!manifest.host_permissions.includes(coverOrigin));
   assert.deepEqual(manifest.optional_host_permissions, [coverOrigin]);
   assert.match(popupJs, /COVER_PERMISSION_PENDING_KEY = "scxCoverPermissionPending"/);
+  assert.match(popupJs, /COVER_HOST_DECLINED_KEY = "scxCoverHostDeclined"/);
   assert.match(popupJs, /function beginCoverHostPermission/);
-  assert.match(popupJs, /type: "scx-request-cover-host"/);
-  assert.doesNotMatch(
-    popupJs,
-    /sendMessage\(\{\s*type: "scx-request-cover-host",\s*fallbackHeroBackgroundStyle/
-  );
-  assert.doesNotMatch(popupJs, /chrome\.permissions\.request\(/);
-  assert.doesNotMatch(popupJs, /settleCoverHostPermission/);
+  assert.match(popupJs, /function resumeCoverHostPermission/);
+  assert.match(popupJs, /function showCoverPermissionPrompt/);
+  assert.match(popupJs, /function settleCoverHostPermission/);
+  assert.match(popupJs, /chrome\.permissions\.request\(/);
+  assert.match(popupJs, /type: COVER_HOST_SETTLED_MESSAGE/);
+  assert.match(popupJs, /result\[COVER_HOST_DECLINED_KEY\]/);
+  assert.match(popupJs, /heroBackgroundStyle: "accent"/);
+  assert.match(popupJs, /heroBackgroundStyle: "cover"/);
+  assert.match(popupJs, /function previewThemePatch/);
+  assert.match(popupJs, /clearsPending/);
+  assert.doesNotMatch(popupJs, /scx-request-cover-host/);
+  assert.doesNotMatch(popupJs, /openCoverPermissionWindow/);
+  assert.doesNotMatch(popupJs, /chrome\.windows\.create\(/);
+  assert.doesNotMatch(popupJs, /chrome\.tabs\.create\(/);
   assert.doesNotMatch(popupJs, /denyCoverHostPermission/);
   assert.doesNotMatch(popupJs, /applyCoverRequestPatch/);
   assert.doesNotMatch(popupJs, /scx-cover-host-granted/);
@@ -1437,16 +1446,29 @@ test("manifest allows Google Fonts host permissions", () => {
   assert.match(popupJs, /initialHeroWaveformStyle === "default"/);
   assert.doesNotMatch(popupJs, /ensureCoverHostPermission/);
   assert.doesNotMatch(popupJs, /revertHeroBackgroundStyle/);
+  assert.match(popupHtml, /id="cover-permission-prompt"/);
+  assert.match(popupHtml, /id="cover-permission-allow"/);
+  assert.match(popupHtml, /id="cover-permission-cancel"/);
+  assert.ok(!fs.existsSync(path.join(ROOT, "popup/cover-permission.html")));
+  assert.ok(!fs.existsSync(path.join(ROOT, "popup/cover-permission.js")));
+  assert.ok(!fs.existsSync(path.join(ROOT, "popup/cover-permission.css")));
   assert.match(background, /COVER_HOST_PERMISSION = "https:\/\/\*\.sndcdn\.com\/\*"/);
+  assert.match(background, /COVER_HOST_DECLINED_KEY = "scxCoverHostDeclined"/);
+  assert.match(background, /function rememberCoverHostDecline/);
+  assert.match(background, /chrome\.storage\.local\.remove\(COVER_HOST_DECLINED_KEY\)/);
+  assert.match(background, /rememberCoverHostDecline\(\)/);
+  assert.match(background, /alreadyKnown/);
   assert.match(background, /chrome\.permissions\.contains\(\{ origins: \[COVER_HOST_PERMISSION\] \}/);
-  assert.match(background, /chrome\.permissions\.request\(/);
+  assert.doesNotMatch(background, /chrome\.permissions\.request\(/);
+  assert.doesNotMatch(background, /scx-request-cover-host/);
+  assert.doesNotMatch(background, /chrome\.windows\.create\(/);
   assert.match(background, /COVER_HOST_GRANTED_MESSAGE = "scx-cover-host-granted"/);
-  assert.match(background, /COVER_HOST_REQUEST_MESSAGE = "scx-request-cover-host"/);
+  assert.match(background, /COVER_HOST_SETTLED_MESSAGE = "scx-cover-host-settled"/);
   assert.match(background, /COVER_PERMISSION_PENDING_KEY = "scxCoverPermissionPending"/);
   assert.match(background, /function completeCoverHostRequest/);
-  assert.match(background, /function requestCoverHostPermissionFromPending/);
   assert.match(background, /function mergeHeroPatchFromPending/);
   assert.match(background, /function patchSettings/);
+  assert.doesNotMatch(background, /function requestCoverHostPermissionFromPending/);
   assert.doesNotMatch(background, /function finishCoverHostRequest/);
   assert.doesNotMatch(background, /function commitPendingCoverThenNotify/);
   assert.doesNotMatch(background, /function settingsFromCoverRequest/);
@@ -1457,6 +1479,37 @@ test("manifest allows Google Fonts host permissions", () => {
   assert.match(background, /OffscreenCanvas/);
   assert.match(background, /coverHostGranted/);
   assert.match(background, /sendResponse\(\{ ok: true, r:/);
+});
+
+test("whats-new dialog shows once per version after upgrade", () => {
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8")
+  );
+  const popupJs = fs.readFileSync(path.join(ROOT, "popup/popup.js"), "utf8");
+  const popupHtml = fs.readFileSync(path.join(ROOT, "popup/popup.html"), "utf8");
+  const whatsNewJs = fs.readFileSync(
+    path.join(ROOT, "popup/whats-new.js"),
+    "utf8"
+  );
+  const privacy = fs.readFileSync(path.join(ROOT, "PRIVACY.md"), "utf8");
+  assert.equal(manifest.version, "1.5.4");
+  assert.match(popupHtml, /id="whats-new-prompt"/);
+  assert.match(popupHtml, /id="whats-new-dismiss"/);
+  assert.match(popupHtml, /Got it/);
+  assert.match(popupHtml, /src="whats-new\.js"/);
+  assert.match(whatsNewJs, /WHATS_NEW_SEEN_KEY = "scxWhatsNewSeen"/);
+  assert.match(whatsNewJs, /"1\.5\.4"/);
+  assert.match(
+    whatsNewJs,
+    /Added a new Hero background style: Cover matching tints the hero from the current track\./
+  );
+  assert.match(whatsNewJs, /globalThis\.__scxMaybeShowWhatsNew/);
+  assert.match(popupJs, /__scxMaybeShowWhatsNew\(\)/);
+  assert.match(
+    popupJs,
+    /__scxMaybeShowWhatsNew\(\)[\s\S]*__scxMaybeShowReviewPrompt\(\)/
+  );
+  assert.match(privacy, /scxWhatsNewSeen/);
 });
 
 test("popup wires font select like hero selects", () => {

@@ -6,6 +6,10 @@ toolbar popup control center; every feature defaults on after install. Supported
 browsers: Chrome, Edge, Opera, and Brave (Chrome 121+ or equivalent). Firefox
 and Safari are not supported.
 
+### What’s new in 1.5.4
+
+- **Cover matching** — new Hero background style that tints the hero from the current track
+
 ### What’s new in 1.5.2
 
 - **Cover matching** — tints from on-page track artwork, or (after an optional sndcdn permission) playlist/listen-hero CSS artwork fetched in the background worker

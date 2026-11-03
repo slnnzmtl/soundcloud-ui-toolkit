@@ -228,6 +228,74 @@
     </main>
 
     <div
+      id="cover-permission-prompt"
+      class="cover-permission-prompt"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cover-permission-prompt-title"
+      hidden
+    >
+      <div class="cover-permission-prompt__backdrop"></div>
+      <div class="cover-permission-prompt__card">
+        <h2
+          id="cover-permission-prompt-title"
+          class="cover-permission-prompt__title"
+        >
+          Allow cover matching?
+        </h2>
+        <p class="cover-permission-prompt__body">
+          Cover matching samples artwork from sndcdn.com so the hero can tint
+          to the current track.
+        </p>
+        <div class="cover-permission-prompt__actions">
+          <button
+            type="button"
+            class="cover-permission-prompt__btn cover-permission-prompt__btn--secondary"
+            id="cover-permission-cancel"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="cover-permission-prompt__btn cover-permission-prompt__btn--primary"
+            id="cover-permission-allow"
+          >
+            Allow
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="whats-new-prompt"
+      class="whats-new-prompt"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="whats-new-title"
+      hidden
+    >
+      <div class="whats-new-prompt__backdrop" id="whats-new-backdrop"></div>
+      <div class="whats-new-prompt__card">
+        <h2 id="whats-new-title" class="whats-new-prompt__title">
+          What’s new
+        </h2>
+        <p class="whats-new-prompt__version">
+          Version <span id="whats-new-version"></span>
+        </p>
+        <ul id="whats-new-list" class="whats-new-prompt__list"></ul>
+        <div class="whats-new-prompt__actions">
+          <button
+            type="button"
+            class="whats-new-prompt__btn"
+            id="whats-new-dismiss"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
       id="review-prompt"
       class="review-prompt"
       role="dialog"
@@ -305,6 +373,7 @@
     <script src="../shared/settings/catalogs.js"></script>
     <script src="../shared/settings/apply.js"></script>
     <script src="../shared/settings.js"></script>
+    <script src="whats-new.js"></script>
     <script src="review-prompt.js"></script>
     <script src="popup.js"></script>
   </body>

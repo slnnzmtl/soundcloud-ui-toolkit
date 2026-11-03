@@ -38,6 +38,9 @@
   } = ScxSettings;
 
   const COVER_PERMISSION_PENDING_KEY = "scxCoverPermissionPending";
+  const COVER_HOST_DECLINED_KEY = "scxCoverHostDeclined";
+  const COVER_HOST_PERMISSION = "https://*.sndcdn.com/*";
+  const COVER_HOST_SETTLED_MESSAGE = "scx-cover-host-settled";
 
   const switches = [
     { id: "full-width", key: "fullWidth" },
@@ -642,8 +645,74 @@
     });
   }
 
+  let coverPermissionSettled = false;
+  let coverPermissionRequestInFlight = false;
+
+  function hideCoverPermissionPrompt() {
+    const root = document.getElementById("cover-permission-prompt");
+    if (root) {
+      root.hidden = true;
+    }
+  }
+
   function clearCoverPermissionPending() {
     chrome.storage.local.remove(COVER_PERMISSION_PENDING_KEY);
+    const root = document.getElementById("cover-permission-prompt");
+    if (root && !root.hidden) {
+      coverPermissionSettled = true;
+      coverPermissionRequestInFlight = false;
+      hideCoverPermissionPrompt();
+    }
+  }
+
+  function showCoverPermissionPrompt() {
+    const root = document.getElementById("cover-permission-prompt");
+    const allowBtn = document.getElementById("cover-permission-allow");
+    const cancelBtn = document.getElementById("cover-permission-cancel");
+    if (!root || !allowBtn || !cancelBtn) {
+      return;
+    }
+    coverPermissionSettled = false;
+    coverPermissionRequestInFlight = false;
+    allowBtn.disabled = false;
+    cancelBtn.disabled = false;
+    root.hidden = false;
+    allowBtn.focus();
+  }
+
+  function settleCoverHostPermission(granted) {
+    if (coverPermissionSettled) {
+      return;
+    }
+    coverPermissionSettled = true;
+    coverPermissionRequestInFlight = false;
+    hideCoverPermissionPrompt();
+    try {
+      chrome.runtime.sendMessage({
+        type: COVER_HOST_SETTLED_MESSAGE,
+        granted: Boolean(granted),
+      });
+    } catch {
+      /* extension context gone */
+    }
+  }
+
+  function resumeCoverHostPermission() {
+    return new Promise((resolve) => {
+      chrome.permissions.contains(
+        { origins: [COVER_HOST_PERMISSION] },
+        (granted) => {
+          if (granted) {
+            coverPermissionSettled = false;
+            settleCoverHostPermission(true);
+            resolve();
+            return;
+          }
+          showCoverPermissionPrompt();
+          resolve();
+        }
+      );
+    });
   }
 
   function beginCoverHostPermission(fallbackStyle, patch) {
@@ -655,46 +724,127 @@
         },
       },
       () => {
-        chrome.runtime.sendMessage({ type: "scx-request-cover-host" });
+        resumeCoverHostPermission();
       }
     );
+  }
+
+  function maybeShowPendingCoverPermission() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(
+        [COVER_PERMISSION_PENDING_KEY, COVER_HOST_DECLINED_KEY],
+        (result) => {
+          if (!result[COVER_PERMISSION_PENDING_KEY]) {
+            resolve();
+            return;
+          }
+          if (result[COVER_HOST_DECLINED_KEY]) {
+            clearCoverPermissionPending();
+            resolve();
+            return;
+          }
+          resumeCoverHostPermission().then(resolve);
+        }
+      );
+    });
+  }
+
+  function bindCoverPermissionPrompt() {
+    const allowBtn = document.getElementById("cover-permission-allow");
+    const cancelBtn = document.getElementById("cover-permission-cancel");
+    if (!allowBtn || !cancelBtn) {
+      return;
+    }
+    allowBtn.addEventListener("click", () => {
+      chrome.permissions.request(
+        { origins: [COVER_HOST_PERMISSION] },
+        (granted) => {
+          settleCoverHostPermission(Boolean(granted));
+        }
+      );
+      coverPermissionRequestInFlight = true;
+      allowBtn.disabled = true;
+      cancelBtn.disabled = true;
+    });
+    cancelBtn.addEventListener("click", () => {
+      settleCoverHostPermission(false);
+    });
   }
 
   function themeChangePlan(themeId) {
     const next = sanitizeTheme(themeId, currentPresets());
     const hero = heroStylesForTheme(next);
-    const patch = { theme: next };
-    if (hero && initialHeroBackgroundStyle === "default") {
-      patch.heroBackgroundStyle = hero.heroBackgroundStyle;
-    }
+    const persistPatch = { theme: next };
     if (hero && initialHeroWaveformStyle === "default") {
-      patch.heroWaveformStyle = hero.heroWaveformStyle;
+      persistPatch.heroWaveformStyle = hero.heroWaveformStyle;
     }
-    const needsCoverGrant = patch.heroBackgroundStyle === "cover";
-    const persistPatch = { ...patch };
-    if (needsCoverGrant) {
-      delete persistPatch.heroBackgroundStyle;
+    let needsCoverGrant = false;
+    let clearsPending = false;
+    if (hero && initialHeroBackgroundStyle === "default") {
+      clearsPending = true;
+      if (hero.heroBackgroundStyle === "cover") {
+        needsCoverGrant = true;
+      } else {
+        persistPatch.heroBackgroundStyle = hero.heroBackgroundStyle;
+      }
     }
-    return { next, persistPatch, needsCoverGrant, patch };
+    return { next, persistPatch, needsCoverGrant, clearsPending };
   }
 
   function applyThemeChoice(themeId) {
     const plan = themeChangePlan(themeId);
     rememberCatalogTheme(plan.next);
     colorsPanelOverride = findCatalogTheme(plan.next) ? "presets" : "custom";
-    if (currentSettings) {
-      currentSettings = { ...currentSettings, ...plan.persistPatch };
-      syncAppearanceSelects(currentSettings);
-      broadcastLiveSettings(currentSettings);
-    }
-    if (plan.needsCoverGrant) {
-      beginCoverHostPermission("accent", plan.persistPatch);
-    } else {
-      setSettings(plan.persistPatch).then(syncAllControls);
-      if (plan.patch.heroBackgroundStyle) {
+
+    function applyThemePatch(patch) {
+      if (currentSettings) {
+        currentSettings = { ...currentSettings, ...patch };
+        syncAppearanceSelects(currentSettings);
+        broadcastLiveSettings(currentSettings);
+      }
+      setSettings(patch).then(syncAllControls);
+      if (plan.clearsPending) {
         clearCoverPermissionPending();
       }
     }
+
+    function previewThemePatch(patch) {
+      if (!currentSettings) {
+        return;
+      }
+      currentSettings = { ...currentSettings, ...patch };
+      syncAppearanceSelects(currentSettings);
+      broadcastLiveSettings(currentSettings);
+    }
+
+    if (!plan.needsCoverGrant) {
+      applyThemePatch(plan.persistPatch);
+      return;
+    }
+
+    chrome.permissions.contains(
+      { origins: [COVER_HOST_PERMISSION] },
+      (granted) => {
+        if (granted) {
+          applyThemePatch({
+            ...plan.persistPatch,
+            heroBackgroundStyle: "cover",
+          });
+          return;
+        }
+        chrome.storage.local.get(COVER_HOST_DECLINED_KEY, (result) => {
+          if (result[COVER_HOST_DECLINED_KEY]) {
+            applyThemePatch({
+              ...plan.persistPatch,
+              heroBackgroundStyle: "accent",
+            });
+            return;
+          }
+          previewThemePatch(plan.persistPatch);
+          beginCoverHostPermission("accent", plan.persistPatch);
+        });
+      }
+    );
   }
 
   function renderThemeList() {
@@ -1143,12 +1293,19 @@
   renderThemeList();
   renderCustomFields();
   bindControls();
+  bindCoverPermissionPrompt();
   onNativeSchemeChanged();
   Promise.all([getSettings(), loadNativeScheme()]).then(([settings]) => {
     rememberCatalogTheme(settings.theme);
     rememberInitialHeroStyles(settings);
     syncAllControls(settings);
-    globalThis.__scxMaybeShowReviewPrompt();
+    maybeShowPendingCoverPermission()
+      .then(() => globalThis.__scxMaybeShowWhatsNew())
+      .then((shown) => {
+        if (!shown) {
+          globalThis.__scxMaybeShowReviewPrompt();
+        }
+      });
   });
   onSettingsChanged((settings) => {
     if (isCustomPaletteSyncStale(settings)) {
@@ -1160,5 +1317,14 @@
 
   window.addEventListener("pagehide", () => {
     flushCustomPalettePersist();
+    const root = document.getElementById("cover-permission-prompt");
+    if (
+      root &&
+      !root.hidden &&
+      !coverPermissionSettled &&
+      !coverPermissionRequestInFlight
+    ) {
+      settleCoverHostPermission(false);
+    }
   });
 })();

@@ -120,9 +120,10 @@ function onNavigated(details) {
 
 const COVER_FETCH_MESSAGE = "scx-fetch-cover";
 const COVER_HOST_GRANTED_MESSAGE = "scx-cover-host-granted";
-const COVER_HOST_REQUEST_MESSAGE = "scx-request-cover-host";
+const COVER_HOST_SETTLED_MESSAGE = "scx-cover-host-settled";
 const COVER_HOST_PERMISSION = "https://*.sndcdn.com/*";
 const COVER_PERMISSION_PENDING_KEY = "scxCoverPermissionPending";
+const COVER_HOST_DECLINED_KEY = "scxCoverHostDeclined";
 const SETTINGS_KEY = "scxSettings";
 const COVER_HOST_RE = /^https:\/\/[\w.-]+\.sndcdn\.com\//i;
 const COVER_SAMPLE_SIZE = 24;
@@ -142,6 +143,11 @@ function originGrantsCoverHost(origins) {
 
 function rememberCoverHostGrant() {
   coverHostGranted = true;
+  chrome.storage.local.remove(COVER_HOST_DECLINED_KEY);
+}
+
+function rememberCoverHostDecline() {
+  chrome.storage.local.set({ [COVER_HOST_DECLINED_KEY]: true });
 }
 
 function sendTabMessage(tabId, frameId, message) {
@@ -337,8 +343,11 @@ function completeCoverHostRequest(granted) {
     const pending = result[COVER_PERMISSION_PENDING_KEY];
     if (!pending) {
       if (granted) {
+        const alreadyKnown = coverHostGranted;
         rememberCoverHostGrant();
-        notifyCoverHostGranted();
+        if (!alreadyKnown) {
+          notifyCoverHostGranted();
+        }
       }
       return;
     }
@@ -350,26 +359,13 @@ function completeCoverHostRequest(granted) {
       patchSettings(next, notifyCoverHostGranted);
       return;
     }
+    rememberCoverHostDecline();
     if (pending.fallbackHeroBackgroundStyle) {
       next.heroBackgroundStyle = pending.fallbackHeroBackgroundStyle;
     }
     if (Object.keys(next).length) {
       patchSettings(next);
     }
-  });
-}
-
-function requestCoverHostPermissionFromPending() {
-  chrome.storage.local.get(COVER_PERMISSION_PENDING_KEY, (result) => {
-    if (!result[COVER_PERMISSION_PENDING_KEY]) {
-      return;
-    }
-    chrome.permissions.request(
-      { origins: [COVER_HOST_PERMISSION] },
-      (granted) => {
-        completeCoverHostRequest(Boolean(granted));
-      }
-    );
   });
 }
 
@@ -384,8 +380,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (!message) {
     return undefined;
   }
-  if (message.type === COVER_HOST_REQUEST_MESSAGE) {
-    requestCoverHostPermissionFromPending();
+  if (message.type === COVER_HOST_SETTLED_MESSAGE) {
+    completeCoverHostRequest(Boolean(message.granted));
     return undefined;
   }
   if (message.type !== COVER_FETCH_MESSAGE) {
